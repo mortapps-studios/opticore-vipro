@@ -70,12 +70,14 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn'); // New Mobile Element
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
 const howItWorksLink = document.getElementById('howItWorksLink');
 const privacyLink = document.getElementById('privacyLink');
 const contactLink = document.getElementById('contactLink');
+const navLinks = document.querySelector('.nav-links'); // Nav container
 
 // Popup Elements
 const howItWorksPopup = document.getElementById('howItWorksPopup');
@@ -136,6 +138,35 @@ function setupPopupCloseButtons() {
     });
 }
 
+// ===== MOBILE MENU TOGGLE (NEW FIX) =====
+function setupMobileMenu() {
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+            
+            // Change icon based on state
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-links a, .nav-links .btn-contact').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('show');
+                const icon = mobileMenuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+    }
+}
+
 // ===== NAVIGATION FUNCTIONS =====
 function setupNavigation() {
     // Frames Link - Scroll to frames section
@@ -143,6 +174,9 @@ function setupNavigation() {
         e.preventDefault();
         const framesSection = document.getElementById('framesSection');
         if (framesSection) {
+            // Close mobile menu if open
+            navLinks.classList.remove('show');
+            
             framesSection.scrollIntoView({ 
                 behavior: 'smooth',
                 block: 'start'
@@ -203,10 +237,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2. Setup popups
     setupPopupCloseButtons();
     
-    // 3. Setup navigation
+    // 3. Setup mobile menu
+    setupMobileMenu(); // NEW CALL
+    
+    // 4. Setup navigation
     setupNavigation();
     
-    // 4. Start application after loading screen
+    // 5. Start application after loading screen
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
@@ -764,7 +801,7 @@ function makeDraggable(element) {
     let offsetX, offsetY;
     
     element.addEventListener('mousedown', startDrag);
-    element.addEventListener('touchstart', startDragTouch);
+    element.addEventListener('touchstart', startDragTouch, {passive: false});
     
     function startDrag(e) {
         isDragging = true;
@@ -782,7 +819,7 @@ function makeDraggable(element) {
         const rect = element.getBoundingClientRect();
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
-        document.addEventListener('touchmove', dragTouch);
+        document.addEventListener('touchmove', dragTouch, {passive: false});
         document.addEventListener('touchend', stopDrag);
         e.preventDefault();
     }
