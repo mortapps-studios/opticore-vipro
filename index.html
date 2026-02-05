@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Opticore ViPro | Professional Virtual Eyewear Analysis</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,10 +14,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#1a2980">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body oncontextmenu="return false;">
-    <!-- Loading Screen (4.2 seconds) -->
+    <!-- Loading Screen (4.2 seconds) - OPTIMIZED -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
             <div class="loading-logo">
@@ -86,7 +85,7 @@
                                 <span>Horizontal positioning</span>
                             </div>
                         </div>
-                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> On mobile: Pinch to resize, drag to reposition.</p>
+                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> On mobile: Pinch to resize, drag to reposition, volume buttons for vertical adjustment.</p>
                     </div>
                 </div>
                 <div class="instruction-step">
@@ -226,46 +225,55 @@
                 </div>
 
                 <div id="permissionOverlay" class="overlay permission-prompt">
-                    <i class="fas fa-camera fa-3x"></i>
-                    <h3>Camera Access Required</h3>
-                    <p>For precise facial mapping, camera access is necessary.</p>
-                    <p class="small-text"><i class="fas fa-shield-alt"></i> 100% local processing - No data leaves your device</p>
-                    <button id="startCameraBtn" class="btn-primary btn-large">
-                        <i class="fas fa-play-circle"></i> Start Visual Analysis
-                    </button>
-                    <button id="useStaticModeBtn" class="btn-secondary">
-                        <i class="fas fa-image"></i> Use Reference Image
-                    </button>
+                    <div class="permission-content">
+                        <i class="fas fa-camera fa-3x"></i>
+                        <h3>Camera Access Required</h3>
+                        <p>For precise facial mapping, camera access is necessary.</p>
+                        <p class="small-text"><i class="fas fa-shield-alt"></i> 100% local processing - No data leaves your device</p>
+                        <div class="permission-buttons">
+                            <button id="startCameraBtn" class="btn-primary btn-large">
+                                <i class="fas fa-play-circle"></i> Start Visual Analysis
+                            </button>
+                            <button id="useStaticModeBtn" class="btn-secondary">
+                                <i class="fas fa-image"></i> Use Reference Image
+                            </button>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Mobile Controls Overlay -->
-                <div id="mobileControls" class="mobile-controls-overlay">
-                    <div class="mobile-controls">
+            <!-- Mobile Controls (BELOW Camera) -->
+            <div id="mobileControls" class="mobile-controls-container">
+                <div class="mobile-controls-grid">
+                    <div class="mobile-control-group">
                         <button class="mobile-control-btn" data-action="zoom-in">
                             <i class="fas fa-search-plus"></i>
+                            <span>Zoom In</span>
                         </button>
                         <button class="mobile-control-btn" data-action="zoom-out">
                             <i class="fas fa-search-minus"></i>
+                            <span>Zoom Out</span>
                         </button>
-                        <div class="mobile-control-separator"></div>
-                        <button class="mobile-control-btn" data-action="move-up">
-                            <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="mobile-control-group">
+                        <button class="mobile-control-btn neural-toggle-btn" id="neuralToggleMobile" data-action="toggle-neural">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Neural Layer: <span id="mobileNeuralStatus">OFF</span></span>
                         </button>
-                        <button class="mobile-control-btn" data-action="move-down">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
-                        <div class="mobile-control-separator"></div>
+                    </div>
+                    <div class="mobile-control-group">
                         <button class="mobile-control-btn" data-action="move-left">
                             <i class="fas fa-arrow-left"></i>
+                            <span>Left</span>
                         </button>
                         <button class="mobile-control-btn" data-action="move-right">
                             <i class="fas fa-arrow-right"></i>
+                            <span>Right</span>
                         </button>
-                        <div class="mobile-control-separator"></div>
-                        <!-- Neural Calibration Layer Toggle for Mobile -->
-                        <button class="mobile-control-btn neural-toggle-btn" id="neuralToggleMobile" data-action="toggle-neural">
-                            <i class="fas fa-brain"></i>
-                        </button>
+                    </div>
+                    <div class="mobile-volume-hint">
+                        <i class="fas fa-volume-up"></i>
+                        <small>Use Volume buttons for Up/Down adjustment</small>
                     </div>
                 </div>
             </div>
@@ -290,7 +298,7 @@
                     </button>
                     <!-- Neural Calibration Layer Toggle for Desktop -->
                     <button id="neuralToggleDesktop" class="btn-control neural-toggle-btn">
-                        <i class="fas fa-brain"></i> <span>Neural Layer: <span id="neuralStatus">OFF</span></span>
+                        <i class="fas fa-project-diagram"></i> <span>Neural Layer: <span id="neuralStatus">OFF</span></span>
                     </button>
                 </div>
 
@@ -305,8 +313,8 @@
                     </div>
                 </div>
 
-                <!-- Adjustment Controls -->
-                <div class="adjustment-controls">
+                <!-- Adjustment Controls (Hidden on Mobile) -->
+                <div class="adjustment-controls desktop-only">
                     <h4><i class="fas fa-sliders-h"></i> Frame Adjustments</h4>
                     
                     <!-- Size Controls -->
