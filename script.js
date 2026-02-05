@@ -3,10 +3,8 @@
 // ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
 // ✅ Professional "How-To" Text
 // ✅ Code Protection (Anti-Inspect)
-// ✅ Mobile Responsive with Smart Orientation Layout
-// ✅ Added Navigation Functions (Frames, How It Works, Privacy)
+// ✅ EVOLVED: Smart Orientation Handling (Stops AI in Portrait)
 // ✅ FIXED: SmartMode L/R labeling from user's perspective
-// ✅ EVOLVED: Portrait/Landscape Layout Switching
 // ============================================
 
 // State Management
@@ -32,7 +30,8 @@ let state = {
     glassesX: 50,
     glassesY: 40,
     lastCapturedImage: null,
-    lastDetection: null
+    lastDetection: null,
+    isPortraitLocked: false // NEW: Tracks if user is stuck in portrait
 };
 
 // Glasses Catalog
@@ -210,14 +209,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 3. Setup navigation
     setupNavigation();
+
+    // 4. Setup Orientation Listeners (Optimized Performance)
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
     
-    // 4. Start application after loading screen
+    // 5. Start application after loading screen
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
     }, 4200);
 });
 
+// ===== SMART ORIENTATION CHECK (New Feature) =====
+function checkOrientation() {
+    // Check if we are on a mobile device via width
+    const isMobile = window.innerWidth < 992;
+    
+    if (isMobile) {
+        // If Height > Width, we are in Portrait -> LOCKED
+        state.isPortraitLocked = window.innerHeight > window.innerWidth;
+    } else {
+        // Desktop/Tablet -> Unlocked
+        state.isPortraitLocked = false;
+    }
+}
+
+// ===== INIT APPLICATION =====
 function initApplication() {
     renderGlassesGrid();
     setupEventListeners();
@@ -225,8 +243,12 @@ function initApplication() {
     loadFaceModels();
     shareBtn.disabled = false;
     
-    // Check if mobile to show controls overlay
+    // Initial check
+    checkOrientation();
+    
+    // Check if mobile to show controls overlay (in landscape)
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // We only show controls via CSS when landscape, but we ensure logic is ready
         document.getElementById('mobileControls').style.display = 'block';
     }
 }
@@ -507,6 +529,14 @@ async function startFaceDetection() {
 }
 
 async function detectFaces() {
+    // OPTIMIZATION: Smart Pause
+    // If we are locked in portrait mode, STOP the AI loop to save battery/CPU
+    if (state.isPortraitLocked) {
+        // Instead of stopping completely, we just skip processing and loop lightly
+        requestAnimationFrame(detectFaces);
+        return;
+    }
+
     if (!state.faceDetectionActive || !state.isCameraActive) return;
     
     try {
@@ -741,6 +771,12 @@ function drawBasicVideo() {
     function drawLoop() {
         if (!state.isCameraActive || state.isStaticMode) return;
         
+        // OPTIMIZATION: Check Portrait Lock
+        if (state.isPortraitLocked) {
+            requestAnimationFrame(drawLoop);
+            return;
+        }
+
         const ctx = canvasElement.getContext('2d');
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
@@ -1264,7 +1300,7 @@ function resetApp() {
             isCameraActive: false, selectedGlasses: glassesCatalog[0], isStaticMode: false, faceDetectionActive: false,
             currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
             glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
-            lastCapturedImage: null, lastDetection: null
+            lastCapturedImage: null, lastDetection: null, isPortraitLocked: false
         });
         
         videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
