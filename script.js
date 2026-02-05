@@ -3,11 +3,10 @@
 // ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
 // ✅ Professional "How-To" Text
 // ✅ Code Protection (Anti-Inspect)
-// ✅ Mobile Responsive
+// ✅ Mobile Responsive with Smart Orientation Layout
 // ✅ Added Navigation Functions (Frames, How It Works, Privacy)
 // ✅ FIXED: SmartMode L/R labeling from user's perspective
-// ✅ UPGRADED: Volume Keys for Mobile Up/Down
-// ✅ UPGRADED: Mobile SmartMode Button
+// ✅ EVOLVED: Portrait/Landscape Layout Switching
 // ============================================
 
 // State Management
@@ -85,7 +84,7 @@ const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
 
-// NEW: Mobile SmartMode Button
+// Mobile SmartMode Button
 const mobileSmartModeBtn = document.getElementById('mobileSmartModeBtn');
 
 // Image Cache
@@ -116,7 +115,7 @@ function showPopup(popupElement) {
         popup.style.display = 'none';
     });
     
-    // Show the requested popup
+    // Show to requested popup
     popupElement.style.display = 'flex';
     
     // Add click outside to close
@@ -366,7 +365,7 @@ function setupEventListeners() {
         });
     });
     
-    // NEW: Mobile SmartMode Toggle
+    // Mobile SmartMode Toggle
     if (mobileSmartModeBtn) {
         mobileSmartModeBtn.addEventListener('click', () => {
             state.smartMode = !state.smartMode;
@@ -420,20 +419,6 @@ function setupEventListeners() {
                 `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
                 state.smartMode ? 'success' : 'info'
             );
-            e.preventDefault();
-            return;
-        }
-        
-        // NEW: Volume Keys for Mobile Up/Down
-        if (e.code === 'VolumeUp') {
-            handleAdjustment('position-up');
-            // Note: preventDefault might not work on all mobile OS due to system priority
-            e.preventDefault(); 
-            return;
-        }
-        
-        if (e.code === 'VolumeDown') {
-            handleAdjustment('position-down');
             e.preventDefault();
             return;
         }
