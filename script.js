@@ -1,10 +1,5 @@
 // ============================================
-// OPTICORE VIPRO - AESTHETIC & SECURE VERSION
-// ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
-// ✅ Professional "How-To" Text
-// ✅ Code Protection (Anti-Inspect)
-// ✅ EVOLVED: Smart Orientation Handling (Stops AI in Portrait)
-// ✅ FIXED: SmartMode L/R labeling from user's perspective
+// OPTICORE VIPRO - FINAL CORRECTED VERSION
 // ============================================
 
 // State Management
@@ -31,7 +26,7 @@ let state = {
     glassesY: 40,
     lastCapturedImage: null,
     lastDetection: null,
-    isPortraitLocked: false // NEW: Tracks if user is stuck in portrait
+    isPortraitLocked: false
 };
 
 // Glasses Catalog
@@ -71,6 +66,7 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
+const orientationLock = document.getElementById('orientation-lock');
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
@@ -97,9 +93,8 @@ function enableCodeProtection() {
         showNotification('🔒 System Protected: Source Code Access Restricted', 'warning');
     });
 
-    // Disable F12 (Developer Tools) - Optional, adds extra security
+    // Disable F12
     document.addEventListener('keydown', (e) => {
-        // F12 or Ctrl+Shift+I
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
             e.preventDefault();
             showNotification('🔒 Developer Tools Disabled in Production Mode', 'warning');
@@ -109,15 +104,11 @@ function enableCodeProtection() {
 
 // ===== POPUP MANAGEMENT =====
 function showPopup(popupElement) {
-    // Hide all popups first
     document.querySelectorAll('.popup-overlay').forEach(popup => {
         popup.style.display = 'none';
     });
-    
-    // Show to requested popup
     popupElement.style.display = 'flex';
     
-    // Add click outside to close
     setTimeout(() => {
         popupElement.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -142,35 +133,27 @@ function setupPopupCloseButtons() {
 
 // ===== NAVIGATION FUNCTIONS =====
 function setupNavigation() {
-    // Frames Link - Scroll to frames section
     framesLink.addEventListener('click', function(e) {
         e.preventDefault();
         const framesSection = document.getElementById('framesSection');
         if (framesSection) {
-            framesSection.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-            // Update active nav link
+            framesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             updateActiveNavLink('frames');
         }
     });
 
-    // How It Works Link - Show popup
     howItWorksLink.addEventListener('click', function(e) {
         e.preventDefault();
         showPopup(howItWorksPopup);
         updateActiveNavLink('howItWorks');
     });
 
-    // Privacy Link - Show popup
     privacyLink.addEventListener('click', function(e) {
         e.preventDefault();
         showPopup(privacyPopup);
         updateActiveNavLink('privacy');
     });
 
-    // Contact Link - Show popup
     contactLink.addEventListener('click', function(e) {
         e.preventDefault();
         showPopup(contactPopup);
@@ -178,12 +161,10 @@ function setupNavigation() {
 }
 
 function updateActiveNavLink(activeLink) {
-    // Remove active class from all nav links
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.classList.remove('active');
     });
     
-    // Add active class to clicked link
     switch(activeLink) {
         case 'frames':
             framesLink.classList.add('active');
@@ -199,7 +180,7 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Secure & Aesthetic Version");
+    console.log("🔬 Opticore ViPro - Final Corrected Version");
     
     // 1. Enable Protection
     enableCodeProtection();
@@ -210,28 +191,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. Setup navigation
     setupNavigation();
 
-    // 4. Setup Orientation Listeners (Optimized Performance)
+    // 4. Orientation Listeners
     window.addEventListener('resize', checkOrientation);
     window.addEventListener('orientationchange', checkOrientation);
     
-    // 5. Start application after loading screen
+    // 5. Start application
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
     }, 4200);
 });
 
-// ===== SMART ORIENTATION CHECK (New Feature) =====
+// ===== SMART ORIENTATION CHECK (FIXED) =====
 function checkOrientation() {
-    // Check if we are on a mobile device via width
     const isMobile = window.innerWidth < 992;
     
     if (isMobile) {
-        // If Height > Width, we are in Portrait -> LOCKED
-        state.isPortraitLocked = window.innerHeight > window.innerWidth;
+        // Check if Portrait
+        if (window.innerHeight > window.innerWidth) {
+            state.isPortraitLocked = true;
+            // Force display:flex just in case CSS is slow
+            orientationLock.style.display = 'flex';
+        } else {
+            state.isPortraitLocked = false;
+            // Force display:none to ensure user sees the camera
+            orientationLock.style.display = 'none';
+        }
     } else {
-        // Desktop/Tablet -> Unlocked
         state.isPortraitLocked = false;
+        orientationLock.style.display = 'none';
     }
 }
 
@@ -246,9 +234,7 @@ function initApplication() {
     // Initial check
     checkOrientation();
     
-    // Check if mobile to show controls overlay (in landscape)
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        // We only show controls via CSS when landscape, but we ensure logic is ready
         document.getElementById('mobileControls').style.display = 'block';
     }
 }
@@ -317,7 +303,6 @@ function preloadImage(src, id) {
     img.crossOrigin = 'anonymous';
     img.onload = function() {
         imageCache.set(id, img);
-        console.log(`✅ Loaded: ${src}`);
     };
     img.onerror = function() {
         console.error(`❌ Failed: ${src}`);
@@ -332,7 +317,6 @@ function selectGlasses(glasses) {
     state.verticalOffset = 0;
     state.horizontalOffset = 0;
     
-    // Update UI
     const cachedImg = imageCache.get(glasses.id);
     if (cachedImg) {
         selectedFrameImg.src = cachedImg.src;
@@ -352,7 +336,6 @@ function selectGlasses(glasses) {
         staticGlasses.style.width = `${200 * state.glassesScale}px`;
     }
     
-    // Highlight Card
     document.querySelectorAll('.glasses-card').forEach(card => {
         if (card.dataset.id == glasses.id) {
             card.classList.add('selected');
@@ -387,18 +370,14 @@ function setupEventListeners() {
         });
     });
     
-    // Mobile SmartMode Toggle
     if (mobileSmartModeBtn) {
         mobileSmartModeBtn.addEventListener('click', () => {
             state.smartMode = !state.smartMode;
-            
-            // Visual feedback for mobile button
             if (state.smartMode) {
                 mobileSmartModeBtn.classList.add('active');
             } else {
                 mobileSmartModeBtn.classList.remove('active');
             }
-
             showNotification(
                 `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
                 state.smartMode ? 'success' : 'info'
@@ -425,7 +404,6 @@ function setupEventListeners() {
     
     sendToWhatsAppBtn.addEventListener('click', sendToWhatsAppDirect);
     
-    // Setup How It Works popup start button
     document.querySelector('.start-try-on-btn').addEventListener('click', function() {
         hidePopup(howItWorksPopup);
         startCamera();
@@ -434,7 +412,6 @@ function setupEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         
-        // SmartMode Toggle (Desktop)
         if (e.ctrlKey && e.key === 'd') {
             state.smartMode = !state.smartMode;
             showNotification(
@@ -495,6 +472,7 @@ async function startCamera() {
             cameraStatus.textContent = 'On';
             toggleCameraBtn.innerHTML = '<i class="fas fa-video"></i> Camera: On';
             
+            // CRITICAL FIX: Remove overlays IMMEDIATELY
             loadingOverlay.style.display = 'none';
             permissionOverlay.style.display = 'none';
             
@@ -529,10 +507,8 @@ async function startFaceDetection() {
 }
 
 async function detectFaces() {
-    // OPTIMIZATION: Smart Pause
-    // If we are locked in portrait mode, STOP the AI loop to save battery/CPU
+    // Pause if in portrait
     if (state.isPortraitLocked) {
-        // Instead of stopping completely, we just skip processing and loop lightly
         requestAnimationFrame(detectFaces);
         return;
     }
@@ -556,7 +532,6 @@ async function detectFaces() {
             const detection = detections[0];
             state.lastDetection = detection;
             
-            // Cool SmartMode Visualization
             if (state.smartMode) {
                 drawCoolSmartMode(ctx, detection);
             }
@@ -603,79 +578,64 @@ function drawCoolSmartMode(ctx, detection) {
     const box = detection.detection.box;
     const positions = landmarks.positions;
     
-    // 1. GREEN BOX (Whole Face)
+    // Green Box
     ctx.strokeStyle = '#00ff00';
     ctx.lineWidth = 3;
     ctx.shadowColor = 'rgba(0, 255, 0, 0.5)';
     ctx.shadowBlur = 10;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
-    ctx.shadowBlur = 0; // Reset shadow
+    ctx.shadowBlur = 0;
     
-    // 2. BLUE MESH (Inner Face) - Connecting all 68 points
-    ctx.strokeStyle = '#00ffff'; // Cyan/Blue
+    // Blue Mesh
+    ctx.strokeStyle = '#00ffff';
     ctx.lineWidth = 1;
     ctx.globalAlpha = 0.6;
     ctx.beginPath();
-    
-    // Simple connect logic for all points to create a "Net" look
-    // Connecting points sequentially
     for (let i = 0; i < positions.length - 1; i++) {
         ctx.moveTo(positions[i].x, positions[i].y);
         ctx.lineTo(positions[i+1].x, positions[i+1].y);
     }
-    // Close loop
     ctx.moveTo(positions[positions.length-1].x, positions[positions.length-1].y);
     ctx.lineTo(positions[0].x, positions[0].y);
-    
     ctx.stroke();
     ctx.globalAlpha = 1.0;
     
-    // 3. DOTS ON FEATURES (Nose, Mouth, Jaw)
-    ctx.fillStyle = '#ff00ff'; // Magenta dots
-    const features = [
-        30, // Nose tip
-        48, 54, // Mouth corners
-        0, 16 // Jaw corners
-    ];
-    
+    // Magenta Dots
+    ctx.fillStyle = '#ff00ff';
+    const features = [30, 48, 54, 0, 16];
     features.forEach(idx => {
         ctx.beginPath();
         ctx.arc(positions[idx].x, positions[idx].y, 3, 0, 2 * Math.PI);
         ctx.fill();
     });
     
-    // 4. RED TRACKERS (L and R Eyes) - FIXED: Now from person's perspective
-    const leftEye = landmarks.getLeftEye();  // Person's left eye (right side in image)
-    const rightEye = landmarks.getRightEye(); // Person's right eye (left side in image)
+    // Red L/R Eyes
+    const leftEye = landmarks.getLeftEye();
+    const rightEye = landmarks.getRightEye();
     const leftEyeCenter = getCenterPoint(leftEye);
     const rightEyeCenter = getCenterPoint(rightEye);
     
     const eyes = [
-        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on the RIGHT side of image
-        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
+        { p: leftEyeCenter, label: 'R' },
+        { p: rightEyeCenter, label: 'L' }
     ];
     
     ctx.font = 'bold 16px "Segoe UI"';
     eyes.forEach(eye => {
-        // Red Background Circle
         ctx.beginPath();
         ctx.arc(eye.p.x, eye.p.y, 8, 0, 2 * Math.PI);
         ctx.fillStyle = '#ff0000';
         ctx.fill();
-        
-        // White Outline (Mobile Friendly)
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.stroke();
-        
-        // Text
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(eye.label, eye.p.x, eye.p.y + 1);
     });
     
-    // 5. GREEN TRACKER (Center)
+    // Green Center
     const centerX = (leftEyeCenter.x + rightEyeCenter.x) / 2;
     const centerY = (leftEyeCenter.y + rightEyeCenter.y) / 2;
     
@@ -705,9 +665,7 @@ function getCenterPoint(points) {
 
 function drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale) {
     const glassesImg = imageCache.get(state.selectedGlasses.id);
-    if (!glassesImg || !glassesImg.complete) {
-        return; // Will retry next frame if not ready
-    }
+    if (!glassesImg || !glassesImg.complete) return;
     
     const aspectRatio = glassesImg.width / glassesImg.height;
     const glassesWidth = baseWidth * frameScale * userScale;
@@ -771,7 +729,6 @@ function drawBasicVideo() {
     function drawLoop() {
         if (!state.isCameraActive || state.isStaticMode) return;
         
-        // OPTIMIZATION: Check Portrait Lock
         if (state.isPortraitLocked) {
             requestAnimationFrame(drawLoop);
             return;
@@ -801,8 +758,8 @@ function activateStaticMode() {
     staticContainer.style.display = 'flex';
     videoElement.style.display = 'none';
     canvasElement.style.display = 'none';
-    permissionOverlay.style.display = 'none';
     loadingOverlay.style.display = 'none';
+    permissionOverlay.style.display = 'none';
     
     cameraStatus.textContent = 'Static';
     toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Static';
@@ -957,7 +914,7 @@ function captureFromCanvas() {
     try {
         return canvasElement.toDataURL('image/png', 1.0);
     } catch (e) {
-        console.warn('Tainted Canvas detected. Saving User Photo only.');
+        console.warn('Tainted Canvas detected.');
         return captureVideoOnly();
     }
 }
@@ -1310,7 +1267,6 @@ function resetApp() {
         document.querySelectorAll('.light-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         document.querySelectorAll('.filter-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         
-        // Reset Mobile SmartMode Button
         if (mobileSmartModeBtn) mobileSmartModeBtn.classList.remove('active');
         
         showPermissionOverlay();
@@ -1320,4 +1276,4 @@ function resetApp() {
     }
 }
 
-console.log("✅ Opticore ViPro - Secure & Aesthetic Version Loaded");
+console.log("✅ Opticore ViPro - Final Corrected Version Loaded");
