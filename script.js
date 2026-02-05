@@ -1,12 +1,13 @@
 // ============================================
-// OPTICORE VIPRO - OPTIMIZED & FIXED VERSION
-// ✅ FIXED: Performance issues (lag removed)
-// ✅ FIXED: Mobile glasses logic (now follows face properly)
-// ✅ FIXED: Mobile scrolling issues
-// ✅ REMOVED: Brain emoji (replaced with professional icon)
-// ✅ ADDED: Volume button control for mobile
-// ✅ FIXED: Mobile controls layout (now below camera)
-// ✅ OPTIMIZED: Loading screen performance
+// OPTICORE VIPRO - AESTHETIC & SECURE VERSION
+// ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
+// ✅ Professional "How-To" Text
+// ✅ Code Protection (Anti-Inspect)
+// ✅ Mobile Responsive
+// ✅ Added Navigation Functions (Frames, How It Works, Privacy)
+// ✅ FIXED: SmartMode L/R labeling from user's perspective
+// ✅ UPGRADED: Volume Keys for Mobile Up/Down
+// ✅ UPGRADED: Mobile SmartMode Button
 // ============================================
 
 // State Management
@@ -32,12 +33,7 @@ let state = {
     glassesX: 50,
     glassesY: 40,
     lastCapturedImage: null,
-    lastDetection: null,
-    isMobile: false,
-    mobileOptimized: false,
-    volumeControlEnabled: false,
-    faceDetectionRunning: false,
-    detectionFrameCount: 0
+    lastDetection: null
 };
 
 // Glasses Catalog
@@ -77,10 +73,6 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
-const neuralToggleDesktop = document.getElementById('neuralToggleDesktop');
-const neuralToggleMobile = document.getElementById('neuralToggleMobile');
-const neuralStatus = document.getElementById('neuralStatus');
-const mobileNeuralStatus = document.getElementById('mobileNeuralStatus');
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
@@ -93,182 +85,28 @@ const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
 
-// Mobile Elements
-const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-const mobileControlsContainer = document.getElementById('mobileControls');
+// NEW: Mobile SmartMode Button
+const mobileSmartModeBtn = document.getElementById('mobileSmartModeBtn');
 
 // Image Cache
 const imageCache = new Map();
 
-// ===== PERFORMANCE OPTIMIZATIONS =====
-function enablePerformanceOptimizations() {
-    // Use requestAnimationFrame efficiently
-    let lastFrameTime = 0;
-    const fpsLimit = 60;
-    const frameInterval = 1000 / fpsLimit;
-    
-    // Optimize canvas rendering
-    if (canvasElement) {
-        canvasElement.style.willChange = 'transform';
-        canvasElement.style.transform = 'translateZ(0)';
-    }
-    
-    // Use passive event listeners for better scrolling
-    const passiveOptions = { passive: true };
-    
-    // Prevent layout thrashing
-    let pendingCanvasUpdate = false;
-    
-    console.log("⚡ Performance optimizations enabled");
-}
+// ===== CODE PROTECTION (ANTI-INSPECT) =====
+function enableCodeProtection() {
+    // Disable Right Click
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        showNotification('🔒 System Protected: Source Code Access Restricted', 'warning');
+    });
 
-// ===== MOBILE DETECTION & ENHANCEMENTS =====
-function detectMobileDevice() {
-    state.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    console.log(state.isMobile ? "📱 Mobile device detected" : "🖥️ Desktop device detected");
-    return state.isMobile;
-}
-
-function setupMobileEnhancements() {
-    if (!state.isMobile) return;
-    
-    console.log("📱 Setting up mobile enhancements...");
-    
-    // 1. Show mobile controls below camera
-    if (mobileControlsContainer) {
-        mobileControlsContainer.style.display = 'block';
-    }
-    
-    // 2. Enable volume button control
-    enableVolumeButtonControl();
-    
-    // 3. Mobile menu toggle
-    if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            navLinks.classList.toggle('show');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('show') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!mobileMenuBtn.contains(e.target) && !navLinks.contains(e.target)) {
-                navLinks.classList.remove('show');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        });
-        
-        // Close menu when clicking a link
-        navLinks.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' || e.target.closest('a')) {
-                navLinks.classList.remove('show');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        });
-    }
-    
-    // 4. Fix scrolling for permission overlay
-    if (permissionOverlay) {
-        permissionOverlay.style.overflowY = 'auto';
-        permissionOverlay.style.WebkitOverflowScrolling = 'touch';
-    }
-    
-    // 5. Add touch gestures for static glasses
-    if (state.isStaticMode && staticGlasses) {
-        addTouchGestures(staticGlasses);
-    }
-    
-    // 6. Optimize face detection for mobile
-    optimizeFaceDetectionForMobile();
-    
-    console.log("✅ Mobile enhancements activated");
-}
-
-function enableVolumeButtonControl() {
-    if (!state.isMobile) return;
-    
-    state.volumeControlEnabled = true;
-    
-    // Listen for volume button events (requires user interaction first)
-    document.addEventListener('keydown', function(e) {
-        // Volume up/down buttons (Chrome/Edge: 33/34, Firefox: 175/176, Safari: 44/45)
-        if (e.keyCode === 33 || e.keyCode === 175 || e.keyCode === 44) {
-            // Volume up - Move glasses up
-            handleAdjustment('position-up');
+    // Disable F12 (Developer Tools) - Optional, adds extra security
+    document.addEventListener('keydown', (e) => {
+        // F12 or Ctrl+Shift+I
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
             e.preventDefault();
-        } else if (e.keyCode === 34 || e.keyCode === 176 || e.keyCode === 45) {
-            // Volume down - Move glasses down
-            handleAdjustment('position-down');
-            e.preventDefault();
+            showNotification('🔒 Developer Tools Disabled in Production Mode', 'warning');
         }
     });
-    
-    console.log("🔊 Volume button control enabled");
-}
-
-function optimizeFaceDetectionForMobile() {
-    state.mobileOptimized = true;
-    
-    // Reduce detection frequency on mobile
-    state.detectionFrameCount = 0;
-    
-    console.log("📱 Mobile face detection optimization applied");
-}
-
-// ===== NEURAL CALIBRATION LAYER TOGGLE =====
-function setupNeuralToggle() {
-    // Desktop toggle
-    if (neuralToggleDesktop) {
-        neuralToggleDesktop.addEventListener('click', function() {
-            toggleSmartMode();
-        });
-    }
-    
-    // Mobile toggle
-    if (neuralToggleMobile) {
-        neuralToggleMobile.addEventListener('click', function() {
-            toggleSmartMode();
-        });
-    }
-    
-    // Update initial state
-    updateNeuralToggleUI();
-}
-
-function toggleSmartMode() {
-    state.smartMode = !state.smartMode;
-    updateNeuralToggleUI();
-    
-    showNotification(
-        `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
-        state.smartMode ? 'success' : 'info'
-    );
-    
-    console.log(`🧠 Neural Calibration Layer: ${state.smartMode ? 'ON' : 'OFF'}`);
-}
-
-function updateNeuralToggleUI() {
-    const status = state.smartMode ? 'ON' : 'OFF';
-    const activeClass = state.smartMode ? 'active' : '';
-    
-    // Update status text
-    if (neuralStatus) neuralStatus.textContent = status;
-    if (mobileNeuralStatus) mobileNeuralStatus.textContent = status;
-    
-    // Update desktop button
-    if (neuralToggleDesktop) {
-        neuralToggleDesktop.classList.toggle('active', state.smartMode);
-        neuralToggleDesktop.innerHTML = `<i class="fas fa-project-diagram"></i> <span>Neural Layer: <span id="neuralStatus">${status}</span></span>`;
-    }
-    
-    // Update mobile button
-    if (neuralToggleMobile) {
-        neuralToggleMobile.classList.toggle('active', state.smartMode);
-        neuralToggleMobile.innerHTML = `<i class="fas fa-project-diagram"></i> <span>Neural Layer: <span id="mobileNeuralStatus">${status}</span></span>`;
-    }
 }
 
 // ===== POPUP MANAGEMENT =====
@@ -363,28 +201,22 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Optimized Version");
+    console.log("🔬 Opticore ViPro - Secure & Aesthetic Version");
     
-    // 1. Enable performance optimizations
-    enablePerformanceOptimizations();
+    // 1. Enable Protection
+    enableCodeProtection();
     
-    // 2. Detect mobile device
-    detectMobileDevice();
-    
-    // 3. Setup popups
+    // 2. Setup popups
     setupPopupCloseButtons();
     
-    // 4. Setup navigation
+    // 3. Setup navigation
     setupNavigation();
     
-    // 5. Setup Neural Calibration Layer toggle
-    setupNeuralToggle();
-    
-    // 6. Optimized loading screen (shorter, smoother)
+    // 4. Start application after loading screen
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
-    }, 4000); // Reduced from 4200ms for better UX
+    }, 4200);
 });
 
 function initApplication() {
@@ -394,15 +226,13 @@ function initApplication() {
     loadFaceModels();
     shareBtn.disabled = false;
     
-    // Mobile enhancements
-    if (state.isMobile) {
-        setupMobileEnhancements();
+    // Check if mobile to show controls overlay
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        document.getElementById('mobileControls').style.display = 'block';
     }
-    
-    console.log("✅ Application initialized successfully");
 }
 
-// ===== FACE MODEL LOADING (OPTIMIZED) =====
+// ===== FACE MODEL LOADING =====
 async function loadFaceModels() {
     loadingText.textContent = 'Loading visual intelligence...';
     loadingOverlay.style.display = 'flex';
@@ -410,26 +240,15 @@ async function loadFaceModels() {
     try {
         const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
         
-        // Load models with timeout to prevent hanging
-        const loadPromise = Promise.all([
-            faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-            faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL)
-        ]);
-        
-        // Add timeout to prevent infinite loading
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Model loading timeout')), 10000);
-        });
-        
-        await Promise.race([loadPromise, timeoutPromise]);
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
         
         state.modelsLoaded = true;
         loadingText.textContent = 'Systems ready';
         
-        // Faster fade out
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
-        }, 500);
+        }, 1000);
         
     } catch (error) {
         console.error('Model loading error:', error);
@@ -437,7 +256,7 @@ async function loadFaceModels() {
         state.modelsLoaded = false;
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
-        }, 1000);
+        }, 2000);
     }
 }
 
@@ -456,25 +275,13 @@ function renderGlassesGrid() {
         }
         
         card.innerHTML = `
-            <img src="assets/glasses/${glasses.image}" alt="${glasses.name}" loading="lazy">
+            <img src="assets/glasses/${glasses.image}" alt="${glasses.name}">
             <h4>${glasses.name}</h4>
             <p>${glasses.price}</p>
             ${badgeHTML}
         `;
         
         card.addEventListener('click', () => selectGlasses(glasses));
-        
-        // Touch feedback for mobile
-        if (state.isMobile) {
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'scale(0.98)';
-            });
-            
-            card.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        }
-        
         glassesGrid.appendChild(card);
         
         preloadImage(`assets/glasses/${glasses.image}`, glasses.id);
@@ -489,9 +296,10 @@ function preloadImage(src, id) {
     img.crossOrigin = 'anonymous';
     img.onload = function() {
         imageCache.set(id, img);
+        console.log(`✅ Loaded: ${src}`);
     };
     img.onerror = function() {
-        console.error(`Failed to load: ${src}`);
+        console.error(`❌ Failed: ${src}`);
     };
     img.src = src;
 }
@@ -521,18 +329,14 @@ function selectGlasses(glasses) {
             staticGlasses.src = `assets/glasses/${glasses.image}`;
         }
         staticGlasses.style.width = `${200 * state.glassesScale}px`;
-        
-        // Re-enable touch gestures if in static mode
-        if (state.isMobile) {
-            addTouchGestures(staticGlasses);
-        }
     }
     
     // Highlight Card
     document.querySelectorAll('.glasses-card').forEach(card => {
-        card.classList.remove('selected');
         if (card.dataset.id == glasses.id) {
             card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
         }
     });
 }
@@ -558,13 +362,28 @@ function setupEventListeners() {
     document.querySelectorAll('.mobile-control-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const action = this.dataset.action;
-            if (action === 'toggle-neural') {
-                toggleSmartMode();
-            } else {
-                handleMobileControl(action);
-            }
+            handleMobileControl(action);
         });
     });
+    
+    // NEW: Mobile SmartMode Toggle
+    if (mobileSmartModeBtn) {
+        mobileSmartModeBtn.addEventListener('click', () => {
+            state.smartMode = !state.smartMode;
+            
+            // Visual feedback for mobile button
+            if (state.smartMode) {
+                mobileSmartModeBtn.classList.add('active');
+            } else {
+                mobileSmartModeBtn.classList.remove('active');
+            }
+
+            showNotification(
+                `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
+                state.smartMode ? 'success' : 'info'
+            );
+        });
+    }
     
     document.querySelectorAll('.light-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -591,41 +410,56 @@ function setupEventListeners() {
         startCamera();
     });
     
-    // Keyboard shortcuts (only enable on desktop)
-    if (!state.isMobile) {
-        document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            // SmartMode Toggle
-            if (e.ctrlKey && e.key === 'd') {
-                toggleSmartMode();
-                e.preventDefault();
-                return;
-            }
-            
-            switch(e.key) {
-                case '+': case '=':
-                    state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
-                    if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-                    e.preventDefault(); break;
-                case '-': case '_':
-                    state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
-                    if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-                    e.preventDefault(); break;
-                case 'ArrowUp':
-                    handleAdjustment('position-up'); e.preventDefault(); break;
-                case 'ArrowDown':
-                    handleAdjustment('position-down'); e.preventDefault(); break;
-                case 'ArrowLeft':
-                    handleAdjustment('position-left'); e.preventDefault(); break;
-                case 'ArrowRight':
-                    handleAdjustment('position-right'); e.preventDefault(); break;
-            }
-        });
-    }
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        // SmartMode Toggle (Desktop)
+        if (e.ctrlKey && e.key === 'd') {
+            state.smartMode = !state.smartMode;
+            showNotification(
+                `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
+                state.smartMode ? 'success' : 'info'
+            );
+            e.preventDefault();
+            return;
+        }
+        
+        // NEW: Volume Keys for Mobile Up/Down
+        if (e.code === 'VolumeUp') {
+            handleAdjustment('position-up');
+            // Note: preventDefault might not work on all mobile OS due to system priority
+            e.preventDefault(); 
+            return;
+        }
+        
+        if (e.code === 'VolumeDown') {
+            handleAdjustment('position-down');
+            e.preventDefault();
+            return;
+        }
+        
+        switch(e.key) {
+            case '+': case '=':
+                state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
+                if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+                e.preventDefault(); break;
+            case '-': case '_':
+                state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
+                if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+                e.preventDefault(); break;
+            case 'ArrowUp':
+                handleAdjustment('position-up'); e.preventDefault(); break;
+            case 'ArrowDown':
+                handleAdjustment('position-down'); e.preventDefault(); break;
+            case 'ArrowLeft':
+                handleAdjustment('position-left'); e.preventDefault(); break;
+            case 'ArrowRight':
+                handleAdjustment('position-right'); e.preventDefault(); break;
+        }
+    });
 }
 
-// ===== CAMERA FUNCTIONS (OPTIMIZED) =====
+// ===== CAMERA FUNCTIONS =====
 async function startCamera() {
     try {
         loadingOverlay.style.display = 'flex';
@@ -633,10 +467,9 @@ async function startCamera() {
         
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { ideal: state.isMobile ? 480 : 640 },
-                height: { ideal: state.isMobile ? 640 : 480 },
-                facingMode: 'user',
-                frameRate: { ideal: state.isMobile ? 24 : 30, max: 30 }
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: 'user'
             },
             audio: false
         });
@@ -646,13 +479,9 @@ async function startCamera() {
         canvasElement.style.display = 'block';
         staticContainer.style.display = 'none';
         
-        videoElement.onloadedmetadata = () => {
-            // Optimize canvas size for performance
-            const width = state.isMobile ? Math.min(480, videoElement.videoWidth) : videoElement.videoWidth;
-            const height = state.isMobile ? Math.min(640, videoElement.videoHeight) : videoElement.videoHeight;
-            
-            canvasElement.width = width;
-            canvasElement.height = height;
+        videoElement.onloadedmetadata = async () => {
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
             
             state.isCameraActive = true;
             state.isStaticMode = false;
@@ -677,16 +506,15 @@ async function startCamera() {
     }
 }
 
-// ===== FACE DETECTION FUNCTIONS (OPTIMIZED FOR MOBILE) =====
-function startFaceDetection() {
-    if (!state.isCameraActive || state.isStaticMode || state.faceDetectionRunning) return;
+// ===== FACE DETECTION FUNCTIONS =====
+async function startFaceDetection() {
+    if (!state.isCameraActive || state.isStaticMode) return;
     
     state.faceDetectionActive = true;
-    state.faceDetectionRunning = true;
     
     const displaySize = { 
-        width: canvasElement.width, 
-        height: canvasElement.height 
+        width: videoElement.videoWidth, 
+        height: videoElement.videoHeight 
     };
     faceapi.matchDimensions(canvasElement, displaySize);
     
@@ -697,18 +525,9 @@ async function detectFaces() {
     if (!state.faceDetectionActive || !state.isCameraActive) return;
     
     try {
-        // Optimize detection frequency for mobile
-        if (state.isMobile) {
-            state.detectionFrameCount++;
-            if (state.detectionFrameCount % 3 !== 0) { // Detect every 3rd frame on mobile
-                requestAnimationFrame(detectFaces);
-                return;
-            }
-        }
-        
         const detections = await faceapi
             .detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions({
-                inputSize: state.isMobile ? 320 : 416,
+                inputSize: 416,
                 scoreThreshold: 0.5
             }))
             .withFaceLandmarks(true);
@@ -716,7 +535,6 @@ async function detectFaces() {
         const ctx = canvasElement.getContext('2d');
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         
-        // Draw video frame
         ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
         
         if (detections.length > 0) {
@@ -751,10 +569,7 @@ async function detectFaces() {
             
         } else {
             state.lastDetection = null;
-            // On mobile, show centered glasses if no face detected
-            if (state.isMobile) {
-                drawCenteredGlasses(ctx);
-            }
+            drawCenteredGlasses(ctx);
         }
         
         requestAnimationFrame(detectFaces);
@@ -775,61 +590,70 @@ function drawCoolSmartMode(ctx, detection) {
     
     // 1. GREEN BOX (Whole Face)
     ctx.strokeStyle = '#00ff00';
-    ctx.lineWidth = state.isMobile ? 2 : 3;
+    ctx.lineWidth = 3;
     ctx.shadowColor = 'rgba(0, 255, 0, 0.5)';
     ctx.shadowBlur = 10;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
-    ctx.shadowBlur = 0;
+    ctx.shadowBlur = 0; // Reset shadow
     
-    // 2. BLUE MESH (Inner Face)
-    ctx.strokeStyle = '#00ffff';
+    // 2. BLUE MESH (Inner Face) - Connecting all 68 points
+    ctx.strokeStyle = '#00ffff'; // Cyan/Blue
     ctx.lineWidth = 1;
     ctx.globalAlpha = 0.6;
     ctx.beginPath();
     
+    // Simple connect logic for all points to create a "Net" look
+    // Connecting points sequentially
     for (let i = 0; i < positions.length - 1; i++) {
         ctx.moveTo(positions[i].x, positions[i].y);
         ctx.lineTo(positions[i+1].x, positions[i+1].y);
     }
-    
+    // Close loop
     ctx.moveTo(positions[positions.length-1].x, positions[positions.length-1].y);
     ctx.lineTo(positions[0].x, positions[0].y);
     
     ctx.stroke();
     ctx.globalAlpha = 1.0;
     
-    // 3. DOTS ON FEATURES
-    ctx.fillStyle = '#ff00ff';
-    const features = [30, 48, 54, 0, 16];
+    // 3. DOTS ON FEATURES (Nose, Mouth, Jaw)
+    ctx.fillStyle = '#ff00ff'; // Magenta dots
+    const features = [
+        30, // Nose tip
+        48, 54, // Mouth corners
+        0, 16 // Jaw corners
+    ];
     
     features.forEach(idx => {
         ctx.beginPath();
-        ctx.arc(positions[idx].x, positions[idx].y, state.isMobile ? 2 : 3, 0, 2 * Math.PI);
+        ctx.arc(positions[idx].x, positions[idx].y, 3, 0, 2 * Math.PI);
         ctx.fill();
     });
     
-    // 4. RED TRACKERS (L and R Eyes) - CORRECTED FOR USER PERSPECTIVE
-    const leftEye = landmarks.getLeftEye();
-    const rightEye = landmarks.getRightEye();
+    // 4. RED TRACKERS (L and R Eyes) - FIXED: Now from person's perspective
+    const leftEye = landmarks.getLeftEye();  // Person's left eye (right side in image)
+    const rightEye = landmarks.getRightEye(); // Person's right eye (left side in image)
     const leftEyeCenter = getCenterPoint(leftEye);
     const rightEyeCenter = getCenterPoint(rightEye);
     
     const eyes = [
-        { p: leftEyeCenter, label: 'R' },  // User's left eye (right side on screen)
-        { p: rightEyeCenter, label: 'L' }  // User's right eye (left side on screen)
+        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on the RIGHT side of image
+        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
     ];
     
-    ctx.font = state.isMobile ? 'bold 14px "Segoe UI"' : 'bold 16px "Segoe UI"';
+    ctx.font = 'bold 16px "Segoe UI"';
     eyes.forEach(eye => {
+        // Red Background Circle
         ctx.beginPath();
-        ctx.arc(eye.p.x, eye.p.y, state.isMobile ? 6 : 8, 0, 2 * Math.PI);
+        ctx.arc(eye.p.x, eye.p.y, 8, 0, 2 * Math.PI);
         ctx.fillStyle = '#ff0000';
         ctx.fill();
         
+        // White Outline (Mobile Friendly)
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = state.isMobile ? 1.5 : 2;
+        ctx.lineWidth = 2;
         ctx.stroke();
         
+        // Text
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -841,12 +665,12 @@ function drawCoolSmartMode(ctx, detection) {
     const centerY = (leftEyeCenter.y + rightEyeCenter.y) / 2;
     
     ctx.beginPath();
-    ctx.arc(centerX, centerY, state.isMobile ? 4 : 5, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
     ctx.fillStyle = '#00ff00';
     ctx.fill();
     
     ctx.fillStyle = '#ffffff';
-    ctx.font = state.isMobile ? 'bold 12px "Segoe UI"' : 'bold 14px "Segoe UI"';
+    ctx.font = 'bold 14px "Segoe UI"';
     ctx.fillText('C', centerX, centerY + 1);
     
     ctx.restore();
@@ -866,7 +690,9 @@ function getCenterPoint(points) {
 
 function drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale) {
     const glassesImg = imageCache.get(state.selectedGlasses.id);
-    if (!glassesImg || !glassesImg.complete) return;
+    if (!glassesImg || !glassesImg.complete) {
+        return; // Will retry next frame if not ready
+    }
     
     const aspectRatio = glassesImg.width / glassesImg.height;
     const glassesWidth = baseWidth * frameScale * userScale;
@@ -927,13 +753,8 @@ function drawCenteredGlasses(ctx) {
 }
 
 function drawBasicVideo() {
-    let animationId = null;
-    
     function drawLoop() {
-        if (!state.isCameraActive || state.isStaticMode) {
-            if (animationId) cancelAnimationFrame(animationId);
-            return;
-        }
+        if (!state.isCameraActive || state.isStaticMode) return;
         
         const ctx = canvasElement.getContext('2d');
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -941,18 +762,15 @@ function drawBasicVideo() {
         
         drawCenteredGlasses(ctx);
         
-        animationId = requestAnimationFrame(drawLoop);
+        requestAnimationFrame(drawLoop);
     }
-    
     drawLoop();
 }
 
-// ===== STATIC MODE FUNCTIONS =====
 function activateStaticMode() {
     state.isStaticMode = true;
     state.isCameraActive = false;
     state.faceDetectionActive = false;
-    state.faceDetectionRunning = false;
     
     if (videoElement.srcObject) {
         videoElement.srcObject.getTracks().forEach(track => track.stop());
@@ -979,65 +797,6 @@ function activateStaticMode() {
     staticGlasses.style.cursor = 'grab';
     
     makeDraggable(staticGlasses);
-    
-    // Enable touch gestures for mobile
-    if (state.isMobile) {
-        addTouchGestures(staticGlasses);
-    }
-}
-
-function addTouchGestures(element) {
-    let initialDistance = null;
-    let initialScale = state.glassesScale;
-    let isDragging = false;
-    
-    element.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            // Pinch zoom
-            initialDistance = getTouchDistance(e.touches[0], e.touches[1]);
-            initialScale = state.glassesScale;
-            e.preventDefault();
-        } else if (e.touches.length === 1) {
-            // Start dragging
-            isDragging = true;
-            element.style.cursor = 'grabbing';
-        }
-    }, { passive: false });
-    
-    element.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2 && initialDistance !== null) {
-            // Pinch zoom
-            const currentDistance = getTouchDistance(e.touches[0], e.touches[1]);
-            const scaleChange = currentDistance / initialDistance;
-            state.glassesScale = Math.max(0.5, Math.min(2.0, initialScale * scaleChange));
-            element.style.width = `${200 * state.glassesScale}px`;
-            e.preventDefault();
-        } else if (isDragging && e.touches.length === 1) {
-            // Drag
-            const touch = e.touches[0];
-            const container = staticContainer.getBoundingClientRect();
-            const percentX = (touch.clientX / container.width) * 100;
-            const percentY = (touch.clientY / container.height) * 100;
-            
-            state.glassesX = Math.max(10, Math.min(percentX, 90));
-            state.glassesY = Math.max(10, Math.min(percentY, 90));
-            
-            element.style.left = `${state.glassesX}%`;
-            element.style.top = `${state.glassesY}%`;
-        }
-    }, { passive: false });
-    
-    element.addEventListener('touchend', function() {
-        isDragging = false;
-        initialDistance = null;
-        element.style.cursor = 'grab';
-    });
-    
-    function getTouchDistance(touch1, touch2) {
-        const dx = touch1.clientX - touch2.clientX;
-        const dy = touch1.clientY - touch2.clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
 }
 
 function makeDraggable(element) {
@@ -1045,6 +804,7 @@ function makeDraggable(element) {
     let offsetX, offsetY;
     
     element.addEventListener('mousedown', startDrag);
+    element.addEventListener('touchstart', startDragTouch);
     
     function startDrag(e) {
         isDragging = true;
@@ -1053,6 +813,17 @@ function makeDraggable(element) {
         element.style.cursor = 'grabbing';
         document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', stopDrag);
+        e.preventDefault();
+    }
+    
+    function startDragTouch(e) {
+        isDragging = true;
+        const touch = e.touches[0];
+        const rect = element.getBoundingClientRect();
+        offsetX = touch.clientX - rect.left;
+        offsetY = touch.clientY - rect.top;
+        document.addEventListener('touchmove', dragTouch);
+        document.addEventListener('touchend', stopDrag);
         e.preventDefault();
     }
     
@@ -1070,20 +841,40 @@ function makeDraggable(element) {
         
         element.style.left = `${state.glassesX}%`;
         element.style.top = `${state.glassesY}%`;
+        element.style.transform = 'translate(-50%, -50%)';
+    }
+    
+    function dragTouch(e) {
+        if (!isDragging) return;
+        const touch = e.touches[0];
+        const container = staticContainer.getBoundingClientRect();
+        const x = touch.clientX - container.left - offsetX;
+        const y = touch.clientY - container.top - offsetY;
+        
+        const percentX = (x / container.width) * 100;
+        const percentY = (y / container.height) * 100;
+        
+        state.glassesX = Math.max(10, Math.min(percentX, 90));
+        state.glassesY = Math.max(10, Math.min(percentY, 90));
+        
+        element.style.left = `${state.glassesX}%`;
+        element.style.top = `${state.glassesY}%`;
+        element.style.transform = 'translate(-50%, -50%)';
     }
     
     function stopDrag() {
         isDragging = false;
         element.style.cursor = 'grab';
         document.removeEventListener('mousemove', drag);
+        document.removeEventListener('touchmove', dragTouch);
         document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchend', stopDrag);
     }
 }
 
 function toggleCamera() {
     if (state.isCameraActive) {
         state.faceDetectionActive = false;
-        state.faceDetectionRunning = false;
         const stream = videoElement.srcObject;
         if (stream) stream.getTracks().forEach(track => track.stop());
         videoElement.srcObject = null;
@@ -1103,89 +894,9 @@ function toggleCamera() {
 
 function showPermissionOverlay() {
     permissionOverlay.style.display = 'flex';
-    // Ensure it's scrollable on mobile
-    if (state.isMobile) {
-        permissionOverlay.style.overflowY = 'auto';
-        permissionOverlay.style.WebkitOverflowScrolling = 'touch';
-    }
 }
 
-// ===== ADJUSTMENT FUNCTIONS =====
-function handleAdjustment(action) {
-    switch(action) {
-        case 'size-up':
-        case 'zoom-in':
-            state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
-            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-            break;
-        case 'size-down':
-        case 'zoom-out':
-            state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
-            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-            break;
-        case 'position-up':
-            state.verticalOffset = Math.max(-0.3, state.verticalOffset - 0.03);
-            if (state.isStaticMode) { 
-                state.glassesY = Math.max(10, state.glassesY - 2); 
-                staticGlasses.style.top = `${state.glassesY}%`; 
-            }
-            break;
-        case 'position-down':
-            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
-            if (state.isStaticMode) { 
-                state.glassesY = Math.min(90, state.glassesY + 2); 
-                staticGlasses.style.top = `${state.glassesY}%`; 
-            }
-            break;
-        case 'position-left':
-        case 'move-left':
-            state.horizontalOffset = Math.max(-0.3, state.horizontalOffset - 0.03);
-            if (state.isStaticMode) { 
-                state.glassesX = Math.max(10, state.glassesX - 2); 
-                staticGlasses.style.left = `${state.glassesX}%`; 
-            }
-            break;
-        case 'position-right':
-        case 'move-right':
-            state.horizontalOffset = Math.min(0.3, state.horizontalOffset + 0.03);
-            if (state.isStaticMode) { 
-                state.glassesX = Math.min(90, state.glassesX + 2); 
-                staticGlasses.style.left = `${state.glassesX}%`; 
-            }
-            break;
-    }
-}
-
-function handleMobileControl(action) {
-    handleAdjustment(action);
-}
-
-// ===== OTHER FUNCTIONS (unchanged but optimized) =====
-function applyCanvasFilter(filter) {
-    state.currentFilter = filter;
-    canvasElement.style.filter = filter;
-    staticContainer.style.filter = filter;
-}
-
-function filterGlasses(category) {
-    const cards = document.querySelectorAll('.glasses-card');
-    cards.forEach(card => {
-        const id = parseInt(card.dataset.id);
-        const glasses = glassesCatalog.find(g => g.id === id);
-        if (category === 'all collections' || category === 'all') card.style.display = 'block';
-        else if (category === 'professional') card.style.display = glasses.category.includes('professional') ? 'block' : 'none';
-        else if (category === 'contemporary') card.style.display = glasses.category.includes('contemporary') ? 'block' : 'none';
-        else if (category === 'classic design') card.style.display = glasses.category.includes('classic') ? 'block' : 'none';
-        else card.style.display = 'block';
-    });
-}
-
-function sendToWhatsAppDirect() {
-    const message = `*OPTICORE VIPRO*\n\nFrame: ${state.selectedGlasses.name}\nScale: ${state.glassesScale}x`;
-    const url = `https://wa.me/254113400063?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-}
-
+// ===== CAPTURE FUNCTION =====
 function capturePhoto(action = 'open') {
     try {
         let dataUrl;
@@ -1225,7 +936,7 @@ function captureFromCanvas() {
     try {
         return canvasElement.toDataURL('image/png', 1.0);
     } catch (e) {
-        console.warn('Canvas capture failed, using video only.');
+        console.warn('Tainted Canvas detected. Saving User Photo only.');
         return captureVideoOnly();
     }
 }
@@ -1255,8 +966,8 @@ function captureFromStatic() {
         const tempCanvas = document.createElement('canvas');
         const ctx = tempCanvas.getContext('2d');
         
-        tempCanvas.width = state.isMobile ? 400 : 800;
-        tempCanvas.height = state.isMobile ? 300 : 600;
+        tempCanvas.width = 800;
+        tempCanvas.height = 600;
         
         if (state.currentFilter && state.currentFilter !== 'none') {
             ctx.filter = state.currentFilter;
@@ -1287,7 +998,7 @@ function captureFromStatic() {
         }
         
         ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
-        ctx.font = state.isMobile ? 'bold 16px Arial' : 'bold 20px Arial';
+        ctx.font = 'bold 20px Arial';
         ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
         
         return tempCanvas.toDataURL('image/png', 1.0);
@@ -1301,27 +1012,27 @@ function captureFromStatic() {
 function createFallbackCapture() {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
-    tempCanvas.width = state.isMobile ? 400 : 800;
-    tempCanvas.height = state.isMobile ? 300 : 600;
+    tempCanvas.width = 800;
+    tempCanvas.height = 600;
     
     ctx.fillStyle = '#f0f8ff';
     ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     
     const glassesImg = imageCache.get(state.selectedGlasses.id);
     if (glassesImg && glassesImg.complete) {
-        const scale = state.isMobile ? 0.3 : 0.5;
+        const scale = 0.5;
         ctx.drawImage(glassesImg, tempCanvas.width/2 - (glassesImg.width*scale)/2, tempCanvas.height/2 - (glassesImg.height*scale)/2, glassesImg.width*scale, glassesImg.height*scale);
     }
     
     ctx.fillStyle = '#1a2980';
-    ctx.font = state.isMobile ? 'bold 18px Arial' : 'bold 24px Arial';
+    ctx.font = 'bold 24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(state.selectedGlasses.name, tempCanvas.width / 2, 80);
+    ctx.fillText(state.selectedGlasses.name, tempCanvas.width / 2, 100);
     
     ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
-    ctx.font = state.isMobile ? 'bold 14px Arial' : 'bold 20px Arial';
+    ctx.font = 'bold 20px Arial';
     ctx.textAlign = 'left';
-    ctx.fillText('Opticore ViPro', 20, tempCanvas.height - 20);
+    ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
     
     return tempCanvas.toDataURL('image/png', 1.0);
 }
@@ -1499,11 +1210,68 @@ if(!document.getElementById('notif-styles')) {
     document.head.appendChild(style);
 }
 
+function sendToWhatsAppDirect() {
+    const message = `*OPTICORE VIPRO*\n\nFrame: ${state.selectedGlasses.name}\nScale: ${state.glassesScale}x`;
+    const url = `https://wa.me/254113400063?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+}
+
+function applyCanvasFilter(filter) {
+    state.currentFilter = filter;
+    canvasElement.style.filter = filter;
+    staticContainer.style.filter = filter;
+}
+
+function handleAdjustment(action) {
+    switch(action) {
+        case 'size-up':
+            state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
+            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+            break;
+        case 'size-down':
+            state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
+            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+            break;
+        case 'position-up':
+            state.verticalOffset = Math.max(-0.3, state.verticalOffset - 0.03);
+            if (state.isStaticMode) { state.glassesY = Math.max(10, state.glassesY - 2); staticGlasses.style.top = `${state.glassesY}%`; }
+            break;
+        case 'position-down':
+            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
+            if (state.isStaticMode) { state.glassesY = Math.min(90, state.glassesY + 2); staticGlasses.style.top = `${state.glassesY}%`; }
+            break;
+        case 'position-left':
+            state.horizontalOffset = Math.max(-0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) { state.glassesX = Math.max(10, state.glassesX - 2); staticGlasses.style.left = `${state.glassesX}%`; }
+            break;
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset + 0.03);
+            if (state.isStaticMode) { state.glassesX = Math.min(90, state.glassesX + 2); staticGlasses.style.left = `${state.glassesX}%`; }
+            break;
+    }
+}
+
+function handleMobileControl(action) {
+    handleAdjustment(action.replace('move-', 'position-').replace('zoom-', 'size-'));
+}
+
+function filterGlasses(category) {
+    const cards = document.querySelectorAll('.glasses-card');
+    cards.forEach(card => {
+        const id = parseInt(card.dataset.id);
+        const glasses = glassesCatalog.find(g => g.id === id);
+        if (category === 'all collections' || category === 'all') card.style.display = 'block';
+        else if (category === 'professional') card.style.display = glasses.category.includes('professional') ? 'block' : 'none';
+        else if (category === 'contemporary') card.style.display = glasses.category.includes('contemporary') ? 'block' : 'none';
+        else if (category === 'classic design') card.style.display = glasses.category.includes('classic') ? 'block' : 'none';
+        else card.style.display = 'block';
+    });
+}
+
 function resetApp() {
     if (confirm("Reset?")) {
         if (state.isCameraActive) {
             state.faceDetectionActive = false;
-            state.faceDetectionRunning = false;
             if (videoElement.srcObject) videoElement.srcObject.getTracks().forEach(track => track.stop());
         }
         
@@ -1511,8 +1279,7 @@ function resetApp() {
             isCameraActive: false, selectedGlasses: glassesCatalog[0], isStaticMode: false, faceDetectionActive: false,
             currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
             glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
-            lastCapturedImage: null, lastDetection: null,
-            faceDetectionRunning: false, detectionFrameCount: 0
+            lastCapturedImage: null, lastDetection: null
         });
         
         videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
@@ -1522,12 +1289,14 @@ function resetApp() {
         document.querySelectorAll('.light-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         document.querySelectorAll('.filter-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         
+        // Reset Mobile SmartMode Button
+        if (mobileSmartModeBtn) mobileSmartModeBtn.classList.remove('active');
+        
         showPermissionOverlay();
         selectGlasses(glassesCatalog[0]);
         filterGlasses('all');
-        updateNeuralToggleUI();
         showNotification('Reset successfully', 'success');
     }
 }
 
-console.log("✅ Opticore ViPro - Optimized & Fixed Version Loaded");
+console.log("✅ Opticore ViPro - Secure & Aesthetic Version Loaded");
