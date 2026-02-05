@@ -1,3 +1,1945 @@
+
+
+I understand perfectly. Since the volume buttons are unreliable (due to browser security), we will bring back the visual buttons, but we will solve the "Squeezing" issue by implementing a **Smart Responsive Layout**.
+
+**The Evolution:**
+1.  **Portrait Mode (Holding phone upright):** The controls will be a sleek bar **underneath** the camera to save vertical space.
+2.  **Landscape Mode (Tilting the phone to watch like a video):** When the user tilts the phone as you suggested, the controls will automatically move to the **Right Side** of the screen. This maximizes the video area naturally, exactly like a professional video editor or player app.
+
+Here is the complete, evolved code.
+
+### HTML
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Opticore ViPro | Professional Virtual Eyewear Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Face-API.js library with CDN models -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+</head>
+<body oncontextmenu="return false;">
+    <!-- Loading Screen (4.2 seconds) -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <div class="pulse-ring"></div>
+                <i class="fas fa-eye"></i>
+                <div class="corner-dots">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+            <h1 class="loading-title">Opticore <span class="vi-pro">ViPro</span></h1>
+            <p class="loading-subtitle">Powered By MortApps Studios</p>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="loading-tagline">Initializing Visual Intelligence</div>
+        </div>
+    </div>
+
+    <!-- Popup Overlays -->
+    <div id="howItWorksPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3><i class="fas fa-info-circle"></i> How It Works</h3>
+                <button class="popup-close">&times;</button>
+            </div>
+            <div class="popup-body">
+                <!-- NEW: Professional SmartMode Instructions -->
+                <div class="engineer-note">
+                    <i class="fas fa-microchip"></i>
+                    <span><strong>PRO TIP:</strong> Activate our proprietary <span style="color: var(--accent-teal);">Neural Calibration Layer</span> by pressing <code>Ctrl + D</code> (Windows) or <code>Cmd + D</code> (Mac) to view real-time biometric tracking data.</span>
+                </div>
+                
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Camera Activation</h4>
+                        <p>Click "Start Visual Analysis" to enable your camera. Access is required for real-time facial mapping.</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Frame Selection</h4>
+                        <p>Choose from our curated collection of precision eyewear. Each selection updates in real-time.</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Precision Adjustment</h4>
+                        <div class="adjustment-instructions">
+                            <div class="adjustment-item">
+                                <span class="key">+</span>
+                                <span>Increase frame dimensions</span>
+                            </div>
+                            <div class="adjustment-item">
+                                <span class="key">-</span>
+                                <span>Decrease frame dimensions</span>
+                            </div>
+                            <div class="adjustment-item">
+                                <span class="key">↑/↓</span>
+                                <span>Vertical positioning</span>
+                            </div>
+                            <div class="adjustment-item">
+                                <span class="key">←/→</span>
+                                <span>Horizontal positioning</span>
+                            </div>
+                        </div>
+                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> <strong>Portrait Mode:</strong> Controls at bottom. <strong>Landscape Mode:</strong> Controls on side (Tilt phone for space).</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Results Delivery</h4>
+                        <p>Select "Send Analysis" to securely transmit your personalized eyewear assessment.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="popup-footer">
+                <button class="btn-primary start-try-on-btn">
+                    <i class="fas fa-play"></i> Begin Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="privacyPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3><i class="fas fa-shield-alt"></i> Privacy & Security Protocol</h3>
+                <button class="popup-close">&times;</button>
+            </div>
+            <div class="popup-body">
+                <div class="security-badge">
+                    <i class="fas fa-lock"></i>
+                    <span>100% Device-Local Processing</span>
+                </div>
+                <p class="privacy-statement">
+                    The Opticore ViPro system operates under strict privacy protocols. All facial recognition, frame mapping, and visual analysis occur exclusively within your device's secure environment.
+                </p>
+                <div class="privacy-points">
+                    <div class="privacy-point">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Zero image transmission to external servers</span>
+                    </div>
+                    <div class="privacy-point">
+                        <i class="fas fa-check-circle"></i>
+                        <span>No facial data storage or retention</span>
+                    </div>
+                    <div class="privacy-point">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Real-time processing with immediate memory clearance</span>
+                    </div>
+                    <div class="privacy-point">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Military-grade local encryption protocols</span>
+                    </div>
+                </div>
+                <p class="security-note">
+                    Your visual privacy is paramount. The system is designed for healthcare and eyewear professionals who require absolute client confidentiality.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contactPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3><i class="fas fa-headset"></i> Professional Consultation</h3>
+                <button class="popup-close">&times;</button>
+            </div>
+            <div class="popup-body">
+                <p>Connect with our optical technology specialists:</p>
+                <div class="contact-options">
+                    <button class="contact-option-btn call-option">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <strong>Direct Call</strong>
+                            <small>+254 113 400 063</small>
+                        </div>
+                    </button>
+                    <button class="contact-option-btn whatsapp-option">
+                        <i class="fab fa-whatsapp"></i>
+                        <div>
+                            <strong>WhatsApp Consultation</strong>
+                            <small>+254 113 400 063</small>
+                        </div>
+                    </button>
+                </div>
+                <p class="contact-note">
+                    <i class="fas fa-clock"></i> Available: Mon-Fri 8:00-18:00 EAT
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-eye"></i>
+                <span>Opticore <strong>ViPro</strong></span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">Visual Analysis</a>
+                <a href="#" id="framesLink">Frames</a>
+                <a href="#" id="howItWorksLink">How It Works</a>
+                <a href="#" id="privacyLink">Privacy</a>
+                <button class="btn-contact" id="contactLink">Consultation</button>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Left Panel: Try-On Area -->
+        <div class="try-on-container">
+            <div class="section-header">
+                <h1><i class="fas fa-atom"></i> Visual Analysis Studio</h1>
+                <p class="subtitle">Precision eyewear fitting with advanced facial mapping technology</p>
+            </div>
+
+            <!-- Camera/Canvas Area -->
+            <div class="camera-section">
+                <!-- Video Feed (hidden but active) -->
+                <video id="videoElement" class="video-feed" autoplay playsinline></video>
+                
+                <!-- Canvas where magic happens -->
+                <canvas id="canvasElement" class="canvas-overlay"></canvas>
+                
+                <!-- Fallback Static Image -->
+                <div id="staticContainer" class="static-fallback">
+                    <img src="assets/static-model.jpg" alt="Reference facial structure for analysis" id="staticModel">
+                    <!-- Draggable glasses will appear here in static mode -->
+                    <img src="assets/glasses/frame1.png" alt="Selected eyewear frame" id="staticGlasses" class="draggable-glasses">
+                </div>
+
+                <!-- Status Overlays -->
+                <div id="loadingOverlay" class="overlay">
+                    <div class="loading-spinner"></div>
+                    <p>Initializing Visual Intelligence <span id="loadingText">Standby</span></p>
+                </div>
+
+                <div id="permissionOverlay" class="overlay permission-prompt">
+                    <i class="fas fa-camera fa-3x"></i>
+                    <h3>Camera Access Required</h3>
+                    <p>For precise facial mapping, camera access is necessary.</p>
+                    <p class="small-text"><i class="fas fa-shield-alt"></i> 100% local processing - No data leaves your device</p>
+                    <button id="startCameraBtn" class="btn-primary btn-large">
+                        <i class="fas fa-play-circle"></i> Start Visual Analysis
+                    </button>
+                    <button id="useStaticModeBtn" class="btn-secondary">
+                        <i class="fas fa-image"></i> Use Reference Image
+                    </button>
+                </div>
+
+                <!-- EVOLVED: Smart Mobile Controls -->
+                <div id="mobileControls" class="mobile-controls-overlay">
+                    <div class="mobile-controls">
+                        <button class="mobile-control-btn" data-action="zoom-in">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="mobile-control-btn" data-action="zoom-out">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <div class="mobile-control-separator"></div>
+                        
+                        <!-- RESTORED UP/DOWN BUTTONS -->
+                        <button class="mobile-control-btn" data-action="move-up">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button class="mobile-control-btn" data-action="move-down">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                        
+                        <div class="mobile-control-separator"></div>
+                        
+                        <button class="mobile-control-btn" data-action="move-left">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <button class="mobile-control-btn" data-action="move-right">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        
+                        <div class="mobile-control-separator"></div>
+                        
+                        <!-- SmartMode Button -->
+                        <button class="mobile-control-btn mobile-smartmode-btn" id="mobileSmartModeBtn">
+                            <i class="fas fa-microchip"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="controls-grid">
+                    <button id="toggleCameraBtn" class="btn-control">
+                        <i class="fas fa-video"></i> <span>Camera: <span id="cameraStatus">Standby</span></span>
+                    </button>
+                    <button id="captureBtn" class="btn-control btn-success">
+                        <i class="fas fa-camera-retro"></i> Capture Analysis
+                    </button>
+                    <button id="downloadBtn" class="btn-control">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button id="shareBtn" class="btn-control" disabled>
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <button id="resetBtn" class="btn-control">
+                        <i class="fas fa-sync-alt"></i> Reset
+                    </button>
+                </div>
+
+                <!-- Lighting Controls -->
+                <div class="lighting-controls">
+                    <h4><i class="fas fa-sun"></i> Lighting</h4>
+                    <div class="lighting-options">
+                        <button class="light-btn active" data-filter="none">Normal</button>
+                        <button class="light-btn" data-filter="brightness(1.2) contrast(1.1)">Bright</button>
+                        <button class="light-btn" data-filter="brightness(0.9) sepia(0.1)">Evening</button>
+                        <button class="light-btn" data-filter="saturate(1.3)">Vibrant</button>
+                    </div>
+                </div>
+
+                <!-- Adjustment Controls -->
+                <div class="adjustment-controls">
+                    <h4><i class="fas fa-sliders-h"></i> Frame Adjustments</h4>
+                    
+                    <!-- Size Controls -->
+                    <div class="adjustment-section">
+                        <label class="adjustment-label">Size Adjustment</label>
+                        <div class="adjustment-row">
+                            <button class="adjust-btn" data-adjust="size-up">
+                                <i class="fas fa-plus"></i> Increase Size
+                            </button>
+                            <button class="adjust-btn" data-adjust="size-down">
+                                <i class="fas fa-minus"></i> Decrease Size
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Position Controls -->
+                    <div class="adjustment-section">
+                        <label class="adjustment-label">Position Adjustment</label>
+                        <div class="position-controls">
+                            <div class="position-row">
+                                <button class="adjust-btn position-btn" data-adjust="position-up">
+                                    <i class="fas fa-arrow-up"></i>
+                                </button>
+                            </div>
+                            <div class="position-row">
+                                <button class="adjust-btn position-btn" data-adjust="position-left">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <button class="adjust-btn position-btn" data-adjust="position-down">
+                                    <i class="fas fa-arrow-down"></i>
+                                </button>
+                                <button class="adjust-btn position-btn" data-adjust="position-right">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard Hint -->
+                    <div class="keyboard-hint">
+                        <i class="fas fa-keyboard"></i>
+                        <small>Use + / - keys for size, Arrow keys for position. Mobile: Use On-Screen Buttons.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Frame Selection -->
+        <div class="selection-panel" id="framesSection">
+            <div class="panel-header">
+                <h2><i class="fas fa-glasses"></i> Select Precision Frames</h2>
+                <div class="frame-count">12 professional models</div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-btn active">All Collections</button>
+                <button class="filter-btn">Professional</button>
+                <button class="filter-btn">Contemporary</button>
+                <button class="filter-btn">Classic Design</button>
+            </div>
+
+            <!-- Glasses Grid -->
+            <div class="glasses-grid" id="glassesGrid">
+                <!-- Glasses cards will be generated by JavaScript -->
+            </div>
+
+            <!-- Selection Summary -->
+            <div class="selection-summary">
+                <h3><i class="fas fa-clipboard-check"></i> Analysis Summary</h3>
+                <div id="selectedFrameDisplay" class="selected-frame">
+                    <img id="selectedFrameImg" src="assets/glasses/frame1.png" alt="Selected Frame">
+                    <div>
+                        <h4 id="selectedFrameName">Classic Thick-Rim Rectangular</h4>
+                        <p id="selectedFramePrice">Professional Grade</p>
+                    </div>
+                </div>
+                <button id="sendToWhatsAppBtn" class="btn-primary btn-full-width">
+                    <i class="fab fa-whatsapp"></i> Send Analysis for Consultation
+                </button>
+                <p class="privacy-note">
+                    <i class="fas fa-shield-alt"></i> 
+                    <strong>Secure Transmission:</strong> Analysis data is encrypted end-to-end via WhatsApp.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4><i class="fas fa-eye"></i> Opticore ViPro</h4>
+                <p>Advanced optical analysis platform for precision eyewear fitting and visual health assessment.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Capabilities</h4>
+                <ul>
+                    <li>Real-time facial biometric mapping</li>
+                    <li>100% client-side visual processing</li>
+                    <li>Professional-grade frame analysis</li>
+                    <li>Secure encrypted consultation system</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>For Professionals</h4>
+                <p class="professional-note">
+                    Used by optical clinics, eyewear retailers, and healthcare providers for precise client consultations.
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Engineered with <span class="heartbeat"><i class="fas fa-heart"></i></span> by <a href="https://www.mortappsstudios.com" target="_blank">MortApps Studios</a></p>
+            <p class="copyright">©2026 Opticore ViPro. Advanced Optical Technology.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+### CSS
+```css
+/* ===== RESET & BASE STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e8f0f8 100%);
+    min-height: 100vh;
+    color: #2c3e50;
+    overflow-x: hidden;
+}
+
+/* ===== LOADING SCREEN (4.2 seconds) ===== */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeOut 0.5s ease 4.2s forwards;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.loading-logo {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+}
+
+.loading-logo i {
+    font-size: 3.5rem;
+    color: white;
+    position: relative;
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+
+.pulse-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: ripple 2s infinite;
+}
+
+.corner-dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.corner-dots span {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+}
+
+.corner-dots span:nth-child(1) { top: 0; left: 0; animation-delay: 0s; }
+.corner-dots span:nth-child(2) { top: 0; right: 0; animation-delay: 0.2s; }
+.corner-dots span:nth-child(3) { bottom: 0; left: 0; animation-delay: 0.4s; }
+.corner-dots span:nth-child(4) { bottom: 0; right: 0; animation-delay: 0.6s; }
+
+.loading-title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+}
+
+.vi-pro {
+    font-weight: 700;
+    background: linear-gradient(45deg, #fff, #4fc3f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.loading-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+}
+
+.loading-progress {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    margin: 2rem 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: white;
+    width: 0;
+    animation: progressBar 4.2s linear forwards;
+    border-radius: 3px;
+}
+
+.loading-tagline {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+@keyframes progressBar {
+    0% { width: 0; }
+    100% { width: 100%; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+}
+
+/* ===== POPUP OVERLAYS ===== */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 1rem;
+    backdrop-filter: blur(5px);
+}
+
+.popup-content {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: popupSlide 0.3s ease;
+}
+
+@keyframes popupSlide {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e8f0f8;
+    background: linear-gradient(135deg, #1a2980, #2980b9);
+    color: white;
+    border-radius: 20px 20px 0 0;
+}
+
+.popup-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.popup-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.popup-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.popup-body {
+    padding: 2rem;
+}
+
+.instruction-step {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+}
+
+.step-number {
+    background: #3498db;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.step-content p {
+    color: #5a6c7d;
+    line-height: 1.6;
+}
+
+.adjustment-instructions {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border: 1px solid #e8f0f8;
+}
+
+.adjustment-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.adjustment-item .key {
+    background: #3498db;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+.mobile-note {
+    background: #e8f4fc;
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #2c65a8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.security-badge {
+    background: #e8f6f3;
+    border: 2px solid #1abc9c;
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #16a085;
+}
+
+.privacy-statement {
+    line-height: 1.7;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.privacy-points {
+    margin: 1.5rem 0;
+}
+
+.privacy-point {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    color: #27ae60;
+}
+
+.privacy-point i {
+    color: #27ae60;
+}
+
+.security-note {
+    font-style: italic;
+    color: #7f8c8d;
+    text-align: center;
+    padding: 1rem;
+    border-top: 1px solid #e8f0f8;
+    margin-top: 1.5rem;
+}
+
+.contact-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.contact-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem;
+    border: 2px solid #e8f0f8;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    width: 100%;
+}
+
+.contact-option-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.call-option {
+    border-color: #3498db;
+}
+
+.call-option i {
+    color: #3498db;
+    font-size: 1.5rem;
+}
+
+.whatsapp-option {
+    border-color: #25D366;
+}
+
+.whatsapp-option i {
+    color: #25D366;
+    font-size: 1.5rem;
+}
+
+.contact-note {
+    text-align: center;
+    color: #7f8c8d;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.popup-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #e8f0f8;
+    text-align: center;
+}
+
+.start-try-on-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.nav-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1a2980;
+}
+
+.logo i {
+    color: #26d0ce;
+    font-size: 2rem;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #1a2980;
+    background: #f0f8ff;
+}
+
+.nav-links a.active {
+    background: linear-gradient(135deg, #1a2980, #2980b9);
+    color: white;
+    box-shadow: 0 4px 12px rgba(26, 41, 128, 0.2);
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: #26d0ce;
+    border-radius: 3px;
+}
+
+.btn-contact {
+    background: linear-gradient(135deg, #26d0ce, #1a9896);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-contact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(38, 208, 206, 0.3);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    cursor: pointer;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.container {
+    max-width: 1600px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.try-on-container {
+    flex: 3;
+    min-width: 300px;
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+.selection-panel {
+    flex: 1.5;
+    min-width: 300px;
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== SECTION HEADER ===== */
+.section-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.section-header h1 {
+    color: #1a2980;
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-weight: 600;
+}
+
+.section-header .subtitle {
+    color: #5a6c7d;
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ===== CAMERA SECTION ===== */
+.camera-section {
+    position: relative;
+    width: 100%;
+    height: 520px; /* Default Desktop Height */
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(45deg, #1a2980, #26d0ce);
+    margin-bottom: 2rem;
+    border: 2px solid #e8f0f8;
+}
+
+.video-feed, .canvas-overlay, .static-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.static-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a2980;
+}
+
+#staticModel {
+    max-width: 85%;
+    max-height: 85%;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.draggable-glasses {
+    position: absolute;
+    width: 220px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+.draggable-glasses:active {
+    cursor: grabbing;
+}
+
+/* ===== MOBILE CONTROLS ===== */
+.mobile-controls-overlay {
+    position: absolute;
+    z-index: 20;
+    display: none; /* Hidden on Desktop */
+}
+
+.mobile-controls {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 0.8rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.mobile-control-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: white;
+    color: #1a2980;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-control-btn:active {
+    transform: scale(0.95);
+    background: #f0f8ff;
+}
+
+.mobile-smartmode-btn {
+    background: #1a2980;
+    color: white;
+}
+
+.mobile-smartmode-btn.active {
+    background: #26d0ce;
+    box-shadow: 0 0 10px #26d0ce;
+}
+
+.mobile-control-separator {
+    height: 1px;
+    background: #e8f0f8;
+    margin: 0.2rem 0;
+}
+
+/* ===== OVERLAYS ===== */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+.permission-prompt {
+    text-align: center;
+    padding: 3rem;
+}
+
+.permission-prompt i {
+    color: #1a2980;
+    margin-bottom: 1.5rem;
+}
+
+.permission-prompt h3 {
+    color: #1a2980;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.permission-prompt p {
+    color: #5a6c7d;
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+.small-text {
+    font-size: 0.9rem;
+    color: #7f8c8d !important;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #1a2980;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary, .btn-secondary, .btn-control {
+    border: none;
+    padding: 0.9rem 1.8rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1a2980, #2980b9);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(26, 41, 128, 0.25);
+}
+
+.btn-large {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+}
+
+.btn-secondary {
+    background: #f8fafc;
+    color: #1a2980;
+    border: 2px solid #e8f0f8;
+}
+
+.btn-secondary:hover {
+    background: #e8f0f8;
+    border-color: #1a2980;
+}
+
+.btn-control {
+    background: white;
+    border: 2px solid #e8f0f8;
+    color: #2c3e50;
+}
+
+.btn-control:hover {
+    border-color: #1a2980;
+    color: #1a2980;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #219653, #1e8749);
+}
+
+.btn-full-width {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+}
+
+/* ===== CONTROL PANEL ===== */
+.control-panel {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 1px solid #e8f0f8;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* ===== LIGHTING CONTROLS ===== */
+.lighting-controls {
+    border-top: 2px solid #e8f0f8;
+    padding-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.lighting-controls h4 {
+    margin-bottom: 1.2rem;
+    color: #1a2980;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+}
+
+.lighting-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.light-btn {
+    padding: 0.8rem 1.2rem;
+    background: white;
+    border: 2px solid #e8f0f8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.light-btn:hover, .light-btn.active {
+    border-color: #1a2980;
+    background: #1a2980;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* ===== ADJUSTMENT CONTROLS ===== */
+.adjustment-controls {
+    border-top: 2px solid #e8f0f8;
+    padding-top: 2rem;
+}
+
+.adjustment-controls h4 {
+    margin-bottom: 1.2rem;
+    color: #1a2980;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+}
+
+.adjustment-section {
+    margin-bottom: 1.5rem;
+}
+
+.adjustment-section:last-child {
+    margin-bottom: 0;
+}
+
+.adjustment-label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.adjustment-row {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.position-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 0.5rem;
+}
+
+.position-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.position-btn {
+    width: 55px;
+    height: 55px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid #d5dbdb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.position-btn i {
+    font-size: 1.3rem;
+    color: #1a2980;
+}
+
+.position-btn:hover {
+    border-color: #1a2980;
+    background: #e8f0f8;
+    transform: scale(1.05);
+}
+
+.position-btn:active {
+    transform: scale(0.95);
+    background: #1a2980;
+}
+
+.position-btn:active i {
+    color: white;
+}
+
+.adjust-btn {
+    flex: 1;
+    padding: 0.8rem 1.2rem;
+    background: white;
+    border: 2px solid #d5dbdb;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #2c3e50;
+}
+
+.adjust-btn:hover {
+    border-color: #1a2980;
+    background: #e8f0f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 41, 128, 0.15);
+}
+
+.adjust-btn:active {
+    transform: translateY(0);
+    background: #1a2980;
+    color: white;
+}
+
+.adjust-btn i {
+    font-size: 1rem;
+}
+
+.keyboard-hint {
+    background: #e8f0f8;
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 1rem;
+    border-left: 4px solid #1a2980;
+}
+
+.keyboard-hint i {
+    color: #1a2980;
+    margin-right: 5px;
+}
+
+.keyboard-hint small {
+    color: #5a6c7d;
+    font-size: 0.85rem;
+}
+
+/* ===== GLASSES SELECTION ===== */
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.panel-header h2 {
+    color: #1a2980;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.8rem;
+}
+
+.frame-count {
+    background: linear-gradient(135deg, #e8f4fc, #d4e6f9);
+    color: #1a2980;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #c5dcf7;
+}
+
+.filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+}
+
+.filter-btn {
+    padding: 0.7rem 1.5rem;
+    background: #f8fafc;
+    border: 2px solid #e8f0f8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    color: #5a6c7d;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: linear-gradient(135deg, #1a2980, #2980b9);
+    color: white;
+    border-color: #1a2980;
+    transform: translateY(-2px);
+}
+
+.glasses-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #c5dcf7 transparent;
+}
+
+.glasses-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.glasses-grid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.glasses-grid::-webkit-scrollbar-thumb {
+    background: #c5dcf7;
+    border-radius: 10px;
+}
+
+.glasses-card {
+    background: white;
+    border: 2px solid #e8f0f8;
+    border-radius: 14px;
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.glasses-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-color: #1a2980;
+}
+
+.glasses-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    transition: transform 0.3s;
+}
+
+.glasses-card:hover img {
+    transform: scale(1.05);
+}
+
+.glasses-card h4 {
+    font-size: 0.95rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.glasses-card p {
+    color: #1a2980;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+.card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* ===== SELECTION SUMMARY ===== */
+.selection-summary {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 2rem;
+    margin-top: 2.5rem;
+    border: 1px solid #e8f0f8;
+}
+
+.selected-frame {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 14px;
+    margin: 1.5rem 0;
+    border: 2px solid #e8f0f8;
+}
+
+.selected-frame img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: white;
+    padding: 0.5rem;
+    border: 1px solid #e8f0f8;
+}
+
+.selected-frame div {
+    flex: 1;
+}
+
+.selected-frame h4 {
+    color: #1a2980;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.selected-frame p {
+    color: #5a6c7d;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.privacy-note {
+    background: #e8f6f3;
+    border-left: 4px solid #1abc9c;
+    padding: 1.2rem;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #16a085;
+    line-height: 1.6;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: linear-gradient(135deg, #1a2980, #1a237e);
+    color: white;
+    margin-top: 4rem;
+    padding: 4rem 2rem 2rem;
+}
+
+.footer-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer-section h4 {
+    margin-bottom: 1.5rem;
+    color: #e3f2fd;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.8rem;
+    color: #bbdefb;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.footer-section ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #26d0ce;
+}
+
+.professional-note {
+    color: #bbdefb;
+    line-height: 1.7;
+    font-style: italic;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border-left: 3px solid #26d0ce;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #90caf9;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.heartbeat {
+    display: inline-block;
+    animation: heartbeat 1.2s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.05); }
+}
+
+.footer-bottom a {
+    color: #4fc3f7;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.footer-bottom a:hover {
+    color: #26d0ce;
+    text-decoration: underline;
+}
+
+.copyright {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* ===== RESPONSIVE DESIGN & SMART LAYOUT EVOLUTION ===== */
+
+/* Mobile Base (Portrait Mode - Holding phone upright) */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 20px 20px;
+        z-index: 1000;
+    }
+    
+    .nav-links.show {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .try-on-container,
+    .selection-panel {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+    
+    .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* PORTRAIT MODE: Controls at BOTTOM */
+    .camera-section {
+        height: 55vh; /* Dynamic height for portrait */
+        margin-bottom: 60px; /* Extra space for bottom controls */
+    }
+    
+    .mobile-controls-overlay {
+        display: block;
+        bottom: 10px; /* Bottom alignment */
+        right: 50%; /* Center horizontally */
+        left: 50%;
+        transform: translateX(-50%); /* Center alignment fix */
+        width: 95%; /* Wide bar */
+        height: auto;
+    }
+    
+    .mobile-controls {
+        flex-direction: row; /* Horizontal row */
+        justify-content: space-around;
+    }
+    
+    .mobile-control-separator {
+        width: 1px;
+        height: 30px;
+        margin: 0 0.2rem;
+    }
+    
+    .glasses-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .lighting-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .adjustment-row {
+        flex-direction: column;
+    }
+    
+    .adjust-btn {
+        width: 100%;
+    }
+    
+    .loading-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* LANDSCAPE MODE: Tilt Phone (Like watching a video) */
+@media (max-width: 992px) and (orientation: landscape) {
+    
+    .camera-section {
+        height: 80vh; /* Use full height in landscape */
+        margin-bottom: 2rem;
+    }
+    
+    /* LANDSCAPE MODE: Controls move to the RIGHT SIDE */
+    .mobile-controls-overlay {
+        top: 50%;
+        bottom: auto; /* Reset bottom */
+        left: auto; /* Reset left centering */
+        right: 10px; /* Dock to right side */
+        transform: translateY(-50%); /* Center vertically */
+        width: auto; /* Allow height */
+        height: auto;
+    }
+    
+    .mobile-controls {
+        flex-direction: column; /* Vertical stack */
+    }
+    
+    .mobile-control-separator {
+        width: 30px;
+        height: 1px;
+        margin: 0.2rem 0;
+    }
+}
+
+/* Small Phones */
+@media (max-width: 480px) {
+    .camera-section {
+        height: 50vh; /* Slightly smaller for very small screens in portrait */
+    }
+    
+    .glasses-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-header h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+    }
+    
+    .filter-tabs::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .popup-content {
+        margin: 1rem;
+        max-height: 85vh;
+    }
+    
+    .instruction-step {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .step-number {
+        align-self: flex-start;
+    }
+    
+    .position-btn {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .position-btn i {
+        font-size: 1.2rem;
+    }
+    
+    .keyboard-hint {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation for button press */
+@keyframes buttonPress {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.adjust-btn:active,
+.position-btn:active {
+    animation: buttonPress 0.2s ease;
+}
+
+/* Disabled state */
+.adjust-btn:disabled,
+.position-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Success state (when adjustment is applied) */
+.adjust-btn.success {
+    background: #2ecc71;
+    color: white;
+    border-color: #27ae60;
+}
+
+/* Focus states for accessibility */
+.adjust-btn:focus,
+.position-btn:focus {
+    outline: 2px solid #1a2980;
+    outline-offset: 2px;
+}
+
+/* Hover effect on parent section */
+.adjustment-section:hover .adjustment-label {
+    color: #1a2980;
+}
+```
+
+### JavaScript
+```javascript
 // ============================================
 // OPTICORE VIPRO - AESTHETIC & SECURE VERSION
 // ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
@@ -7,7 +1949,6 @@
 // ✅ Added Navigation Functions (Frames, How It Works, Privacy)
 // ✅ FIXED: SmartMode L/R labeling from user's perspective
 // ✅ EVOLVED: Portrait/Landscape Layout Switching
-// ✅ FIXED: White Overlay Issue (Hard Removal + Force Hide)
 // ============================================
 
 // State Management
@@ -59,7 +2000,6 @@ const staticContainer = document.getElementById('staticContainer');
 const staticGlasses = document.getElementById('staticGlasses');
 const loadingOverlay = document.getElementById('loadingOverlay');
 const permissionOverlay = document.getElementById('permissionOverlay');
-const loadingScreen = document.getElementById('loadingScreen');
 const startCameraBtn = document.getElementById('startCameraBtn');
 const useStaticModeBtn = document.getElementById('useStaticModeBtn');
 const toggleCameraBtn = document.getElementById('toggleCameraBtn');
@@ -97,7 +2037,7 @@ function enableCodeProtection() {
     // Disable Right Click
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        showNotification('🔒 System Protected: Access Restricted', 'warning');
+        showNotification('🔒 System Protected: Source Code Access Restricted', 'warning');
     });
 
     // Disable F12 (Developer Tools) - Optional, adds extra security
@@ -215,11 +2155,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 4. Start application after loading screen
     setTimeout(() => {
-        // HARD FIX: Physically remove the loading screen element from DOM
-        // This guarantees it can't stay visible as a white layer
-        if (loadingScreen) {
-            loadingScreen.remove();
-        }
+        document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
     }, 4200);
 });
@@ -453,10 +2389,7 @@ function setupEventListeners() {
 // ===== CAMERA FUNCTIONS =====
 async function startCamera() {
     try {
-        // HARD FIX: Force hide overlays immediately to prevent white screen lingering
-        permissionOverlay.style.display = 'none';
-        loadingOverlay.style.display = 'none';
-        
+        loadingOverlay.style.display = 'flex';
         loadingText.textContent = 'Requesting camera access...';
         
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -630,8 +2563,8 @@ function drawCoolSmartMode(ctx, detection) {
     const rightEyeCenter = getCenterPoint(rightEye);
     
     const eyes = [
-        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on => RIGHT side of image
-        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on => LEFT side of image
+        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on the RIGHT side of image
+        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
     ];
     
     ctx.font = 'bold 16px "Segoe UI"';
@@ -888,7 +2821,6 @@ function toggleCamera() {
 
 function showPermissionOverlay() {
     permissionOverlay.style.display = 'flex';
-    // Hard fix: Ensure overlays are hidden by default in CSS class sense, but we force show here
 }
 
 // ===== CAPTURE FUNCTION =====
@@ -1096,7 +3028,7 @@ function showShareOptions(dataUrl, message) {
                     <button class="popup-close" onclick="document.getElementById('sharePopup').remove()">×</button>
                 </div>
                 <div class="popup-body">
-                    <p style="margin-bottom:1.5rem; color: #5a6c7d;">Choose how to share:</p>
+                    <p style="margin-bottom: 1.5rem; color: #5a6c7d;">Choose how to share:</p>
                     <div class="contact-options">
                         <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
                             <i class="fab fa-whatsapp"></i>
@@ -1295,3 +3227,4 @@ function resetApp() {
 }
 
 console.log("✅ Opticore ViPro - Secure & Aesthetic Version Loaded");
+```
