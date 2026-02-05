@@ -79,7 +79,7 @@
                                 <span>Horizontal positioning</span>
                             </div>
                         </div>
-                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> On mobile: Pinch to resize, drag to reposition. Use <strong>Volume Up/Down</strong> for vertical adjustment.</p>
+                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> <strong>Portrait Mode:</strong> Controls at bottom. <strong>Landscape Mode:</strong> Controls on side (Tilt phone for space).</p>
                     </div>
                 </div>
                 <div class="instruction-step">
@@ -231,22 +231,24 @@
                     </button>
                 </div>
 
-                <!-- Mobile Controls Overlay (UPGRADED) -->
+                <!-- EVOLVED: Smart Mobile Controls -->
                 <div id="mobileControls" class="mobile-controls-overlay">
                     <div class="mobile-controls">
-                        <!-- Volume Hint -->
-                        <div class="mobile-volume-hint">
-                            <i class="fas fa-volume-up"></i>
-                        </div>
-                        
                         <button class="mobile-control-btn" data-action="zoom-in">
                             <i class="fas fa-search-plus"></i>
                         </button>
                         <button class="mobile-control-btn" data-action="zoom-out">
                             <i class="fas fa-search-minus"></i>
                         </button>
+                        <div class="mobile-control-separator"></div>
                         
-                        <!-- REMOVED Up/Down Buttons as requested to use Volume Keys -->
+                        <!-- RESTORED UP/DOWN BUTTONS -->
+                        <button class="mobile-control-btn" data-action="move-up">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button class="mobile-control-btn" data-action="move-down">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
                         
                         <div class="mobile-control-separator"></div>
                         
@@ -259,7 +261,7 @@
                         
                         <div class="mobile-control-separator"></div>
                         
-                        <!-- NEW: Mobile Neural Calibration Button -->
+                        <!-- SmartMode Button -->
                         <button class="mobile-control-btn mobile-smartmode-btn" id="mobileSmartModeBtn">
                             <i class="fas fa-microchip"></i>
                         </button>
@@ -341,7 +343,7 @@
                     <!-- Keyboard Hint -->
                     <div class="keyboard-hint">
                         <i class="fas fa-keyboard"></i>
-                        <small>Use + / - keys for size, Arrow keys for position. Mobile: Use Volume Up/Down.</small>
+                        <small>Use + / - keys for size, Arrow keys for position. Mobile: Use On-Screen Buttons.</small>
                     </div>
                 </div>
             </div>
