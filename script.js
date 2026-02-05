@@ -1,15 +1,3 @@
-
-
-I understand perfectly. Since the volume buttons are unreliable (due to browser security), we will bring back the visual buttons, but we will solve the "Squeezing" issue by implementing a **Smart Responsive Layout**.
-
-**The Evolution:**
-1.  **Portrait Mode (Holding phone upright):** The controls will be a sleek bar **underneath** the camera to save vertical space.
-2.  **Landscape Mode (Tilting the phone to watch like a video):** When the user tilts the phone as you suggested, the controls will automatically move to the **Right Side** of the screen. This maximizes the video area naturally, exactly like a professional video editor or player app.
-
-Here is the complete, evolved code.
-
-### HTML
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3228,3 +3216,4 @@ function resetApp() {
 
 console.log("✅ Opticore ViPro - Secure & Aesthetic Version Loaded");
 ```
+
