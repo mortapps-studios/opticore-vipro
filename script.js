@@ -3,9 +3,8 @@
 // ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
 // ✅ Professional "How-To" Text
 // ✅ Code Protection (Anti-Inspect)
-// ✅ Mobile Responsive
-// ✅ Added Navigation Functions (Frames, How It Works, Privacy)
-// ✅ FIXED: SmartMode L/R labeling from user's perspective
+// ✅ ENHANCED: Full Mobile Responsiveness
+// ✅ ADDED: Neural Calibration Layer toggle for mobile
 // ============================================
 
 // State Management
@@ -31,7 +30,10 @@ let state = {
     glassesX: 50,
     glassesY: 40,
     lastCapturedImage: null,
-    lastDetection: null
+    lastDetection: null,
+    isMobile: false,
+    mobileOptimized: false,
+    touchGesturesEnabled: false
 };
 
 // Glasses Catalog
@@ -71,6 +73,9 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
+const neuralToggleDesktop = document.getElementById('neuralToggleDesktop');
+const neuralToggleMobile = document.getElementById('neuralToggleMobile');
+const neuralStatus = document.getElementById('neuralStatus');
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
@@ -82,6 +87,10 @@ const contactLink = document.getElementById('contactLink');
 const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
+
+// Mobile Elements
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
 
 // Image Cache
 const imageCache = new Map();
@@ -102,6 +111,204 @@ function enableCodeProtection() {
             showNotification('🔒 Developer Tools Disabled in Production Mode', 'warning');
         }
     });
+}
+
+// ===== MOBILE DETECTION & ENHANCEMENTS =====
+function detectMobileDevice() {
+    state.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log(state.isMobile ? "📱 Mobile device detected" : "🖥️ Desktop device detected");
+    return state.isMobile;
+}
+
+function setupMobileEnhancements() {
+    if (!state.isMobile) return;
+    
+    console.log("📱 Setting up mobile enhancements...");
+    
+    // 1. Enable mobile controls overlay
+    document.getElementById('mobileControls').style.display = 'block';
+    
+    // 2. Add touch gesture support for static mode glasses
+    if (state.isStaticMode && staticGlasses) {
+        addTouchGestures(staticGlasses);
+    }
+    
+    // 3. Mobile menu toggle
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            navLinks.classList.toggle('show');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('show') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mobileMenuBtn.contains(e.target) && !navLinks.contains(e.target)) {
+                navLinks.classList.remove('show');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+        
+        // Close menu when clicking a link
+        navLinks.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                navLinks.classList.remove('show');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+    }
+    
+    // 4. Prevent zoom on double tap (only for draggable elements)
+    document.addEventListener('dblclick', function(e) {
+        if (e.target.classList.contains('draggable-glasses') || 
+            e.target.closest('.camera-section')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // 5. Mobile-specific notifications
+    setTimeout(() => {
+        showNotification('📱 Mobile mode activated. Use pinch to zoom and drag to reposition.', 'info');
+    }, 4500);
+    
+    // 6. Optimize canvas for mobile performance
+    if (canvasElement) {
+        canvasElement.style.imageRendering = 'optimizeQuality';
+    }
+    
+    // 7. Add touch gestures for static glasses
+    state.touchGesturesEnabled = true;
+    
+    console.log("✅ Mobile enhancements activated");
+}
+
+function addTouchGestures(element) {
+    if (!state.touchGesturesEnabled) return;
+    
+    let initialDistance = null;
+    let initialScale = state.glassesScale;
+    let lastTouchEnd = 0;
+    
+    element.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 2) {
+            // Two-finger touch for pinch zoom
+            initialDistance = getTouchDistance(e.touches[0], e.touches[1]);
+            initialScale = state.glassesScale;
+            e.preventDefault();
+        }
+        
+        // Prevent double-tap zoom
+        const now = Date.now();
+        if (now - lastTouchEnd < 300) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    element.addEventListener('touchend', function(e) {
+        lastTouchEnd = Date.now();
+    });
+    
+    element.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 2) {
+            // Pinch zoom gesture
+            const currentDistance = getTouchDistance(e.touches[0], e.touches[1]);
+            const scaleChange = currentDistance / initialDistance;
+            state.glassesScale = Math.max(0.5, Math.min(2.0, initialScale * scaleChange));
+            element.style.width = `${200 * state.glassesScale}px`;
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    function getTouchDistance(touch1, touch2) {
+        const dx = touch1.clientX - touch2.clientX;
+        const dy = touch1.clientY - touch2.clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+}
+
+function optimizeForMobilePerformance() {
+    if (!state.isMobile) return;
+    
+    state.mobileOptimized = true;
+    
+    // Reduce face detection frequency on mobile for better performance
+    const originalDetectFaces = detectFaces;
+    let lastDetectionTime = 0;
+    const MOBILE_DETECTION_INTERVAL = 200; // ms
+    
+    detectFaces = async function() {
+        const now = Date.now();
+        if (state.mobileOptimized && now - lastDetectionTime < MOBILE_DETECTION_INTERVAL) {
+            requestAnimationFrame(detectFaces);
+            return;
+        }
+        
+        lastDetectionTime = now;
+        await originalDetectFaces.call(this);
+    }.bind(this);
+    
+    console.log("⚡ Mobile performance optimizations applied");
+}
+
+// ===== NEURAL CALIBRATION LAYER TOGGLE =====
+function setupNeuralToggle() {
+    // Desktop toggle
+    if (neuralToggleDesktop) {
+        neuralToggleDesktop.addEventListener('click', function() {
+            toggleSmartMode();
+        });
+    }
+    
+    // Mobile toggle
+    if (neuralToggleMobile) {
+        neuralToggleMobile.addEventListener('click', function() {
+            toggleSmartMode();
+            // Visual feedback for mobile
+            this.classList.add('active');
+            setTimeout(() => {
+                this.classList.remove('active');
+            }, 200);
+        });
+    }
+    
+    // Update initial state
+    updateNeuralToggleUI();
+}
+
+function toggleSmartMode() {
+    state.smartMode = !state.smartMode;
+    updateNeuralToggleUI();
+    
+    showNotification(
+        `🧠 Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
+        state.smartMode ? 'success' : 'info'
+    );
+    
+    console.log(`🧠 Neural Calibration Layer: ${state.smartMode ? 'ON' : 'OFF'}`);
+}
+
+function updateNeuralToggleUI() {
+    const status = state.smartMode ? 'ON' : 'OFF';
+    const activeClass = state.smartMode ? 'active' : '';
+    
+    // Update status text
+    if (neuralStatus) neuralStatus.textContent = status;
+    
+    // Update desktop button
+    if (neuralToggleDesktop) {
+        neuralToggleDesktop.classList.toggle('active', state.smartMode);
+        neuralToggleDesktop.innerHTML = `<i class="fas fa-brain"></i> <span>Neural Layer: <span id="neuralStatus">${status}</span></span>`;
+    }
+    
+    // Update mobile button
+    if (neuralToggleMobile) {
+        neuralToggleMobile.classList.toggle('active', state.smartMode);
+        neuralToggleMobile.innerHTML = state.smartMode 
+            ? '<i class="fas fa-brain" style="color: #00ff00;"></i>'
+            : '<i class="fas fa-brain"></i>';
+    }
 }
 
 // ===== POPUP MANAGEMENT =====
@@ -201,13 +408,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. Enable Protection
     enableCodeProtection();
     
-    // 2. Setup popups
+    // 2. Detect mobile device
+    detectMobileDevice();
+    
+    // 3. Setup popups
     setupPopupCloseButtons();
     
-    // 3. Setup navigation
+    // 4. Setup navigation
     setupNavigation();
     
-    // 4. Start application after loading screen
+    // 5. Setup Neural Calibration Layer toggle
+    setupNeuralToggle();
+    
+    // 6. Start application after loading screen
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
@@ -221,9 +434,11 @@ function initApplication() {
     loadFaceModels();
     shareBtn.disabled = false;
     
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        document.getElementById('mobileControls').style.display = 'block';
-    }
+    // Mobile enhancements
+    setupMobileEnhancements();
+    optimizeForMobilePerformance();
+    
+    console.log("✅ Application initialized successfully");
 }
 
 // ===== FACE MODEL LOADING =====
@@ -269,13 +484,25 @@ function renderGlassesGrid() {
         }
         
         card.innerHTML = `
-            <img src="assets/glasses/${glasses.image}" alt="${glasses.name}">
+            <img src="assets/glasses/${glasses.image}" alt="${glasses.name}" loading="lazy">
             <h4>${glasses.name}</h4>
             <p>${glasses.price}</p>
             ${badgeHTML}
         `;
         
         card.addEventListener('click', () => selectGlasses(glasses));
+        
+        // Touch feedback for mobile
+        if (state.isMobile) {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        }
+        
         glassesGrid.appendChild(card);
         
         preloadImage(`assets/glasses/${glasses.image}`, glasses.id);
@@ -323,6 +550,11 @@ function selectGlasses(glasses) {
             staticGlasses.src = `assets/glasses/${glasses.image}`;
         }
         staticGlasses.style.width = `${200 * state.glassesScale}px`;
+        
+        // Re-enable touch gestures if in static mode
+        if (state.isMobile && state.touchGesturesEnabled) {
+            addTouchGestures(staticGlasses);
+        }
     }
     
     // Highlight Card
@@ -350,13 +582,25 @@ function setupEventListeners() {
         btn.addEventListener('click', function() {
             const action = this.dataset.adjust;
             handleAdjustment(action);
+            
+            // Touch feedback for mobile
+            if (state.isMobile) {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            }
         });
     });
     
     document.querySelectorAll('.mobile-control-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const action = this.dataset.action;
-            handleMobileControl(action);
+            if (action === 'toggle-neural') {
+                toggleSmartMode();
+            } else {
+                handleMobileControl(action);
+            }
         });
     });
     
@@ -385,39 +629,38 @@ function setupEventListeners() {
         startCamera();
     });
     
-    document.addEventListener('keydown', (e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        
-        // SmartMode Toggle
-        if (e.ctrlKey && e.key === 'd') {
-            state.smartMode = !state.smartMode;
-            showNotification(
-                `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
-                state.smartMode ? 'success' : 'info'
-            );
-            e.preventDefault();
-            return;
-        }
-        
-        switch(e.key) {
-            case '+': case '=':
-                state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
-                if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-                e.preventDefault(); break;
-            case '-': case '_':
-                state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
-                if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-                e.preventDefault(); break;
-            case 'ArrowUp':
-                handleAdjustment('position-up'); e.preventDefault(); break;
-            case 'ArrowDown':
-                handleAdjustment('position-down'); e.preventDefault(); break;
-            case 'ArrowLeft':
-                handleAdjustment('position-left'); e.preventDefault(); break;
-            case 'ArrowRight':
-                handleAdjustment('position-right'); e.preventDefault(); break;
-        }
-    });
+    // Keyboard shortcuts (only enable on desktop)
+    if (!state.isMobile) {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            // SmartMode Toggle
+            if (e.ctrlKey && e.key === 'd') {
+                toggleSmartMode();
+                e.preventDefault();
+                return;
+            }
+            
+            switch(e.key) {
+                case '+': case '=':
+                    state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
+                    if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+                    e.preventDefault(); break;
+                case '-': case '_':
+                    state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
+                    if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+                    e.preventDefault(); break;
+                case 'ArrowUp':
+                    handleAdjustment('position-up'); e.preventDefault(); break;
+                case 'ArrowDown':
+                    handleAdjustment('position-down'); e.preventDefault(); break;
+                case 'ArrowLeft':
+                    handleAdjustment('position-left'); e.preventDefault(); break;
+                case 'ArrowRight':
+                    handleAdjustment('position-right'); e.preventDefault(); break;
+            }
+        });
+    }
 }
 
 // ===== CAMERA FUNCTIONS =====
@@ -428,9 +671,10 @@ async function startCamera() {
         
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { ideal: 640 },
-                height: { ideal: 480 },
-                facingMode: 'user'
+                width: { ideal: state.isMobile ? 480 : 640 },
+                height: { ideal: state.isMobile ? 640 : 480 },
+                facingMode: 'user',
+                frameRate: state.isMobile ? 24 : 30
             },
             audio: false
         });
@@ -441,8 +685,12 @@ async function startCamera() {
         staticContainer.style.display = 'none';
         
         videoElement.onloadedmetadata = async () => {
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
+            // Optimize canvas size for mobile
+            const width = state.isMobile ? Math.min(480, videoElement.videoWidth) : videoElement.videoWidth;
+            const height = state.isMobile ? Math.min(640, videoElement.videoHeight) : videoElement.videoHeight;
+            
+            canvasElement.width = width;
+            canvasElement.height = height;
             
             state.isCameraActive = true;
             state.isStaticMode = false;
@@ -474,8 +722,8 @@ async function startFaceDetection() {
     state.faceDetectionActive = true;
     
     const displaySize = { 
-        width: videoElement.videoWidth, 
-        height: videoElement.videoHeight 
+        width: canvasElement.width, 
+        height: canvasElement.height 
     };
     faceapi.matchDimensions(canvasElement, displaySize);
     
@@ -488,7 +736,7 @@ async function detectFaces() {
     try {
         const detections = await faceapi
             .detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions({
-                inputSize: 416,
+                inputSize: state.isMobile ? 320 : 416,
                 scoreThreshold: 0.5
             }))
             .withFaceLandmarks(true);
@@ -551,7 +799,7 @@ function drawCoolSmartMode(ctx, detection) {
     
     // 1. GREEN BOX (Whole Face)
     ctx.strokeStyle = '#00ff00';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = state.isMobile ? 2 : 3;
     ctx.shadowColor = 'rgba(0, 255, 0, 0.5)';
     ctx.shadowBlur = 10;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
@@ -586,7 +834,7 @@ function drawCoolSmartMode(ctx, detection) {
     
     features.forEach(idx => {
         ctx.beginPath();
-        ctx.arc(positions[idx].x, positions[idx].y, 3, 0, 2 * Math.PI);
+        ctx.arc(positions[idx].x, positions[idx].y, state.isMobile ? 2 : 3, 0, 2 * Math.PI);
         ctx.fill();
     });
     
@@ -601,17 +849,17 @@ function drawCoolSmartMode(ctx, detection) {
         { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
     ];
     
-    ctx.font = 'bold 16px "Segoe UI"';
+    ctx.font = state.isMobile ? 'bold 14px "Segoe UI"' : 'bold 16px "Segoe UI"';
     eyes.forEach(eye => {
         // Red Background Circle
         ctx.beginPath();
-        ctx.arc(eye.p.x, eye.p.y, 8, 0, 2 * Math.PI);
+        ctx.arc(eye.p.x, eye.p.y, state.isMobile ? 6 : 8, 0, 2 * Math.PI);
         ctx.fillStyle = '#ff0000';
         ctx.fill();
         
         // White Outline (Mobile Friendly)
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = state.isMobile ? 1.5 : 2;
         ctx.stroke();
         
         // Text
@@ -626,12 +874,12 @@ function drawCoolSmartMode(ctx, detection) {
     const centerY = (leftEyeCenter.y + rightEyeCenter.y) / 2;
     
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, state.isMobile ? 4 : 5, 0, 2 * Math.PI);
     ctx.fillStyle = '#00ff00';
     ctx.fill();
     
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px "Segoe UI"';
+    ctx.font = state.isMobile ? 'bold 12px "Segoe UI"' : 'bold 14px "Segoe UI"';
     ctx.fillText('C', centerX, centerY + 1);
     
     ctx.restore();
@@ -758,6 +1006,11 @@ function activateStaticMode() {
     staticGlasses.style.cursor = 'grab';
     
     makeDraggable(staticGlasses);
+    
+    // Enable touch gestures for mobile
+    if (state.isMobile) {
+        addTouchGestures(staticGlasses);
+    }
 }
 
 function makeDraggable(element) {
@@ -927,8 +1180,8 @@ function captureFromStatic() {
         const tempCanvas = document.createElement('canvas');
         const ctx = tempCanvas.getContext('2d');
         
-        tempCanvas.width = 800;
-        tempCanvas.height = 600;
+        tempCanvas.width = state.isMobile ? 400 : 800;
+        tempCanvas.height = state.isMobile ? 300 : 600;
         
         if (state.currentFilter && state.currentFilter !== 'none') {
             ctx.filter = state.currentFilter;
@@ -959,7 +1212,7 @@ function captureFromStatic() {
         }
         
         ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
-        ctx.font = 'bold 20px Arial';
+        ctx.font = state.isMobile ? 'bold 16px Arial' : 'bold 20px Arial';
         ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
         
         return tempCanvas.toDataURL('image/png', 1.0);
@@ -973,27 +1226,27 @@ function captureFromStatic() {
 function createFallbackCapture() {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
-    tempCanvas.width = 800;
-    tempCanvas.height = 600;
+    tempCanvas.width = state.isMobile ? 400 : 800;
+    tempCanvas.height = state.isMobile ? 300 : 600;
     
     ctx.fillStyle = '#f0f8ff';
     ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     
     const glassesImg = imageCache.get(state.selectedGlasses.id);
     if (glassesImg && glassesImg.complete) {
-        const scale = 0.5;
+        const scale = state.isMobile ? 0.3 : 0.5;
         ctx.drawImage(glassesImg, tempCanvas.width/2 - (glassesImg.width*scale)/2, tempCanvas.height/2 - (glassesImg.height*scale)/2, glassesImg.width*scale, glassesImg.height*scale);
     }
     
     ctx.fillStyle = '#1a2980';
-    ctx.font = 'bold 24px Arial';
+    ctx.font = state.isMobile ? 'bold 18px Arial' : 'bold 24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(state.selectedGlasses.name, tempCanvas.width / 2, 100);
+    ctx.fillText(state.selectedGlasses.name, tempCanvas.width / 2, 80);
     
     ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
-    ctx.font = 'bold 20px Arial';
+    ctx.font = state.isMobile ? 'bold 14px Arial' : 'bold 20px Arial';
     ctx.textAlign = 'left';
-    ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+    ctx.fillText('Opticore ViPro', 20, tempCanvas.height - 20);
     
     return tempCanvas.toDataURL('image/png', 1.0);
 }
@@ -1253,8 +1506,9 @@ function resetApp() {
         showPermissionOverlay();
         selectGlasses(glassesCatalog[0]);
         filterGlasses('all');
+        updateNeuralToggleUI();
         showNotification('Reset successfully', 'success');
     }
 }
 
-console.log("✅ Opticore ViPro - Secure & Aesthetic Version Loaded");
+console.log("✅ Opticore ViPro - Mobile Enhanced Version Loaded");
