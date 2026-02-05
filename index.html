@@ -118,6 +118,22 @@
         </div>
     </div>
 
+    <!-- MOBILE ORIENTATION LOCK (New Feature) -->
+    <div id="orientation-lock" class="orientation-lock">
+        <div class="orientation-content">
+            <div class="rotate-device">
+                <i class="fas fa-mobile-alt"></i>
+                <div class="rotate-ring"></div>
+            </div>
+            <h2>Opticore ViPro</h2>
+            <p>Optical Precision Requires Wide Angle</p>
+            <div class="rotate-instruction">
+                <i class="fas fa-sync-alt fa-spin"></i>
+                <span>Please rotate your device to begin</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Popup Overlays -->
     <div id="howItWorksPopup" class="popup-overlay">
         <div class="popup-content">
@@ -168,7 +184,7 @@
                                 <span>Horizontal positioning</span>
                             </div>
                         </div>
-                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> <strong>Portrait Mode:</strong> Controls at bottom. <strong>Landscape Mode:</strong> Controls on side (Tilt phone for space).</p>
+                        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> <strong>Mobile:</strong> Landscape mode required. Controls on the right side.</p>
                     </div>
                 </div>
                 <div class="instruction-step">
@@ -320,46 +336,46 @@
                     </button>
                 </div>
 
-                <!-- EVOLVED: Smart Mobile Controls -->
+                <!-- MOBILE CONTROLS (EVOLVED: Landscape Docked) -->
                 <div id="mobileControls" class="mobile-controls-overlay">
                     <div class="mobile-controls">
-                        <button class="mobile-control-btn" data-action="zoom-in">
+                        <button class="mobile-control-btn" data-action="zoom-in" title="Zoom In">
                             <i class="fas fa-search-plus"></i>
                         </button>
-                        <button class="mobile-control-btn" data-action="zoom-out">
+                        <button class="mobile-control-btn" data-action="zoom-out" title="Zoom Out">
                             <i class="fas fa-search-minus"></i>
                         </button>
                         <div class="mobile-control-separator"></div>
                         
                         <!-- RESTORED UP/DOWN BUTTONS -->
-                        <button class="mobile-control-btn" data-action="move-up">
+                        <button class="mobile-control-btn" data-action="move-up" title="Move Up">
                             <i class="fas fa-arrow-up"></i>
                         </button>
-                        <button class="mobile-control-btn" data-action="move-down">
+                        <button class="mobile-control-btn" data-action="move-down" title="Move Down">
                             <i class="fas fa-arrow-down"></i>
                         </button>
                         
                         <div class="mobile-control-separator"></div>
                         
-                        <button class="mobile-control-btn" data-action="move-left">
+                        <button class="mobile-control-btn" data-action="move-left" title="Move Left">
                             <i class="fas fa-arrow-left"></i>
                         </button>
-                        <button class="mobile-control-btn" data-action="move-right">
+                        <button class="mobile-control-btn" data-action="move-right" title="Move Right">
                             <i class="fas fa-arrow-right"></i>
                         </button>
                         
                         <div class="mobile-control-separator"></div>
                         
                         <!-- SmartMode Button -->
-                        <button class="mobile-control-btn mobile-smartmode-btn" id="mobileSmartModeBtn">
+                        <button class="mobile-control-btn mobile-smartmode-btn" id="mobileSmartModeBtn" title="Toggle SmartMode">
                             <i class="fas fa-microchip"></i>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Control Panel -->
-            <div class="control-panel">
+            <!-- Control Panel (Hidden on Mobile to preserve space) -->
+            <div class="control-panel desktop-only">
                 <div class="controls-grid">
                     <button id="toggleCameraBtn" class="btn-control">
                         <i class="fas fa-video"></i> <span>Camera: <span id="cameraStatus">Standby</span></span>
