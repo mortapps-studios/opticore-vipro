@@ -151,6 +151,81 @@ body {
     to { opacity: 0; visibility: hidden; }
 }
 
+/* ===== ORIENTATION LOCK (NEW) ===== */
+.orientation-lock {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+    z-index: 99999;
+    display: none; /* Hidden by default on PC/Tablet */
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.orientation-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.orientation-content p {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+.rotate-device {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 2rem;
+    animation: rotatePhone 2s infinite ease-in-out;
+}
+
+.rotate-device i {
+    font-size: 4rem;
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.rotate-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px;
+    height: 140px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    animation: rotateRing 2s infinite linear;
+}
+
+.rotate-instruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    display: inline-flex;
+}
+
+@keyframes rotatePhone {
+    0%, 100% { transform: rotate(-90deg); }
+    50% { transform: rotate(-90deg) scale(1.1); }
+}
+
+@keyframes rotateRing {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 /* ===== POPUP OVERLAYS ===== */
 .popup-overlay {
     position: fixed;
@@ -1282,216 +1357,118 @@ body {
 
 /* ===== RESPONSIVE DESIGN & SMART LAYOUT EVOLUTION ===== */
 
-/* Mobile Base (Portrait Mode - Holding phone upright) */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: white;
-        flex-direction: column;
-        padding: 1rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        border-radius: 0 0 20px 20px;
-        z-index: 1000;
+/* Mobile Base (Portrait Mode - FORCED LOCK) */
+@media screen and (orientation: portrait) and (max-width: 992px) {
+    .orientation-lock {
+        display: flex !important;
     }
     
-    .nav-links.show {
-        display: flex;
+    /* Hide everything else to save battery and prevent access */
+    body {
+        overflow: hidden;
+    }
+    
+    .navbar, .container, .footer {
+        filter: blur(5px);
+        pointer-events: none;
+    }
+}
+
+/* Landscape Mode (The Correct Mode for Mobile) */
+@media screen and (orientation: landscape) and (max-width: 992px) {
+    .orientation-lock {
+        display: none !important;
+    }
+    
+    .nav-links {
+        display: none;
     }
     
     .mobile-menu-btn {
         display: block;
     }
     
-    .container {
-        padding: 0 1rem;
-    }
-    
-    .try-on-container,
+    .try-on-container, 
     .selection-panel {
-        padding: 1.5rem;
-        border-radius: 20px;
+        padding: 1rem;
     }
     
-    .controls-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .desktop-only {
+        display: none; /* Hide heavy controls panel */
+    }
+
+    /* IMMERSIVE LANDSCAPE LAYOUT */
+    .container {
+        flex-direction: row;
+        margin: 0;
+        padding: 0.5rem;
+        height: 95vh; /* Use almost full height */
+        align-items: stretch;
     }
     
-    /* PORTRAIT MODE: Controls at BOTTOM */
+    .try-on-container {
+        flex: 2;
+        padding: 1rem;
+        margin-bottom: 0;
+    }
+    
+    .selection-panel {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+    }
+    
     .camera-section {
-        height: 55vh; /* Dynamic height for portrait */
-        margin-bottom: 60px; /* Extra space for bottom controls */
+        height: 100%; /* Full height in landscape */
+        margin-bottom: 0;
     }
     
+    .section-header {
+        display: none; /* Hide header to save space */
+    }
+    
+    /* MOBILE CONTROLS - DOCKED RIGHT */
     .mobile-controls-overlay {
         display: block;
-        bottom: 10px; /* Bottom alignment */
-        right: 50%; /* Center horizontally */
-        left: 50%;
-        transform: translateX(-50%); /* Center alignment fix */
-        width: 95%; /* Wide bar */
-        height: auto;
-    }
-    
-    .mobile-controls {
-        flex-direction: row; /* Horizontal row */
-        justify-content: space-around;
-    }
-    
-    .mobile-control-separator {
-        width: 1px;
-        height: 30px;
-        margin: 0 0.2rem;
-    }
-    
-    .glasses-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .lighting-options {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .adjustment-row {
-        flex-direction: column;
-    }
-    
-    .adjust-btn {
-        width: 100%;
-    }
-    
-    .loading-title {
-        font-size: 2.5rem;
-    }
-}
-
-/* LANDSCAPE MODE: Tilt Phone (Like watching a video) */
-@media (max-width: 992px) and (orientation: landscape) {
-    
-    .camera-section {
-        height: 80vh; /* Use full height in landscape */
-        margin-bottom: 2rem;
-    }
-    
-    /* LANDSCAPE MODE: Controls move to the RIGHT SIDE */
-    .mobile-controls-overlay {
         top: 50%;
-        bottom: auto; /* Reset bottom */
-        left: auto; /* Reset left centering */
-        right: 10px; /* Dock to right side */
-        transform: translateY(-50%); /* Center vertically */
-        width: auto; /* Allow height */
+        bottom: auto;
+        left: auto;
+        right: 20px; /* Right side dock */
+        transform: translateY(-50%);
+        width: auto;
         height: auto;
     }
     
     .mobile-controls {
         flex-direction: column; /* Vertical stack */
+        padding: 0.5rem;
     }
     
     .mobile-control-separator {
         width: 30px;
         height: 1px;
         margin: 0.2rem 0;
-    }
-}
-
-/* Small Phones */
-@media (max-width: 480px) {
-    .camera-section {
-        height: 50vh; /* Slightly smaller for very small screens in portrait */
+        background: #e8f0f8;
     }
     
-    .glasses-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .controls-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .section-header h1 {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .filter-tabs {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
-    }
-    
-    .filter-tabs::-webkit-scrollbar {
-        height: 4px;
-    }
-    
-    .popup-content {
-        margin: 1rem;
-        max-height: 85vh;
-    }
-    
-    .instruction-step {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .step-number {
-        align-self: flex-start;
-    }
-    
-    .position-btn {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .position-btn i {
+    /* Adjust selection panel for landscape */
+    .panel-header h2 {
         font-size: 1.2rem;
     }
     
-    .keyboard-hint {
-        font-size: 0.8rem;
+    .glasses-grid {
+        grid-template-columns: repeat(3, 1fr); /* More columns in landscape */
+        max-height: 60vh;
     }
 }
 
-/* Animation for button press */
-@keyframes buttonPress {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
-}
-
-.adjust-btn:active,
-.position-btn:active {
-    animation: buttonPress 0.2s ease;
-}
-
-/* Disabled state */
-.adjust-btn:disabled,
-.position-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Success state (when adjustment is applied) */
-.adjust-btn.success {
-    background: #2ecc71;
-    color: white;
-    border-color: #27ae60;
-}
-
-/* Focus states for accessibility */
-.adjust-btn:focus,
-.position-btn:focus {
-    outline: 2px solid #1a2980;
-    outline-offset: 2px;
-}
-
-/* Hover effect on parent section */
-.adjustment-section:hover .adjustment-label {
-    color: #1a2980;
+/* Tablet & Desktop (Default) - UNTOUCHED */
+@media (min-width: 993px) {
+    .orientation-lock {
+        display: none !important;
+    }
+    
+    .mobile-controls-overlay {
+        display: none;
+    }
 }
