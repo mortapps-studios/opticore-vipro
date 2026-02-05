@@ -2,12 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Opticore ViPro | Professional Virtual Eyewear Analysis</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Face-API.js library with CDN models -->
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    
+    <!-- Mobile PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a2980">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body oncontextmenu="return false;">
     <!-- Loading Screen (4.2 seconds) -->
@@ -182,7 +189,7 @@
                 <a href="#" id="privacyLink">Privacy</a>
                 <button class="btn-contact" id="contactLink">Consultation</button>
             </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <button class="mobile-menu-btn">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
@@ -254,6 +261,11 @@
                         <button class="mobile-control-btn" data-action="move-right">
                             <i class="fas fa-arrow-right"></i>
                         </button>
+                        <div class="mobile-control-separator"></div>
+                        <!-- Neural Calibration Layer Toggle for Mobile -->
+                        <button class="mobile-control-btn neural-toggle-btn" id="neuralToggleMobile" data-action="toggle-neural">
+                            <i class="fas fa-brain"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -275,6 +287,10 @@
                     </button>
                     <button id="resetBtn" class="btn-control">
                         <i class="fas fa-sync-alt"></i> Reset
+                    </button>
+                    <!-- Neural Calibration Layer Toggle for Desktop -->
+                    <button id="neuralToggleDesktop" class="btn-control neural-toggle-btn">
+                        <i class="fas fa-brain"></i> <span>Neural Layer: <span id="neuralStatus">OFF</span></span>
                     </button>
                 </div>
 
