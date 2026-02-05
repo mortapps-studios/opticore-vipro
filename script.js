@@ -7,6 +7,7 @@
 // ✅ Added Navigation Functions (Frames, How It Works, Privacy)
 // ✅ FIXED: SmartMode L/R labeling from user's perspective
 // ✅ EVOLVED: Portrait/Landscape Layout Switching
+// ✅ FIXED: White Overlay Issue (Hard Removal + Force Hide)
 // ============================================
 
 // State Management
@@ -58,6 +59,7 @@ const staticContainer = document.getElementById('staticContainer');
 const staticGlasses = document.getElementById('staticGlasses');
 const loadingOverlay = document.getElementById('loadingOverlay');
 const permissionOverlay = document.getElementById('permissionOverlay');
+const loadingScreen = document.getElementById('loadingScreen');
 const startCameraBtn = document.getElementById('startCameraBtn');
 const useStaticModeBtn = document.getElementById('useStaticModeBtn');
 const toggleCameraBtn = document.getElementById('toggleCameraBtn');
@@ -95,7 +97,7 @@ function enableCodeProtection() {
     // Disable Right Click
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        showNotification('🔒 System Protected: Source Code Access Restricted', 'warning');
+        showNotification('🔒 System Protected: Access Restricted', 'warning');
     });
 
     // Disable F12 (Developer Tools) - Optional, adds extra security
@@ -213,7 +215,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 4. Start application after loading screen
     setTimeout(() => {
-        document.getElementById('loadingScreen').style.display = 'none';
+        // HARD FIX: Physically remove the loading screen element from DOM
+        // This guarantees it can't stay visible as a white layer
+        if (loadingScreen) {
+            loadingScreen.remove();
+        }
         initApplication();
     }, 4200);
 });
@@ -447,7 +453,10 @@ function setupEventListeners() {
 // ===== CAMERA FUNCTIONS =====
 async function startCamera() {
     try {
-        loadingOverlay.style.display = 'flex';
+        // HARD FIX: Force hide overlays immediately to prevent white screen lingering
+        permissionOverlay.style.display = 'none';
+        loadingOverlay.style.display = 'none';
+        
         loadingText.textContent = 'Requesting camera access...';
         
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -621,8 +630,8 @@ function drawCoolSmartMode(ctx, detection) {
     const rightEyeCenter = getCenterPoint(rightEye);
     
     const eyes = [
-        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on the RIGHT side of image
-        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
+        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on => RIGHT side of image
+        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on => LEFT side of image
     ];
     
     ctx.font = 'bold 16px "Segoe UI"';
@@ -879,6 +888,7 @@ function toggleCamera() {
 
 function showPermissionOverlay() {
     permissionOverlay.style.display = 'flex';
+    // Hard fix: Ensure overlays are hidden by default in CSS class sense, but we force show here
 }
 
 // ===== CAPTURE FUNCTION =====
@@ -1086,7 +1096,7 @@ function showShareOptions(dataUrl, message) {
                     <button class="popup-close" onclick="document.getElementById('sharePopup').remove()">×</button>
                 </div>
                 <div class="popup-body">
-                    <p style="margin-bottom: 1.5rem; color: #5a6c7d;">Choose how to share:</p>
+                    <p style="margin-bottom:1.5rem; color: #5a6c7d;">Choose how to share:</p>
                     <div class="contact-options">
                         <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
                             <i class="fab fa-whatsapp"></i>
