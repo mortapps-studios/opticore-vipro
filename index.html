@@ -118,7 +118,7 @@
         </div>
     </div>
 
-    <!-- MOBILE ORIENTATION LOCK (New Feature) -->
+    <!-- MOBILE ORIENTATION LOCK -->
     <div id="orientation-lock" class="orientation-lock">
         <div class="orientation-content">
             <div class="rotate-device">
@@ -304,8 +304,8 @@
 
             <!-- Camera/Canvas Area -->
             <div class="camera-section">
-                <!-- Video Feed (hidden but active) -->
-                <video id="videoElement" class="video-feed" autoplay playsinline></video>
+                <!-- Video Feed -->
+                <video id="videoElement" class="video-feed" autoplay playsinline muted></video>
                 
                 <!-- Canvas where magic happens -->
                 <canvas id="canvasElement" class="canvas-overlay"></canvas>
@@ -336,7 +336,7 @@
                     </button>
                 </div>
 
-                <!-- MOBILE CONTROLS (EVOLVED: Landscape Docked) -->
+                <!-- MOBILE CONTROLS -->
                 <div id="mobileControls" class="mobile-controls-overlay">
                     <div class="mobile-controls">
                         <button class="mobile-control-btn" data-action="zoom-in" title="Zoom In">
@@ -347,7 +347,6 @@
                         </button>
                         <div class="mobile-control-separator"></div>
                         
-                        <!-- RESTORED UP/DOWN BUTTONS -->
                         <button class="mobile-control-btn" data-action="move-up" title="Move Up">
                             <i class="fas fa-arrow-up"></i>
                         </button>
@@ -374,7 +373,7 @@
                 </div>
             </div>
 
-            <!-- Control Panel (Hidden on Mobile to preserve space) -->
+            <!-- Control Panel -->
             <div class="control-panel desktop-only">
                 <div class="controls-grid">
                     <button id="toggleCameraBtn" class="btn-control">
