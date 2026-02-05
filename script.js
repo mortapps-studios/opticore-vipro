@@ -5,6 +5,7 @@
 // ✅ Code Protection (Anti-Inspect)
 // ✅ Mobile Responsive
 // ✅ Added Navigation Functions (Frames, How It Works, Privacy)
+// ✅ FIXED: SmartMode L/R labeling from user's perspective
 // ============================================
 
 // State Management
@@ -70,14 +71,12 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
-const mobileMenuBtn = document.getElementById('mobileMenuBtn'); // New Mobile Element
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
 const howItWorksLink = document.getElementById('howItWorksLink');
 const privacyLink = document.getElementById('privacyLink');
 const contactLink = document.getElementById('contactLink');
-const navLinks = document.querySelector('.nav-links'); // Nav container
 
 // Popup Elements
 const howItWorksPopup = document.getElementById('howItWorksPopup');
@@ -138,35 +137,6 @@ function setupPopupCloseButtons() {
     });
 }
 
-// ===== MOBILE MENU TOGGLE (NEW FIX) =====
-function setupMobileMenu() {
-    if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('show');
-            
-            // Change icon based on state
-            const icon = mobileMenuBtn.querySelector('i');
-            if (navLinks.classList.contains('show')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-
-        // Close menu when clicking a link
-        document.querySelectorAll('.nav-links a, .nav-links .btn-contact').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('show');
-                const icon = mobileMenuBtn.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-    }
-}
-
 // ===== NAVIGATION FUNCTIONS =====
 function setupNavigation() {
     // Frames Link - Scroll to frames section
@@ -174,9 +144,6 @@ function setupNavigation() {
         e.preventDefault();
         const framesSection = document.getElementById('framesSection');
         if (framesSection) {
-            // Close mobile menu if open
-            navLinks.classList.remove('show');
-            
             framesSection.scrollIntoView({ 
                 behavior: 'smooth',
                 block: 'start'
@@ -237,13 +204,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2. Setup popups
     setupPopupCloseButtons();
     
-    // 3. Setup mobile menu
-    setupMobileMenu(); // NEW CALL
-    
-    // 4. Setup navigation
+    // 3. Setup navigation
     setupNavigation();
     
-    // 5. Start application after loading screen
+    // 4. Start application after loading screen
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
@@ -626,15 +590,15 @@ function drawCoolSmartMode(ctx, detection) {
         ctx.fill();
     });
     
-    // 4. RED TRACKERS (L and R Eyes)
-    const leftEye = landmarks.getLeftEye();
-    const rightEye = landmarks.getRightEye();
+    // 4. RED TRACKERS (L and R Eyes) - FIXED: Now from person's perspective
+    const leftEye = landmarks.getLeftEye();  // Person's left eye (right side in image)
+    const rightEye = landmarks.getRightEye(); // Person's right eye (left side in image)
     const leftEyeCenter = getCenterPoint(leftEye);
     const rightEyeCenter = getCenterPoint(rightEye);
     
     const eyes = [
-        { p: leftEyeCenter, label: 'L' },
-        { p: rightEyeCenter, label: 'R' }
+        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on the RIGHT side of image
+        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
     ];
     
     ctx.font = 'bold 16px "Segoe UI"';
@@ -801,7 +765,7 @@ function makeDraggable(element) {
     let offsetX, offsetY;
     
     element.addEventListener('mousedown', startDrag);
-    element.addEventListener('touchstart', startDragTouch, {passive: false});
+    element.addEventListener('touchstart', startDragTouch);
     
     function startDrag(e) {
         isDragging = true;
@@ -819,7 +783,7 @@ function makeDraggable(element) {
         const rect = element.getBoundingClientRect();
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
-        document.addEventListener('touchmove', dragTouch, {passive: false});
+        document.addEventListener('touchmove', dragTouch);
         document.addEventListener('touchend', stopDrag);
         e.preventDefault();
     }
@@ -1156,7 +1120,7 @@ function openResultPage(dataUrl) {
                 .btn-primary { background: linear-gradient(135deg, #1a2980, #2980b9); color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
             </style>
         </head>
-<body>
+        <body>
             <div class="result-container">
                 <h1>Result</h1>
                 <img src="${dataUrl}">
