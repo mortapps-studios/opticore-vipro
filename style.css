@@ -11,6 +11,8 @@ body {
     min-height: 100vh;
     color: #2c3e50;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
 }
 
 /* ===== LOADING SCREEN (4.2 seconds) ===== */
@@ -165,6 +167,7 @@ body {
     z-index: 10000;
     padding: 1rem;
     backdrop-filter: blur(5px);
+    touch-action: manipulation;
 }
 
 .popup-content {
@@ -176,6 +179,7 @@ body {
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: popupSlide 0.3s ease;
+    -webkit-overflow-scrolling: touch;
 }
 
 @keyframes popupSlide {
@@ -199,6 +203,7 @@ body {
     align-items: center;
     gap: 10px;
     font-weight: 500;
+    font-size: 1.2rem;
 }
 
 .popup-close {
@@ -215,6 +220,8 @@ body {
     justify-content: center;
     border-radius: 50%;
     transition: background 0.3s;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .popup-close:hover {
@@ -365,6 +372,7 @@ body {
     transition: all 0.3s;
     text-align: left;
     width: 100%;
+    min-height: 70px;
 }
 
 .contact-option-btn:hover {
@@ -409,6 +417,7 @@ body {
 .start-try-on-btn {
     padding: 1rem 2rem;
     font-size: 1.1rem;
+    min-height: 60px;
 }
 
 /* ===== NAVBAR ===== */
@@ -429,7 +438,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
 }
 
 .logo {
@@ -460,6 +468,9 @@ body {
     border-radius: 8px;
     transition: all 0.3s;
     position: relative;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
 }
 
 .nav-links a:hover {
@@ -497,6 +508,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-height: 44px;
 }
 
 .btn-contact:hover {
@@ -511,7 +523,21 @@ body {
     font-size: 1.5rem;
     color: #2c3e50;
     cursor: pointer;
-    z-index: 1002; /* Above menu overlay */
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Neural Toggle Button Active State */
+.neural-toggle-btn.active {
+    background: linear-gradient(135deg, #00ff00, #00cc00) !important;
+    color: white !important;
+    border-color: #00cc00 !important;
+}
+
+.neural-toggle-btn.active i {
+    color: white !important;
 }
 
 /* ===== MAIN CONTAINER ===== */
@@ -577,6 +603,7 @@ body {
     background: linear-gradient(45deg, #1a2980, #26d0ce);
     margin-bottom: 2rem;
     border: 2px solid #e8f0f8;
+    touch-action: manipulation;
 }
 
 .video-feed, .canvas-overlay, .static-fallback {
@@ -586,6 +613,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    image-rendering: optimizeQuality;
 }
 
 .static-fallback {
@@ -609,6 +637,7 @@ body {
     user-select: none;
     transition: transform 0.2s;
     z-index: 10;
+    touch-action: none;
 }
 
 .draggable-glasses:active {
@@ -637,19 +666,21 @@ body {
 }
 
 .mobile-control-btn {
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
     border: none;
     background: white;
     color: #1a2980;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-width: 50px;
+    min-height: 50px;
 }
 
 .mobile-control-btn:active {
@@ -677,6 +708,7 @@ body {
     justify-content: center;
     z-index: 10;
     backdrop-filter: blur(5px);
+    touch-action: manipulation;
 }
 
 .permission-prompt {
@@ -735,6 +767,8 @@ body {
     justify-content: center;
     gap: 10px;
     font-size: 1rem;
+    min-height: 44px;
+    touch-action: manipulation;
 }
 
 .btn-primary {
@@ -751,12 +785,14 @@ body {
 .btn-large {
     padding: 1.2rem 2.5rem;
     font-size: 1.2rem;
+    min-height: 60px;
 }
 
 .btn-secondary {
     background: #f8fafc;
     color: #1a2980;
     border: 2px solid #e8f0f8;
+    min-height: 44px;
 }
 
 .btn-secondary:hover {
@@ -768,6 +804,7 @@ body {
     background: white;
     border: 2px solid #e8f0f8;
     color: #2c3e50;
+    min-height: 44px;
 }
 
 .btn-control:hover {
@@ -792,6 +829,7 @@ body {
     margin-top: 1.5rem;
     padding: 1.2rem;
     font-size: 1.1rem;
+    min-height: 60px;
 }
 
 /* ===== CONTROL PANEL ===== */
@@ -844,6 +882,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    min-height: 44px;
 }
 
 .light-btn:hover, .light-btn.active {
@@ -915,6 +954,8 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
+    min-width: 55px;
+    min-height: 55px;
 }
 
 .position-btn i {
@@ -951,6 +992,7 @@ body {
     justify-content: center;
     gap: 8px;
     color: #2c3e50;
+    min-height: 44px;
 }
 
 .adjust-btn:hover {
@@ -1033,6 +1075,7 @@ body {
     transition: all 0.3s;
     font-weight: 500;
     color: #5a6c7d;
+    min-height: 44px;
 }
 
 .filter-btn:hover, .filter-btn.active {
@@ -1052,6 +1095,7 @@ body {
     padding-right: 10px;
     scrollbar-width: thin;
     scrollbar-color: #c5dcf7 transparent;
+    -webkit-overflow-scrolling: touch;
 }
 
 .glasses-grid::-webkit-scrollbar {
@@ -1079,6 +1123,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 180px;
 }
 
 .glasses-card:hover {
@@ -1277,229 +1322,654 @@ body {
     opacity: 0.8;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-/* Tablet & Larger Phones */
+/* ============================================
+   ENHANCED MOBILE RESPONSIVENESS
+   ============================================ */
+
+/* Tablet & Small Desktop (max-width: 1200px) */
 @media (max-width: 1200px) {
     .container {
         flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .try-on-container, .selection-panel {
+        width: 100%;
+        min-width: 100%;
     }
     
     .camera-section {
         height: 450px;
     }
     
-    .panel-header {
-        flex-direction: column;
-        align-items: flex-start;
+    .controls-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .glasses-grid {
+        grid-template-columns: repeat(3, 1fr);
+        max-height: 400px;
     }
 }
 
-/* Mobile Phones - CRITICAL FIXES */
-@media (max-width: 768px) {
-    /* Navbar Fixes */
-    .navbar {
-        padding: 1rem;
+/* Large Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 1.5rem;
+        margin: 1.5rem auto;
     }
+    
+    .try-on-container, .selection-panel {
+        padding: 2rem;
+    }
+    
+    .camera-section {
+        height: 400px;
+    }
+    
+    .section-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .panel-header h2 {
+        font-size: 1.6rem;
+    }
+    
+    .glasses-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+}
 
-    .mobile-menu-btn {
-        display: block;
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
     }
     
     .nav-links {
-        display: none; /* Hidden by default */
-        position: absolute;
-        top: 100%;
+        display: none;
+        position: fixed;
+        top: 70px;
         left: 0;
         width: 100%;
         background: white;
         flex-direction: column;
         padding: 1.5rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        border-radius: 0 0 20px 20px;
-        z-index: 1001;
-        gap: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
+        gap: 0.5rem;
     }
     
     .nav-links.show {
-        display: flex; /* Shown via JS */
-        animation: slideDown 0.3s ease;
-    }
-
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        display: flex;
     }
     
     .nav-links a {
+        padding: 1rem 1.5rem;
+        margin: 0.2rem 0;
         width: 100%;
         text-align: center;
-        padding: 1rem;
-        font-size: 1.1rem;
-    }
-
-    .nav-links a.active::after {
-        display: none;
-    }
-    
-    .btn-contact {
-        width: 100%;
         justify-content: center;
+        min-height: 50px;
     }
     
-    /* Layout Fixes */
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
     .container {
         padding: 0 1rem;
         margin: 1rem auto;
+        gap: 1rem;
     }
     
-    .try-on-container,
-    .selection-panel {
+    .try-on-container, .selection-panel {
         padding: 1.5rem;
-        border-radius: 20px;
+        border-radius: 18px;
     }
     
-    /* Camera Fixes */
+    .section-header h1 {
+        font-size: 1.8rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .section-header .subtitle {
+        font-size: 1rem;
+        padding: 0 0.5rem;
+    }
+    
     .camera-section {
-        height: 50vh; /* Responsive height instead of fixed 400px */
-        min-height: 350px;
+        height: 350px;
+        border-radius: 16px;
     }
     
-    .permission-prompt {
+    .mobile-controls-overlay {
+        display: block;
+    }
+    
+    .control-panel {
         padding: 1.5rem;
-    }
-
-    .permission-prompt h3 {
-        font-size: 1.4rem;
+        margin-top: 1.5rem;
     }
     
-    /* Controls Fixes */
     .controls-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.8rem;
     }
-
-    .btn-control {
-        font-size: 0.9rem;
-        padding: 0.8rem 0.5rem;
-    }
     
-    .glasses-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.8rem;
-        max-height: 400px;
+    .lighting-controls h4,
+    .adjustment-controls h4 {
+        font-size: 1.1rem;
     }
     
     .lighting-options {
-        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .light-btn {
+        padding: 0.7rem 1rem;
+        font-size: 0.85rem;
+        flex: 1;
+        min-width: calc(50% - 0.5rem);
     }
     
     .adjustment-row {
         flex-direction: column;
+        gap: 0.5rem;
     }
     
     .adjust-btn {
+        padding: 0.9rem 1rem;
+        font-size: 0.9rem;
         width: 100%;
-        justify-content: center;
+    }
+    
+    .position-controls {
+        padding: 0;
     }
     
     .position-btn {
         width: 50px;
         height: 50px;
+        min-width: 50px;
+        min-height: 50px;
+    }
+    
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .panel-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .frame-count {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .filter-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.8rem;
+        gap: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .filter-btn {
+        padding: 0.6rem 1rem;
+        white-space: nowrap;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+    
+    .glasses-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+        max-height: 350px;
+    }
+    
+    .glasses-card {
+        padding: 1rem;
+        min-height: 160px;
+    }
+    
+    .glasses-card img {
+        height: 100px;
+        margin-bottom: 0.8rem;
+    }
+    
+    .glasses-card h4 {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .glasses-card p {
+        font-size: 0.8rem;
+    }
+    
+    .card-badge {
+        top: 8px;
+        right: 8px;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+    }
+    
+    .selected-frame {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+    
+    .selected-frame img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .btn-full-width {
+        padding: 1rem;
+        font-size: 1rem;
+        min-height: 55px;
+    }
+    
+    .privacy-note {
+        font-size: 0.85rem;
+        padding: 1rem;
+    }
+    
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    
+    .footer-section h4 {
+        font-size: 1.1rem;
+    }
+    
+    .footer {
+        padding: 3rem 1.5rem 1.5rem;
+        margin-top: 3rem;
+    }
+}
+
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .loading-title {
+        font-size: 2.5rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    .logo i {
+        font-size: 1.7rem;
+    }
+    
+    .container {
+        padding: 0 1rem;
+        margin: 0.5rem auto;
+    }
+    
+    .try-on-container, .selection-panel {
+        padding: 1.2rem;
+        border-radius: 16px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-header h1 {
+        font-size: 1.5rem;
+        gap: 0.5rem;
+    }
+    
+    .section-header .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .camera-section {
+        height: 300px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .mobile-controls {
+        padding: 0.6rem;
+        gap: 0.6rem;
+    }
+    
+    .mobile-control-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 1.2rem;
+    }
+    
+    .control-panel {
+        padding: 1.2rem;
+        margin-top: 1rem;
+    }
+    
+    .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+    
+    .btn-control {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.9rem;
+        min-height: 40px;
+    }
+    
+    .light-btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+        min-height: 40px;
+    }
+    
+    .adjustment-section {
+        margin-bottom: 1rem;
+    }
+    
+    .adjustment-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .adjust-btn {
+        padding: 0.8rem 0.8rem;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+    
+    .position-btn {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+        min-height: 45px;
     }
     
     .position-btn i {
         font-size: 1.2rem;
     }
     
-    .adjustment-controls {
-        padding: 1rem;
+    .keyboard-hint {
+        padding: 0.6rem;
+        font-size: 0.8rem;
+        margin-top: 0.8rem;
     }
     
-    /* Loading Screen Mobile Fixes */
-    .loading-title {
-        font-size: 2rem;
-    }
-    
-    /* Show Mobile Controls overlay on touch devices */
-    .mobile-controls-overlay {
-        display: block;
-    }
-
-    /* Popup Mobile Fixes */
-    .popup-content {
-        margin: 1rem;
-        max-height: 85vh;
-        width: 95%;
-    }
-    
-    .instruction-step {
-        flex-direction: column;
-        gap: 0.8rem;
-        text-align: left;
-    }
-    
-    .step-number {
-        align-self: flex-start;
-    }
-    
-    /* Footer Mobile Fixes */
-    .footer {
-        padding: 2rem 1rem;
-    }
-    
-    .footer-section {
-        margin-bottom: 1.5rem;
-    }
-}
-
-/* Extra Small Mobile Phones */
-@media (max-width: 480px) {
-    .section-header h1 {
-        font-size: 1.8rem;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .section-header .subtitle {
-        font-size: 1rem;
-    }
-    
-    .glasses-grid {
-        grid-template-columns: 1fr 1fr; /* Keep 2 columns but tighter */
-        gap: 0.5rem;
-    }
-
-    .glasses-card h4 {
+    .keyboard-hint small {
         font-size: 0.8rem;
     }
     
-    .controls-grid {
-        grid-template-columns: 1fr; /* Stack buttons completely */
+    .panel-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .frame-count {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
     }
     
     .filter-tabs {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
-        white-space: nowrap;
+        gap: 0.4rem;
+        padding-bottom: 0.6rem;
     }
     
-    .filter-tabs::-webkit-scrollbar {
-        height: 4px;
+    .filter-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        min-height: 38px;
     }
     
-    .position-btn {
-        width: 45px;
-        height: 45px;
+    .glasses-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+        max-height: 300px;
     }
     
-    .position-btn i {
+    .glasses-card {
+        padding: 0.8rem;
+        min-height: 150px;
+    }
+    
+    .glasses-card img {
+        height: 80px;
+        margin-bottom: 0.6rem;
+    }
+    
+    .glasses-card h4 {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .glasses-card p {
+        font-size: 0.75rem;
+    }
+    
+    .selected-frame {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .selected-frame img {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .selected-frame h4 {
         font-size: 1rem;
     }
     
-    .keyboard-hint {
+    .selected-frame p {
+        font-size: 0.85rem;
+    }
+    
+    .btn-full-width {
+        padding: 0.9rem;
+        font-size: 0.95rem;
+        min-height: 50px;
+    }
+    
+    .privacy-note {
         font-size: 0.8rem;
-        display: none; /* Hide keyboard hints on mobile since no keyboard */
+        padding: 0.8rem;
+        margin-top: 1rem;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .footer-section {
+        text-align: center;
+    }
+    
+    .footer-section ul li {
+        text-align: center;
+        padding-left: 0;
+    }
+    
+    .footer-section ul li::before {
+        display: none;
+    }
+    
+    .footer {
+        padding: 2rem 1rem 1rem;
+        margin-top: 2rem;
+    }
+}
+
+/* Small Mobile Devices (max-width: 360px) */
+@media (max-width: 360px) {
+    .camera-section {
+        height: 280px;
+    }
+    
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .glasses-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .position-btn {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+    }
+    
+    .adjust-btn {
+        font-size: 0.8rem;
+        padding: 0.7rem 0.6rem;
+    }
+    
+    .filter-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* ===== TOUCH-FRIENDLY ENHANCEMENTS ===== */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch target sizes */
+    .btn-primary, .btn-secondary, .btn-control,
+    .light-btn, .filter-btn, .adjust-btn,
+    .glasses-card, .contact-option-btn {
+        min-height: 44px; /* Apple's minimum touch target */
+    }
+    
+    .mobile-control-btn {
+        min-width: 50px;
+        min-height: 50px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .glasses-card:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: #e8f0f8;
+    }
+    
+    .glasses-card:active {
+        transform: scale(0.98);
+        background: #f0f8ff;
+        border-color: #1a2980;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Better scrolling */
+    .glasses-grid {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    
+    .glasses-grid::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Prevent text selection on touch */
+    .btn-primary, .btn-secondary, .btn-control,
+    .mobile-control-btn, .adjust-btn {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+}
+
+/* ===== ORIENTATION SPECIFIC ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .container {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .try-on-container {
+        flex: 2;
+        min-width: 60%;
+    }
+    
+    .selection-panel {
+        flex: 1;
+        min-width: 35%;
+    }
+    
+    .camera-section {
+        height: 280px;
+    }
+    
+    .glasses-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 200px;
+    }
+    
+    .controls-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ===== HIGH DPI DISPLAYS ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .btn-primary, .btn-secondary, .btn-control {
+        border-width: 1.5px;
+    }
+    
+    .mobile-control-btn {
+        border-width: 1.5px;
+    }
+    
+    .glasses-card {
+        border-width: 1.5px;
+    }
+}
+
+/* ===== SAFARI SPECIFIC FIXES ===== */
+@supports (-webkit-touch-callout: none) {
+    .camera-section {
+        height: 320px; /* Slightly taller for Safari */
+    }
+    
+    .loading-screen {
+        height: -webkit-fill-available;
+    }
+    
+    .glasses-grid {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fix for iOS bounce effect */
+    body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .container {
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ===== FIREFOX SCROLLBAR FIX ===== */
+@-moz-document url-prefix() {
+    .glasses-grid {
+        scrollbar-width: thin;
+        scrollbar-color: #c5dcf7 #f1f1f1;
     }
 }
 
@@ -1511,7 +1981,8 @@ body {
 }
 
 .adjust-btn:active,
-.position-btn:active {
+.position-btn:active,
+.mobile-control-btn:active {
     animation: buttonPress 0.2s ease;
 }
 
