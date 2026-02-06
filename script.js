@@ -3,7 +3,7 @@
 // ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
 // ✅ Professional "How-To" Text
 // ✅ Code Protection (Anti-Inspect)
-// ✅ REMOVED Mobile Accessibility per Pivot Plan
+// ✅ HARD BLOCK MOBILE ACCESS (No way in)
 // ✅ Removed Orientation Lock & Mobile Controls
 // ✅ Fixed SmartMode L/R labeling from user's perspective
 // ============================================
@@ -83,10 +83,17 @@ const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
 
-// PIVOT PLAN: REMOVED MOBILE SMARTMODE BUTTON
-
 // Image Cache
 const imageCache = new Map();
+
+// ===== MOBILE EXIT FUNCTION =====
+function attemptExit() {
+    try {
+        window.close();
+    } catch (e) {
+        alert("Please close this tab manually.");
+    }
+}
 
 // ===== CODE PROTECTION (ANTI-INSPECT) =====
 function enableCodeProtection() {
@@ -222,9 +229,6 @@ function initApplication() {
     showPermissionOverlay();
     loadFaceModels();
     shareBtn.disabled = false;
-    
-    // PIVOT PLAN: REMOVED MOBILE CHECK LOGIC
-    // Mobile controls are now physically removed from DOM
 }
 
 // ===== FACE MODEL LOADING =====
@@ -353,10 +357,6 @@ function setupEventListeners() {
             handleAdjustment(action);
         });
     });
-    
-    // PIVOT PLAN: REMOVED MOBILE CONTROL LISTENERS
-    
-    // PIVOT PLAN: REMOVED MOBILE SMARTMODE BUTTON LISTENER
     
     document.querySelectorAll('.light-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -893,7 +893,7 @@ function capturePhoto(action = 'open') {
 
 function captureFromCanvas() {
     try {
-        return canvasElement.toDataURL('image/png', 1.0);
+        return canvasElement.toDataURL('image/png',1.0);
     } catch (e) {
         console.warn('Tainted Canvas detected. Saving User Photo only.');
         return captureVideoOnly();
@@ -1210,8 +1210,6 @@ function handleAdjustment(action) {
     }
 }
 
-// PIVOT PLAN: REMOVED handleMobileControl()
-
 function filterGlasses(category) {
     const cards = document.querySelectorAll('.glasses-card');
     cards.forEach(card => {
@@ -1245,8 +1243,6 @@ function resetApp() {
         
         document.querySelectorAll('.light-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         document.querySelectorAll('.filter-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
-        
-        // PIVOT PLAN: REMOVED MOBILE SMARTMODE BUTTON RESET
         
         showPermissionOverlay();
         selectGlasses(glassesCatalog[0]);
