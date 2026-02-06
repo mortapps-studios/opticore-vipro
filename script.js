@@ -1,6 +1,6 @@
 // ============================================
-// OPTICORE VIPRO - FINAL RESOLUTION
-// Fixes: White Layer, Canvas Tilt, Orientation Lock
+// OPTICORE VIPRO - ENTERPRISE DESKTOP VERSION
+// Focused on Stability & Performance
 // ============================================
 
 // State Management
@@ -26,8 +26,7 @@ let state = {
     glassesX: 50,
     glassesY: 40,
     lastCapturedImage: null,
-    lastDetection: null,
-    isPortraitLocked: false
+    lastDetection: null
 };
 
 // Glasses Catalog
@@ -43,7 +42,7 @@ const glassesCatalog = [
     { id: 9, name: "Slim Oval", price: "Professional Grade", image: "frame9.png", category: ["professional", "contemporary"], scale: 0.76, style: "rectangle", verticalAdjust: 0.25 },
     { id: 10, name: "Bold Square", price: "Professional Grade", image: "frame10.png", category: ["professional", "contemporary"], scale: 0.88, style: "oversized", verticalAdjust: 0.29 },
     { id: 11, name: "Round Metal", price: "Professional Grade", image: "frame11.png", category: ["professional", "contemporary"], badge: "Premium", scale: 0.74, style: "rimless", verticalAdjust: 0.26 },
-    { id: 12, name: "Compact Rectangular", price: "Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.27 }
+    { id: 12, name: "Compact Rectangular", price: "professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.27 }
 ];
 
 // DOM Elements
@@ -67,7 +66,6 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
-const orientationLock = document.getElementById('orientation-lock');
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
@@ -79,9 +77,6 @@ const contactLink = document.getElementById('contactLink');
 const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
-
-// Mobile SmartMode Button
-const mobileSmartModeBtn = document.getElementById('mobileSmartModeBtn');
 
 // Image Cache
 const imageCache = new Map();
@@ -118,7 +113,7 @@ function showPopup(popupElement) {
 }
 
 function hidePopup(popupElement) {
-    popupElement.style.display = 'none';
+    popupElement.style.style.display = 'none';
 }
 
 function setupPopupCloseButtons() {
@@ -179,50 +174,17 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Final Resolution Version");
+    console.log("🔬 Opticore ViPro - Desktop/Tablet Enterprise Edition");
     
     enableCodeProtection();
     setupPopupCloseButtons();
     setupNavigation();
-
-    // Window Resize Listener to fix Canvas Tilt/Size issues
-    window.addEventListener('resize', updateCanvasDimensions);
-    window.addEventListener('orientationchange', updateCanvasDimensions);
     
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
     }, 4200);
 });
-
-// ===== CANVAS RESIZE FIX =====
-function updateCanvasDimensions() {
-    // This ensures canvas matches video resolution when phone rotates
-    if (state.isCameraActive && videoElement.videoWidth > 0) {
-        canvasElement.width = videoElement.videoWidth;
-        canvasElement.height = videoElement.videoHeight;
-        faceapi.matchDimensions(canvasElement, { width: videoElement.videoWidth, height: videoElement.videoHeight });
-    }
-    checkOrientation();
-}
-
-// ===== SMART ORIENTATION CHECK =====
-function checkOrientation() {
-    const isMobile = window.innerWidth < 992;
-    
-    if (isMobile) {
-        if (window.innerHeight > window.innerWidth) {
-            state.isPortraitLocked = true;
-            orientationLock.style.display = 'flex';
-        } else {
-            state.isPortraitLocked = false;
-            orientationLock.style.display = 'none';
-        }
-    } else {
-        state.isPortraitLocked = false;
-        orientationLock.style.display = 'none';
-    }
-}
 
 // ===== INIT APPLICATION =====
 function initApplication() {
@@ -231,12 +193,6 @@ function initApplication() {
     showPermissionOverlay();
     loadFaceModels();
     shareBtn.disabled = false;
-    
-    checkOrientation();
-    
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        document.getElementById('mobileControls').style.display = 'block';
-    }
 }
 
 // ===== FACE MODEL LOADING =====
@@ -254,7 +210,7 @@ async function loadFaceModels() {
         loadingText.textContent = 'Systems ready';
         
         setTimeout(() => {
-            loadingOverlay.classList.add('force-hidden');
+            loadingOverlay.style.display = 'none';
         }, 1000);
         
     } catch (error) {
@@ -262,7 +218,7 @@ async function loadFaceModels() {
         loadingText.textContent = 'Basic mode activated';
         state.modelsLoaded = false;
         setTimeout(() => {
-            loadingOverlay.classList.add('force-hidden');
+            loadingOverlay.style.display = 'none';
         }, 2000);
     }
 }
@@ -363,28 +319,6 @@ function setupEventListeners() {
         });
     });
     
-    document.querySelectorAll('.mobile-control-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const action = this.dataset.action;
-            handleMobileControl(action);
-        });
-    });
-    
-    if (mobileSmartModeBtn) {
-        mobileSmartModeBtn.addEventListener('click', () => {
-            state.smartMode = !state.smartMode;
-            if (state.smartMode) {
-                mobileSmartModeBtn.classList.add('active');
-            } else {
-                mobileSmartModeBtn.classList.remove('active');
-            }
-            showNotification(
-                `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
-                state.smartMode ? 'success' : 'info'
-            );
-        });
-    }
-    
     document.querySelectorAll('.light-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.light-btn').forEach(b => b.classList.remove('active'));
@@ -464,18 +398,14 @@ async function startCamera() {
         staticContainer.style.display = 'none';
         
         videoElement.onloadedmetadata = async () => {
-            // Update Canvas Dimensions immediately
-            updateCanvasDimensions();
             
             state.isCameraActive = true;
             state.isStaticMode = false;
             cameraStatus.textContent = 'On';
             toggleCameraBtn.innerHTML = '<i class="fas fa-video"></i> Camera: On';
             
-            // CRITICAL FIX: Force Hidden Overlays
-            loadingOverlay.classList.add('force-hidden');
-            permissionOverlay.classList.add('force-hidden');
-            orientationLock.style.display = 'none';
+            loadingOverlay.style.display = 'none';
+            permissionOverlay.style.display = 'none';
             
             if (state.modelsLoaded) {
                 startFaceDetection();
@@ -486,7 +416,7 @@ async function startCamera() {
         
     } catch (error) {
         console.error('Camera error:', error);
-        loadingOverlay.classList.add('force-hidden');
+        loadingOverlay.style.display = 'none';
         showNotification('Camera access denied. Using static mode.', 'warning');
         activateStaticMode();
     }
@@ -508,12 +438,6 @@ async function startFaceDetection() {
 }
 
 async function detectFaces() {
-    // Pause if in portrait
-    if (state.isPortraitLocked) {
-        requestAnimationFrame(detectFaces);
-        return;
-    }
-
     if (!state.faceDetectionActive || !state.isCameraActive) return;
     
     try {
@@ -730,11 +654,6 @@ function drawBasicVideo() {
     function drawLoop() {
         if (!state.isCameraActive || state.isStaticMode) return;
         
-        if (state.isPortraitLocked) {
-            requestAnimationFrame(drawLoop);
-            return;
-        }
-
         const ctx = canvasElement.getContext('2d');
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
@@ -759,11 +678,11 @@ function activateStaticMode() {
     staticContainer.style.display = 'flex';
     videoElement.style.display = 'none';
     canvasElement.style.display = 'none';
-    loadingOverlay.classList.add('force-hidden');
-    permissionOverlay.classList.add('force-hidden');
+    loadingOverlay.style.display = 'none';
+    permissionOverlay.style.display = 'none';
     
     cameraStatus.textContent = 'Static';
-    toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Static';
+    toggleCameraBtn.innerHTML = '<i class="繁琐 fa-video-slash"></i> Camera: Static';
     
     const cachedImg = imageCache.get(state.selectedGlasses.id);
     staticGlasses.src = cachedImg ? cachedImg.src : `assets/glasses/${state.selectedGlasses.image}`;
@@ -802,7 +721,7 @@ function makeDraggable(element) {
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
         document.addEventListener('touchmove', dragTouch);
-        document.addEventListener('touchend', stopDrag);
+        document.addEventListener('end', stopDrag);
         e.preventDefault();
     }
     
@@ -831,7 +750,7 @@ function makeDraggable(element) {
         const y = touch.clientY - container.top - offsetY;
         
         const percentX = (x / container.width) * 100;
-        const percentY = (y / container.height) * 100;
+        const const percentY = (y / container.height) * 100;
         
         state.glassesX = Math.max(10, Math.min(percentX, 90));
         state.glassesY = Math.max(10, Math.min(percentY, 90));
@@ -872,8 +791,7 @@ function toggleCamera() {
 }
 
 function showPermissionOverlay() {
-    loadingOverlay.classList.remove('force-hidden');
-    permissionOverlay.classList.remove('force-hidden');
+    loadingOverlay.style.display = 'none';
     permissionOverlay.style.display = 'flex';
 }
 
@@ -971,7 +889,7 @@ function captureFromStatic() {
             const containerRect = container.getBoundingClientRect();
             
             const x = (rect.left - containerRect.left) * (tempCanvas.width / container.offsetWidth);
-            const y = (rect.top - containerRect.top) * (tempCanvas.height / container.offsetHeight);
+            const y = ( rect.top - containerRect.top) * (tempCanvas.height / container.offsetHeight);
             const width = rect.width * (tempCanvas.width / container.offsetWidth);
             const height = rect.height * (tempCanvas.height / container.offsetHeight);
             
@@ -1026,7 +944,7 @@ function downloadImage(dataUrl) {
         const link = document.createElement('a');
         link.download = filename;
         link.href = dataUrl;
-        link.style.display = 'none';
+        link.style.display = 'none;
         document.body.appendChild(link);
         link.click();
         
@@ -1060,7 +978,7 @@ async function shareImage(dataUrl) {
                 showNotification('Shared successfully!', 'success');
                 return;
             } catch (shareError) {
-                if (shareError.name !== 'AbortError') console.log('Web Share failed:', shareError);
+                if (shareError.name !== 'AbtError') console.log('Web Share failed:', shareError);
             }
         }
         
@@ -1130,7 +1048,7 @@ function openResultPage(dataUrl) {
         <html>
         <head>
             <title>Your Try-On</title>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0/css/all.min.css">
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
@@ -1160,7 +1078,7 @@ function showNotification(message, type = 'info') {
             <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
             <span>${message}</span>
         </div>
-        <button class="notification-close">×</button>
+        <button class="notification-close">&times;</button>
     `;
     document.body.appendChild(notification);
     setTimeout(() => notification.classList.add('show'), 10);
@@ -1186,7 +1104,7 @@ if(!document.getElementById('notif-styles')) {
         .notification-success { border-left-color: #27ae60; background: linear-gradient(to right, #f0f9ff, white); }
         .notification-warning { border-left-color: #f39c12; background: linear-gradient(to right, #fef9e7, white); }
         .notification-content { display: flex; align-items: center; gap: 10px; }
-        .notification-close { background: none; border: none; font-size:1.5rem; cursor: pointer; color: #95a5a6; }
+        .notification-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #95a5a6; }
     `;
     document.head.appendChild(style);
 }
@@ -1206,14 +1124,10 @@ function applyCanvasFilter(filter) {
 function handleAdjustment(action) {
     switch(action) {
         case 'size-up':
-            state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
-            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-            break;
-        case 'size-down':
-            state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
-            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-            break;
-        case 'position-up':
+            state.glassesScale = Math.min(2.0, state.glassesScale + 0. Replaced Code Protection: Source Code Access Restricted', 'warning');
+    case 'size-down':
+            state.glassesScale = Replaced Code Protection: Source Code Access Restricted', 'warning');
+            case 'position-up':
             state.verticalOffset = Math.max(-0.3, state.verticalOffset - 0.03);
             if (state.isStaticMode) { state.glassesY = Math.max(10, state.glassesY - 2); staticGlasses.style.top = `${state.glassesY}%`; }
             break;
@@ -1227,13 +1141,9 @@ function handleAdjustment(action) {
             break;
         case 'position-right':
             state.horizontalOffset = Math.min(0.3, state.horizontalOffset + 0.03);
-            if (state.isStaticMode) { state.glassesX = Math.min(90, state.glassesX + 2); staticGlasses.style.left = `${state.glassesX}%`; }
+            if (state state.glassesX = Math.min(90, state.glassesX + 2); staticGlasses.style.left = `${state.glassesX}%`; }
             break;
     }
-}
-
-function handleMobileControl(action) {
-    handleAdjustment(action.replace('move-', 'position-').replace('zoom-', 'size-'));
 }
 
 function filterGlasses(category) {
@@ -1260,7 +1170,7 @@ function resetApp() {
             isCameraActive: false, selectedGlasses: glassesCatalog[0], isStaticMode: false, faceDetectionActive: false,
             currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
             glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
-            lastCapturedImage: null, lastDetection: null, isPortraitLocked: false
+            lastCapturedImage: null, lastDetection: null
         });
         
         videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
@@ -1270,8 +1180,6 @@ function resetApp() {
         document.querySelectorAll('.light-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         document.querySelectorAll('.filter-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
         
-        if (mobileSmartModeBtn) mobileSmartModeBtn.classList.remove('active');
-        
         showPermissionOverlay();
         selectGlasses(glassesCatalog[0]);
         filterGlasses('all');
@@ -1279,4 +1187,4 @@ function resetApp() {
     }
 }
 
-console.log("✅ Opticore ViPro - Final Resolution Version Loaded");
+console.log("✅ Opticore ViPro - Desktop/Tablet Enterprise Edition Loaded");
