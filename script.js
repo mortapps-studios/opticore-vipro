@@ -3,7 +3,7 @@
 // ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
 // ✅ Professional "How-To" Text
 // ✅ Code Protection (Anti-Inspect)
-// ✅ HARD BLOCK MOBILE ACCESS (No way in)
+// ✅ HARD BLOCK MOBILE ACCESS (Aggressive CSS Kill Switch)
 // ✅ Removed Orientation Lock & Mobile Controls
 // ✅ Fixed SmartMode L/R labeling from user's perspective
 // ============================================
@@ -91,7 +91,8 @@ function attemptExit() {
     try {
         window.close();
     } catch (e) {
-        alert("Please close this tab manually.");
+        // Fallback for browsers that block window.close()
+        window.location.href = "about:blank";
     }
 }
 
