@@ -94,7 +94,7 @@ body {
     background: linear-gradient(135deg, #c0392b, #a93226);
 }
 
-/* PIVOT PLAN: Mobile Access Cut-off (Aggressive Kill Switch) */
+/* MOBILE ACCESS CUT-OFF (AGGRESSIVE KILL SWITCH) */
 @media screen and (max-width: 768px) {
     /* 1. FREEZE THE PAGE AND PREVENT SCROLLING */
     html, body {
@@ -1335,5 +1335,3 @@ body {
     font-size: 0.9rem;
     opacity: 0.8;
 }
-
-/* PIVOT PLAN: REMOVED OLD MOBILE RESPONSIVENESS - KEEP PC/TABLET ONLY */
