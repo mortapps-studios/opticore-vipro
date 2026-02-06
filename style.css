@@ -13,63 +13,106 @@ body {
     overflow-x: hidden;
 }
 
-/* ===== MOBILE RESTRICTION OVERLAY (PIVOT PLAN) ===== */
+/* ===== MOBILE HARD BLOCK (PIVOT PLAN) ===== */
 .mobile-restriction-overlay {
     display: none; /* Hidden on PC/Tablet by default */
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: #0a192f; /* Deep Navy Background */
-    color: white;
-    z-index: 99999; /* Above everything */
-    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 25, 47, 0.98); /* Deep Navy with high opacity */
+    z-index: 9999999; /* Above EVERYTHING */
     align-items: center;
     justify-content: center;
-    text-align: center;
     padding: 2rem;
+    backdrop-filter: blur(10px);
 }
 
-.restriction-icon {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-    color: #26d0ce;
+.restriction-modal {
+    background: white;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.restriction-title {
-    font-size: 2rem;
+@keyframes modalPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    color: white;
+    font-size: 2.5rem;
+    box-shadow: 0 10px 25px rgba(26, 208, 206, 0.4);
+}
+
+.modal-title {
+    font-size: 1.75rem;
+    color: #1a2980;
     margin-bottom: 1rem;
     font-weight: 700;
 }
 
-.restriction-message {
-    font-size: 1.2rem;
-    max-width: 600px;
+.modal-message {
+    font-size: 1.1rem;
+    color: #5a6c7d;
     line-height: 1.6;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
-.restriction-note {
-    font-size: 0.9rem;
-    color: #8892b0;
-    border-top: 1px solid #233554;
-    padding-top: 1rem;
+.modal-exit-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-exit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+    background: linear-gradient(135deg, #c0392b, #a93226);
 }
 
 /* PIVOT PLAN: Mobile Access Cut-off (Below Tablet Size) */
 @media (max-width: 768px) {
-    /* 1. HIDE THE MAIN APPLICATION */
+    /* 1. COMPLETELY FREEZE THE PAGE */
     body {
-        overflow: hidden; /* Stop scrolling */
-    }
-    .navbar, .container, .footer, .loading-screen, .popup-overlay {
-        display: none !important;
+        overflow: hidden !important;
+        pointer-events: none !important; /* Disables all clicks underneath */
+        background: #0a192f !important; /* Force dark background */
     }
 
-    /* 2. SHOW THE RESTRICTION MESSAGE */
+    /* 2. HIDE ALL APP CONTENT (Loading screen, Navbar, Main, Footer, Popups) */
+    .navbar, .container, .footer, .loading-screen, .popup-overlay, .mobile-menu-btn {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* 3. SHOW THE PROFESSIONAL MODAL */
     .mobile-restriction-overlay {
         display: flex !important;
+        pointer-events: auto !important; /* Enable clicks on the modal */
     }
 }
 
@@ -672,8 +715,6 @@ body {
 .draggable-glasses:active {
     cursor: grabbing;
 }
-
-/* PIVOT PLAN: REMOVED MOBILE CONTROLS CSS */
 
 /* ===== OVERLAYS ===== */
 .overlay {
@@ -1289,4 +1330,5 @@ body {
     opacity: 0.8;
 }
 
-/* PIVOT PLAN: REMOVED OLD MOBILE RESPONSIVENESS LOGIC - KEEP PC/TABLET ONLY */
+/* ===== RESPONSIVE DESIGN & SMART LAYOUT EVOLUTION ===== */
+/* REMOVED OLD MOBILE RESPONSIVENESS - KEEP PC/TABLET ONLY */
