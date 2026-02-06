@@ -1,5 +1,6 @@
 // ============================================
-// OPTICORE VIPRO - FINAL CORRECTED VERSION
+// OPTICORE VIPRO - FINAL RESOLUTION
+// Fixes: White Layer, Canvas Tilt, Orientation Lock
 // ============================================
 
 // State Management
@@ -85,15 +86,13 @@ const mobileSmartModeBtn = document.getElementById('mobileSmartModeBtn');
 // Image Cache
 const imageCache = new Map();
 
-// ===== CODE PROTECTION (ANTI-INSPECT) =====
+// ===== CODE PROTECTION =====
 function enableCodeProtection() {
-    // Disable Right Click
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         showNotification('🔒 System Protected: Source Code Access Restricted', 'warning');
     });
 
-    // Disable F12
     document.addEventListener('keydown', (e) => {
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
             e.preventDefault();
@@ -180,41 +179,43 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Final Corrected Version");
+    console.log("🔬 Opticore ViPro - Final Resolution Version");
     
-    // 1. Enable Protection
     enableCodeProtection();
-    
-    // 2. Setup popups
     setupPopupCloseButtons();
-    
-    // 3. Setup navigation
     setupNavigation();
 
-    // 4. Orientation Listeners
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
+    // Window Resize Listener to fix Canvas Tilt/Size issues
+    window.addEventListener('resize', updateCanvasDimensions);
+    window.addEventListener('orientationchange', updateCanvasDimensions);
     
-    // 5. Start application
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
     }, 4200);
 });
 
-// ===== SMART ORIENTATION CHECK (FIXED) =====
+// ===== CANVAS RESIZE FIX =====
+function updateCanvasDimensions() {
+    // This ensures canvas matches video resolution when phone rotates
+    if (state.isCameraActive && videoElement.videoWidth > 0) {
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+        faceapi.matchDimensions(canvasElement, { width: videoElement.videoWidth, height: videoElement.videoHeight });
+    }
+    checkOrientation();
+}
+
+// ===== SMART ORIENTATION CHECK =====
 function checkOrientation() {
     const isMobile = window.innerWidth < 992;
     
     if (isMobile) {
-        // Check if Portrait
         if (window.innerHeight > window.innerWidth) {
             state.isPortraitLocked = true;
-            // Force display:flex just in case CSS is slow
             orientationLock.style.display = 'flex';
         } else {
             state.isPortraitLocked = false;
-            // Force display:none to ensure user sees the camera
             orientationLock.style.display = 'none';
         }
     } else {
@@ -231,7 +232,6 @@ function initApplication() {
     loadFaceModels();
     shareBtn.disabled = false;
     
-    // Initial check
     checkOrientation();
     
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -254,7 +254,7 @@ async function loadFaceModels() {
         loadingText.textContent = 'Systems ready';
         
         setTimeout(() => {
-            loadingOverlay.style.display = 'none';
+            loadingOverlay.classList.add('force-hidden');
         }, 1000);
         
     } catch (error) {
@@ -262,7 +262,7 @@ async function loadFaceModels() {
         loadingText.textContent = 'Basic mode activated';
         state.modelsLoaded = false;
         setTimeout(() => {
-            loadingOverlay.style.display = 'none';
+            loadingOverlay.classList.add('force-hidden');
         }, 2000);
     }
 }
@@ -446,8 +446,8 @@ function setupEventListeners() {
 // ===== CAMERA FUNCTIONS =====
 async function startCamera() {
     try {
-        loadingOverlay.style.display = 'flex';
         loadingText.textContent = 'Requesting camera access...';
+        loadingOverlay.style.display = 'flex';
         
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
@@ -464,17 +464,18 @@ async function startCamera() {
         staticContainer.style.display = 'none';
         
         videoElement.onloadedmetadata = async () => {
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
+            // Update Canvas Dimensions immediately
+            updateCanvasDimensions();
             
             state.isCameraActive = true;
             state.isStaticMode = false;
             cameraStatus.textContent = 'On';
             toggleCameraBtn.innerHTML = '<i class="fas fa-video"></i> Camera: On';
             
-            // CRITICAL FIX: Remove overlays IMMEDIATELY
-            loadingOverlay.style.display = 'none';
-            permissionOverlay.style.display = 'none';
+            // CRITICAL FIX: Force Hidden Overlays
+            loadingOverlay.classList.add('force-hidden');
+            permissionOverlay.classList.add('force-hidden');
+            orientationLock.style.display = 'none';
             
             if (state.modelsLoaded) {
                 startFaceDetection();
@@ -485,7 +486,7 @@ async function startCamera() {
         
     } catch (error) {
         console.error('Camera error:', error);
-        loadingOverlay.style.display = 'none';
+        loadingOverlay.classList.add('force-hidden');
         showNotification('Camera access denied. Using static mode.', 'warning');
         activateStaticMode();
     }
@@ -758,8 +759,8 @@ function activateStaticMode() {
     staticContainer.style.display = 'flex';
     videoElement.style.display = 'none';
     canvasElement.style.display = 'none';
-    loadingOverlay.style.display = 'none';
-    permissionOverlay.style.display = 'none';
+    loadingOverlay.classList.add('force-hidden');
+    permissionOverlay.classList.add('force-hidden');
     
     cameraStatus.textContent = 'Static';
     toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Static';
@@ -871,6 +872,8 @@ function toggleCamera() {
 }
 
 function showPermissionOverlay() {
+    loadingOverlay.classList.remove('force-hidden');
+    permissionOverlay.classList.remove('force-hidden');
     permissionOverlay.style.display = 'flex';
 }
 
@@ -1183,7 +1186,7 @@ if(!document.getElementById('notif-styles')) {
         .notification-success { border-left-color: #27ae60; background: linear-gradient(to right, #f0f9ff, white); }
         .notification-warning { border-left-color: #f39c12; background: linear-gradient(to right, #fef9e7, white); }
         .notification-content { display: flex; align-items: center; gap: 10px; }
-        .notification-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #95a5a6; }
+        .notification-close { background: none; border: none; font-size:1.5rem; cursor: pointer; color: #95a5a6; }
     `;
     document.head.appendChild(style);
 }
@@ -1276,4 +1279,4 @@ function resetApp() {
     }
 }
 
-console.log("✅ Opticore ViPro - Final Corrected Version Loaded");
+console.log("✅ Opticore ViPro - Final Resolution Version Loaded");
