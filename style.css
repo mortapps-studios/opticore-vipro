@@ -151,94 +151,6 @@ body {
     to { opacity: 0; visibility: hidden; }
 }
 
-/* ===== HARD FORCE HIDE (FIX FOR WHITE LAYER) ===== */
-.force-hidden {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-}
-
-/* ===== ORIENTATION LOCK ===== */
-.orientation-lock {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
-    z-index: 999999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-}
-
-@media screen and (orientation: portrait) and (max-width: 992px) {
-    .orientation-lock {
-        display: flex !important;
-    }
-}
-
-.orientation-content h2 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.orientation-content p {
-    font-size: 1.2rem;
-    opacity: 0.8;
-    margin-bottom: 2rem;
-}
-
-.rotate-device {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 2rem;
-    animation: rotatePhone 2s infinite ease-in-out;
-}
-
-.rotate-device i {
-    font-size: 4rem;
-    color: white;
-    position: relative;
-    z-index: 2;
-}
-
-.rotate-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 140px;
-    height: 140px;
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    animation: rotateRing 2s infinite linear;
-}
-
-.rotate-instruction {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    display: inline-flex;
-}
-
-@keyframes rotatePhone {
-    0%, 100% { transform: rotate(-90deg); }
-    50% { transform: rotate(-90deg) scale(1.1); }
-}
-
-@keyframes rotateRing {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 /* ===== POPUP OVERLAYS ===== */
 .popup-overlay {
     position: fixed;
@@ -326,7 +238,7 @@ body {
 .step-number {
     background: #3498db;
     color: white;
-    width: 32px;
+    width:  32px;
     height: 32px;
     border-radius: 50%;
     display: flex;
@@ -699,59 +611,6 @@ body {
 
 .draggable-glasses:active {
     cursor: grabbing;
-}
-
-/* ===== MOBILE CONTROLS ===== */
-.mobile-controls-overlay {
-    position: absolute;
-    z-index: 20;
-    display: none;
-}
-
-.mobile-controls {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 0.8rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.mobile-control-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: none;
-    background: white;
-    color: #1a2980;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.mobile-control-btn:active {
-    transform: scale(0.95);
-    background: #f0f8ff;
-}
-
-.mobile-smartmode-btn {
-    background: #1a2980;
-    color: white;
-}
-
-.mobile-smartmode-btn.active {
-    background: #26d0ce;
-    box-shadow: 0 0 10px #26d0ce;
-}
-
-.mobile-control-separator {
-    height: 1px;
-    background: #e8f0f8;
-    margin: 0.2rem 0;
 }
 
 /* ===== OVERLAYS ===== */
@@ -1368,99 +1227,59 @@ body {
     opacity: 0.8;
 }
 
-/* ===== RESPONSIVE DESIGN & FIXES ===== */
-
-/* Mobile Portrait: Orientation Lock */
-@media screen and (orientation: portrait) and (max-width: 992px) {
-    /* Handled by CSS media query on .orientation-lock */
-}
-
-/* Mobile Landscape: Fix Tilt & Responsiveness */
-@media screen and (orientation: landscape) and (max-width: 992px) {
-    .nav-links {
+/* ===== RESPONSIVE DESIGN ===== */
+/* Desktop Primary */
+@media (min-width: 993px) {
+    .mobile-controls-overlay {
         display: none;
     }
-    
-    .mobile-menu-btn {
-        display: block;
-    }
-    
-    .try-on-container, 
-    .selection-panel {
-        padding: 1rem;
-    }
-    
-    .desktop-only {
-        display: none; 
-    }
+}
 
-    .container {
-        flex-direction: row;
-        margin: 0;
-        padding: 0.5rem;
-        height: 95vh; /* Full Height */
-        align-items: stretch;
-    }
-    
-    .try-on-container {
-        flex: 2;
-        padding: 1rem;
-        margin-bottom: 0;
-    }
-    
-    .selection-panel {
-        flex: 1;
-        padding: 1rem;
-        overflow-y: auto;
-    }
-    
+/* Mobile - Clean Rejection */
+@media screen and (max-width: 992px) {
     .camera-section {
-        height: 100%; 
-        margin-bottom: 0;
+        height: 300px;
+    }
+    
+    .permission-prompt {
+        padding: 1.5rem;
     }
     
     .section-header {
         display: none;
     }
     
-    /* CONTROLS DOCKED RIGHT */
-    .mobile-controls-overlay {
-        display: block;
-        top: 50%;
-        bottom: auto;
-        left: auto;
-        right: 20px;
-        transform: translateY(-50%);
-        width: auto;
-        height: auto;
+    .try-on-container {
+        padding: 1rem;
+        margin-bottom: 0;
     }
     
-    .mobile-controls {
-        flex-direction: column;
-        padding: 0.5rem;
-    }
-    
-    .mobile-control-separator {
-        width: 30px;
-        height: 1px;
-        margin: 0.2rem 0;
-        background: #e8f0f8;
-    }
-    
-    /* Fix Grid Tilt */
-    .panel-header h2 {
-        font-size: 1.2rem;
-    }
-    
-    .glasses-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns in landscape */
-        max-height: 60vh;
-    }
-}
-
-/* Desktop: Unchanged */
-@media (min-width: 993px) {
-    .mobile-controls-overlay {
+    .desktop-only {
         display: none;
+    }
+    
+    .selection-panel {
+        display: none; /* Hide frames panel on mobile */
+    }
+    
+    /* FULL SCREEN MESSAGE */
+    body::after {
+        content: "Opticore ViPro requires a larger screen (Desktop/Tablet) for Precision Calibration.";
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(26, 41, 128, 0.95);
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        z-index: 9999;
+        font-size: 0.9rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        pointer-events: none;
     }
 }
