@@ -1,6 +1,6 @@
 // ============================================
-// OPTICORE VIPRO - ENTERPRISE DESKTOP VERSION
-// Focused on Stability & Performance
+// OPTICORE VIPRO - FINAL MASTERPIECE VERSION
+// Optimized for Desktop/Tablet Only. Mobile features removed.
 // ============================================
 
 // State Management
@@ -8,7 +8,7 @@ let state = {
     isCameraActive: false,
     selectedGlasses: {
         id: 1,
-        name: "Classic Thick-Rim Rectangular",
+        name: "Classic Thick-Rim",
         price: "Professional Grade",
         image: "frame1.png",
         style: "classic",
@@ -42,7 +42,7 @@ const glassesCatalog = [
     { id: 9, name: "Slim Oval", price: "Professional Grade", image: "frame9.png", category: ["professional", "contemporary"], scale: 0.76, style: "rectangle", verticalAdjust: 0.25 },
     { id: 10, name: "Bold Square", price: "Professional Grade", image: "frame10.png", category: ["professional", "contemporary"], scale: 0.88, style: "oversized", verticalAdjust: 0.29 },
     { id: 11, name: "Round Metal", price: "Professional Grade", image: "frame11.png", category: ["professional", "contemporary"], badge: "Premium", scale: 0.74, style: "rimless", verticalAdjust: 0.26 },
-    { id: 12, name: "Compact Rectangular", price: "professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.27 }
+    { id: 12, name: "Compact Rectangular", price: "Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.27 }
 ];
 
 // DOM Elements
@@ -77,6 +77,9 @@ const contactLink = document.getElementById('contactLink');
 const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
+
+// Mobile SmartMode Button
+const mobileSmartModeBtn = document.getElementById('mobileSmartModeBtn');
 
 // Image Cache
 const imageCache = new Map();
@@ -113,14 +116,14 @@ function showPopup(popupElement) {
 }
 
 function hidePopup(popupElement) {
-    popupElement.style.style.display = 'none';
+    popupElement.style.display = 'none';
 }
 
 function setupPopupCloseButtons() {
     document.querySelectorAll('.popup-close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             const popup = this.closest('.popup-overlay');
-            hidePopup(popup);
+            hidePopup(popupElement);
         });
     });
 }
@@ -152,6 +155,11 @@ function setupNavigation() {
         e.preventDefault();
         showPopup(contactPopup);
     });
+
+contactLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPopup(contactPopup);
+    });
 }
 
 function updateActiveNavLink(activeLink) {
@@ -174,12 +182,16 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Desktop/Tablet Enterprise Edition");
+    console.log("🔬 Opticore ViPro - Enterprise Edition (Desktop/Tablet Optimized)");
     
     enableCodeProtection();
     setupPopupCloseButtons();
     setupNavigation();
-    
+
+    // REMOVED: Window & Orientation Listeners for Desktop Only
+    // console.log("✅ Desktop/Desktop Mode Active");
+
+    // Wait for Loading Screen
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         initApplication();
@@ -193,6 +205,16 @@ function initApplication() {
     showPermissionOverlay();
     loadFaceModels();
     shareBtn.disabled = false;
+    showNotification('System Ready', 'success');
+
+    // SmartMode Button Logic
+    if (mobileSmartModeBtn) mobileSmartModeBtn.classList.remove('active');
+}
+
+    // Ensure grid is rendered
+    if (!document.getElementById('glassesGrid').innerHTML === '') {
+        renderGlassesGrid();
+    }
 }
 
 // ===== FACE MODEL LOADING =====
@@ -259,6 +281,7 @@ function preloadImage(src, id) {
     img.crossOrigin = 'anonymous';
     img.onload = function() {
         imageCache.set(id, img);
+        console.log(`✅ Loaded: ${src}`);
     };
     img.onerror = function() {
         console.error(`❌ Failed: ${src}`);
@@ -289,6 +312,7 @@ function selectGlasses(glasses) {
         } else {
             staticGlasses.src = `assets/glasses/${glasses.image}`;
         }
+        
         staticGlasses.style.width = `${200 * state.glassesScale}px`;
     }
     
@@ -319,6 +343,25 @@ function setupEventListeners() {
         });
     });
     
+    document.querySelectorAll('.mobile-control-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.dataset.action;
+            handleMobileControl(action);
+        });
+    });
+    
+    if (mobileSmartModeBtn) {
+        mobileSmartModeBtn.addEventListener('click', () => {
+            state.smartMode = !state.smartMode;
+            if (state.smartMode) {
+                mobileSmartModeBtn.classList.add('active');
+            } else {
+                mobileSmartModeBtn.classList.remove('active');
+            }
+            showNotification(`Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, state.smartMode ? 'success' : 'info');
+        });
+    }
+    
     document.querySelectorAll('.light-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.light-btn').forEach(b => b.classList.remove('active'));
@@ -334,7 +377,6 @@ function setupEventListeners() {
             this.classList.add('active');
             filterGlasses(this.textContent.toLowerCase());
         });
-    });
     
     sendToWhatsAppBtn.addEventListener('click', sendToWhatsAppDirect);
     
@@ -348,10 +390,7 @@ function setupEventListeners() {
         
         if (e.ctrlKey && e.key === 'd') {
             state.smartMode = !state.smartMode;
-            showNotification(
-                `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
-                state.smartMode ? 'success' : 'info'
-            );
+            showNotification(`Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}', state.smartMode ? 'success' : 'info');
             e.preventDefault();
             return;
         }
@@ -366,13 +405,17 @@ function setupEventListeners() {
                 if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
                 e.preventDefault(); break;
             case 'ArrowUp':
-                handleAdjustment('position-up'); e.preventDefault(); break;
+                handleAdjustment('position-up');
+                e.preventDefault(); break;
             case 'ArrowDown':
-                handleAdjustment('position-down'); e.preventDefault(); break;
+                handleAdjustment('position-down');
+                e.preventDefault(); break;
             case 'ArrowLeft':
-                handleAdjustment('position-left'); e.preventDefault(); break;
+                handleAdjustment('position-left');
+                e.preventDefault(); break;
             case 'ArrowRight':
-                handleAdjustment('position-right'); e.preventDefault(); break;
+                handleAdjustment('position-right');
+                e.preventDefault(); break;
         }
     });
 }
@@ -398,25 +441,27 @@ async function startCamera() {
         staticContainer.style.display = 'none';
         
         videoElement.onloadedmetadata = async () => {
+            // Updated to remove overlays on start
+            loadingOverlay.style.display = 'none';
+            permissionOverlay.style.display = 'none';
             
             state.isCameraActive = true;
             state.isStaticMode = false;
             cameraStatus.textContent = 'On';
             toggleCameraBtn.innerHTML = '<i class="fas fa-video"></i> Camera: On';
             
-            loadingOverlay.style.display = 'none';
-            permissionOverlay.style.display = 'none';
+            loadingOverlay.classList.add('display: none'); // Hide manual loading layer
+            permissionOverlay.classList.add('display: none'); // Hide permission layer
             
             if (state.modelsLoaded) {
                 startFaceDetection();
             } else {
                 drawBasicVideo();
             }
-        };
         
     } catch (error) {
         console.error('Camera error:', error);
-        loadingOverlay.style.display = 'none';
+        loadingOverlay.classList.add('display: none');
         showNotification('Camera access denied. Using static mode.', 'warning');
         activateStaticMode();
     }
@@ -432,13 +477,14 @@ async function startFaceDetection() {
         width: videoElement.videoWidth, 
         height: videoElement.videoHeight 
     };
+    
     faceapi.matchDimensions(canvasElement, displaySize);
     
     detectFaces();
 }
 
 async function detectFaces() {
-    if (!state.faceDetectionActive || !state.isCameraActive) return;
+    if (!state.isCameraActive || state.isStaticMode) return;
     
     try {
         const detections = await faceapi
@@ -457,6 +503,7 @@ async function detectFaces() {
             const detection = detections[0];
             state.lastDetection = detection;
             
+            // Cool SmartMode Visualization
             if (state.smartMode) {
                 drawCoolSmartMode(ctx, detection);
             }
@@ -506,7 +553,7 @@ function drawCoolSmartMode(ctx, detection) {
     // Green Box
     ctx.strokeStyle = '#00ff00';
     ctx.lineWidth = 3;
-    ctx.shadowColor = 'rgba(0, 255, 0, 0.5)';
+    ctx.shadowColor = 'rgba(0,255, 0, 0.5)';
     ctx.shadowBlur = 10;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
     ctx.shadowBlur = 0;
@@ -520,7 +567,7 @@ function drawCoolSmartMode(ctx, detection) {
         ctx.moveTo(positions[i].x, positions[i].y);
         ctx.lineTo(positions[i+1].x, positions[i+1].y);
     }
-    ctx.moveTo(positions[positions.length-1].x, positions[positions.length-1].y);
+    ctx.moveTo(positions[positions.length-1].x, positions[0].x, positions[0].y);
     ctx.lineTo(positions[0].x, positions[0].y);
     ctx.stroke();
     ctx.globalAlpha = 1.0;
@@ -588,6 +635,7 @@ function getCenterPoint(points) {
     };
 }
 
+// ===== DRAW GLASSES =====
 function drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale) {
     const glassesImg = imageCache.get(state.selectedGlasses.id);
     if (!glassesImg || !glassesImg.complete) return;
@@ -682,7 +730,7 @@ function activateStaticMode() {
     permissionOverlay.style.display = 'none';
     
     cameraStatus.textContent = 'Static';
-    toggleCameraBtn.innerHTML = '<i class="繁琐 fa-video-slash"></i> Camera: Static';
+    toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Static';
     
     const cachedImg = imageCache.get(state.selectedGlasses.id);
     staticGlasses.src = cachedImg ? cachedImg.src : `assets/glasses/${state.selectedGlasses.image}`;
@@ -692,6 +740,7 @@ function activateStaticMode() {
     staticGlasses.style.left = `${state.glassesX}%`;
     staticGlasses.style.top = `${state.glassesY}%`;
     staticGlasses.style.transform = 'translate(-50%, -50%)';
+    
     staticGlasses.style.cursor = 'grab';
     
     makeDraggable(staticGlasses);
@@ -700,10 +749,10 @@ function activateStaticMode() {
 function makeDraggable(element) {
     let isDragging = false;
     let offsetX, offsetY;
-    
+
     element.addEventListener('mousedown', startDrag);
     element.addEventListener('touchstart', startDragTouch);
-    
+
     function startDrag(e) {
         isDragging = true;
         offsetX = e.offsetX;
@@ -713,7 +762,7 @@ function makeDraggable(element) {
         document.addEventListener('mouseup', stopDrag);
         e.preventDefault();
     }
-    
+
     function startDragTouch(e) {
         isDragging = true;
         const touch = e.touches[0];
@@ -721,10 +770,10 @@ function makeDraggable(element) {
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
         document.addEventListener('touchmove', dragTouch);
-        document.addEventListener('end', stopDrag);
+        document.addEventListener('touchend', stopDrag);
         e.preventDefault();
     }
-    
+
     function drag(e) {
         if (!isDragging) return;
         const container = staticContainer.getBoundingClientRect();
@@ -740,32 +789,37 @@ function makeDraggable(element) {
         element.style.left = `${state.glassesX}%`;
         element.style.top = `${state.glassesY}%`;
         element.style.transform = 'translate(-50%, -50%)';
+        element.style.left = `${state.glassesX}%`;
+        element.style.top = `${state.glassesY}%`;
+        element.style.transform = 'translate(-50%, -50%)';
     }
-    
+
     function dragTouch(e) {
         if (!isDragging) return;
         const touch = e.touches[0];
         const container = staticContainer.getBoundingClientRect();
         const x = touch.clientX - container.left - offsetX;
         const y = touch.clientY - container.top - offsetY;
-        
+
         const percentX = (x / container.width) * 100;
-        const const percentY = (y / container.height) * 100;
+        const percentY = (y / container.height) * 100;
         
         state.glassesX = Math.max(10, Math.min(percentX, 90));
         state.glassesY = Math.max(10, Math.min(percentY, 90));
         
         element.style.left = `${state.glassesX}%`;
         element.style.top = `${state.glassesY}%`;
+        element.style.top = `${state.glassesY}%`;
+        element.style.left = `${state.glassesX}%`;
+        element.style.top = `${state.glassesY}%`;
         element.style.transform = 'translate(-50%, -50%)';
     }
-    
+
     function stopDrag() {
         isDragging = false;
         element.style.cursor = 'grab';
         document.removeEventListener('mousemove', drag);
         document.removeEventListener('touchmove', dragTouch);
-        document.removeEventListener('mouseup', stopDrag);
         document.removeEventListener('touchend', stopDrag);
     }
 }
@@ -780,7 +834,7 @@ function toggleCamera() {
         state.isCameraActive = false;
         cameraStatus.textContent = 'Off';
         toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Off';
-        
+
         const ctx = canvasElement.getContext('2d');
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         
@@ -791,7 +845,7 @@ function toggleCamera() {
 }
 
 function showPermissionOverlay() {
-    loadingOverlay.style.display = 'none';
+    loadingOverlay.classList.remove('display: none');
     permissionOverlay.style.display = 'flex';
 }
 
@@ -823,6 +877,12 @@ function capturePhoto(action = 'open') {
             case 'share':
                 shareImage(dataUrl);
                 break;
+            case 'download':
+                downloadImage(dataUrl);
+                break;
+            case 'share':
+                shareImage(dataUrl);
+                break;
         }
         
     } catch (error) {
@@ -835,7 +895,7 @@ function captureFromCanvas() {
     try {
         return canvasElement.toDataURL('image/png', 1.0);
     } catch (e) {
-        console.warn('Tainted Canvas detected.');
+        console.warn('Tainted Canvas detected. Saving user photo only.');
         return captureVideoOnly();
     }
 }
@@ -846,15 +906,20 @@ function captureVideoOnly() {
     
     tempCanvas.width = canvasElement.width;
     tempCanvas.height = canvasElement.height;
-    
+
+    const ctx = tempCtx = tempCanvas.getContext('2d');
     ctx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
     
     if (state.currentFilter && state.currentFilter !== 'none') {
         ctx.filter = state.currentFilter;
     }
-    
+
     ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
     ctx.font = 'bold 24px Arial';
+    ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+    
+    ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
+    ctx.font = 'bold 20px Arial';
     ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
     
     return tempCanvas.toDataURL('image/png', 1.0);
@@ -873,6 +938,7 @@ function captureFromStatic() {
         }
         
         const bg = document.getElementById('staticModel');
+        const bg = document.getElementById('staticModel');
         if (bg && bg.complete) {
             const scale = Math.min(tempCanvas.width / bg.naturalWidth, tempCanvas.height / bg.naturalHeight) * 0.85;
             const width = bg.naturalWidth * scale;
@@ -889,12 +955,20 @@ function captureFromStatic() {
             const containerRect = container.getBoundingClientRect();
             
             const x = (rect.left - containerRect.left) * (tempCanvas.width / container.offsetWidth);
-            const y = ( rect.top - containerRect.top) * (tempCanvas.height / container.offsetHeight);
+            const y = (rect.top - containerRect.top) * (tempCanvas.height / container.offsetHeight);
+            const width = rect.width * (tempCanvas.width / container.offsetWidth);
+            const height = rect.height * (tempCanvas.height / container.offsetHeight);
+            
+            const x = (rect.left - containerRect.left) * (tempCanvas.width / container.offsetWidth);
+            const y = (rect.top - containerRect.top) * (tempCanvas.height / container.offsetHeight);
+            
             const width = rect.width * (tempCanvas.width / container.offsetWidth);
             const height = rect.height * (tempCanvas.height / container.offsetHeight);
             
             ctx.drawImage(glassesImg, x, y, width, height);
         }
+        
+        ctx.filter = 'none';
         
         ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
         ctx.font = 'bold 20px Arial';
@@ -920,7 +994,7 @@ function createFallbackCapture() {
     const glassesImg = imageCache.get(state.selectedGlasses.id);
     if (glassesImg && glassesImg.complete) {
         const scale = 0.5;
-        ctx.drawImage(glassesImg, tempCanvas.width/2 - (glassesImg.width*scale)/2, tempCanvas.height/2 - (glassesImg.height*scale)/2, glassesImg.width*scale, glassesImg.height*scale);
+        ctx.drawImage(glassesImg, tempCanvas.width/2 - (glassesImg.width*scale)/2, tempCanvas.height/2, glassesImg.width*scale, glassesImg.height*scale);
     }
     
     ctx.fillStyle = '#1a2980';
@@ -930,7 +1004,7 @@ function createFallbackCapture() {
     
     ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
     ctx.font = 'bold 20px Arial';
-    ctx.textAlign = 'left';
+    ctx.textAlign = 'center';
     ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
     
     return tempCanvas.toDataURL('image/png', 1.0);
@@ -938,13 +1012,182 @@ function createFallbackCapture() {
 
 function downloadImage(dataUrl) {
     try {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-', '').substring(0, 19);
         const filename = `opticore-tryon-${timestamp}.png`;
         
         const link = document.createElement('a');
         link.download = filename;
         link.href = dataUrl;
-        link.style.display = 'none;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        
+        setTimeout(() => {
+            document.body.removeChild(link);
+        }, 100);
+        
+        showNotification('Download started!', 'success');
+        
+    } catch (error) {
+        console.error('Download error:', error);
+        showNotification('Download failed.', 'error');
+    }
+}
+
+function shareImage(dataUrl) {
+    try {
+        const message = `Check out my virtual try-on with ${state.selectedGlasses.name} from Opticore ViPro!`;
+        
+        if (navigator.share) {
+            try {
+                const response = await fetch(dataUrl);
+                const blob = await response.blob();
+                const file = new File([blob], 'opticore-tryon.png', { type: 'image/png' });
+                
+                await navigator.share({
+                    title: 'My Opticore ViPro Virtual Try-On',
+                    text: message,
+                    files: [file]
+                });
+                showNotification('Shared successfully!', 'success');
+                return;
+            } catch (shareError) {
+                if (shareError.name !== 'AbortError') console.log('Web Share failed:', shareError);
+            }
+        }
+        
+        showShareOptions(dataUrl, message);
+        
+    } catch (error) {
+        console.error('Share error:', error);
+        showNotification('Share failed. Try downloading instead.', 'error');
+    }
+}
+
+function showShareOptions(dataUrl, message) {
+    const encodedMessage = encodeURIComponent(message);
+    const shareHTML = `
+        <div class="popup-overlay" id="sharePopup" style="display: flex;">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h3><i class="fas fa-share-alt"></i> Share Your Try-On</h3>
+                    <button class="popup-close">&times;</button>
+                </div>
+                <div class="popup-body">
+                    <p style="margin-bottom: 1.5rem; color: #5a6c7d;">Choose how to share:</p>
+                    <div class="contact-options">
+                        <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+                                <strong>WhatsApp</strong>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Share via WhatsApp</p>
+                            </div>
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" class="contact-option-btn" style="border-color: #3b5998;">
+                            <i class="fab fa-facebook" style="color: #3b5998; font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>Facebook</strong>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Share on Facebook</p>
+                            </div>
+                        </a>
+                        <button onclick="navigator.clipboard.writeText('${dataUrl}').then(() => alert('Image data copied!')).catch(() => alert('Download first')).catch(() => alert('Download first'));" class="contact-option-btn" style="border-color: #e74c3c;">
+                            <i class="fas fa-download" style="color: #e74c3c; font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>Download First</strong>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Download image to share</p>
+                            </div>
+                        </button>
+                    </div>
+                    <button onclick="document.getElementById('sharePopup').remove()" class="btn-secondary" style="width: 100%; margin-top: 1rem;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const div = document.createElement('div');
+    div.innerHTML = shareHTML;
+    document.body.appendChild(div);
+}
+
+function openResultPage(dataUrl) {
+    const win = window.open('', '_blank', 'width=1000,height=750,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes');
+    if (!win) {
+        showNotification('Please allow popups.', 'warning');
+        downloadImage(dataUrl);
+        return;
+    }
+    
+    win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Result</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+                body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+                .result-container { background: white; border-radius: 24px; padding: 3rem; max-width: 900px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
+                .result-container h1 { color: #1a2980; margin-bottom: 1rem; font-size: 2.5rem; }
+                img { max-width: 100%; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+                <button class="btn-primary">Close</button>
+            </div>
+        </body>
+        </html>
+    `);
+    win.document.close();
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close">×</button>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    });
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+// Add Notification Styles dynamically if missing
+if(!document.getElementById('notif-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notif-styles';
+    style.textContent = `
+        .notification { position: fixed; top: 20px; right: 20px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); z-index: 10000; display: flex; align-items: center; gap: 15px; border-left: 5px solid #3498db; transform: translateX(120%); transition: transform: 0.3s; }
+        .notification.show { transform: translateX(0); }
+        .notification-success { border-left-color: #27ae60; background: linear-gradient(to right, #f0f9ff, white); border-left-color: #27ae60; }
+        .notification-warning { border-left-color: #f39c12; background: linear-gradient(to right, #fef9e7, white); border-left-color: #f39c12; }
+        .notification-content { display: flex; align-items: center; gap: 10px; }
+        .notification-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #95a5a6; display: none; }
+        .notification-close:hover { background: rgba(255, 255, 255, 0.2); border-radius: 50%; transition: background: rgba(255, 255, 255, 0.1); }
+        </div>
+    `;
+    document.head.appendChild(style);
+}
+
+function downloadImage(dataUrl) {
+    try {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-', '').substring(0, 19);
+        const filename = `opticore-tryon-${timestamp}.png`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
         
@@ -978,7 +1221,7 @@ async function shareImage(dataUrl) {
                 showNotification('Shared successfully!', 'success');
                 return;
             } catch (shareError) {
-                if (shareError.name !== 'AbtError') console.log('Web Share failed:', shareError);
+                if (shareError.name !== 'AbortError') console.log('Web Share failed:', shareError);
             }
         }
         
@@ -990,49 +1233,437 @@ async function shareImage(dataUrl) {
     }
 }
 
-function showShareOptions(dataUrl, message) {
-    const encodedMessage = encodeURIComponent(message);
-    const shareHTML = `
-        <div class="popup-overlay" id="sharePopup" style="display: flex;">
-            <div class="popup-content">
-                <div class="popup-header">
-                    <h3><i class="fas fa-share-alt"></i> Share Your Try-On</h3>
-                    <button class="popup-close" onclick="document.getElementById('sharePopup').remove()">×</button>
-                </div>
-                <div class="popup-body">
-                    <p style="margin-bottom:1.5rem; color: #5a6c7d;">Choose how to share:</p>
-                    <div class="contact-options">
-                        <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
-                            <i class="fab fa-whatsapp"></i>
-                            <div>
-                                <strong>WhatsApp</strong>
-                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Share via WhatsApp</p>
-                            </div>
-                        </a>
-                        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" class="contact-option-btn" style="border-color: #3b5998;">
-                            <i class="fab fa-facebook" style="color: #3b5998; font-size: 1.5rem;"></i>
-                            <div>
-                                <strong>Facebook</strong>
-                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Share on Facebook</p>
-                            </div>
-                        </a>
-                        <button onclick="navigator.clipboard.writeText('${dataUrl}').then(() => alert('Image data copied!')).catch(() => alert('Download first'));" class="contact-option-btn" style="border-color: #e74c3c;">
-                            <i class="fas fa-download" style="color: #e74c3c; font-size: 1.5rem;"></i>
-                            <div>
-                                <strong>Download First</strong>
-                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Download image to share</p>
-                            </div>
-                        </button>
-                    </div>
-                    <button onclick="document.getElementById('sharePopup').remove()" class="btn-secondary" style="width: 100%; margin-top: 1rem;">Cancel</button>
-                </div>
-            </div>
-        </div>
-    `;
+// ===== CANVAS FUNCTIONS =====
+async function drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale) {
+    const glassesImg = imageCache.get(state.selectedGlasses.id);
+    if (!glassesImg || !glassesImg.complete) return;
     
-    const div = document.createElement('div');
-    div.innerHTML = shareHTML;
-    document.body.appendChild(div);
+    const aspectRatio = glassesImg.width / glassesImg.height;
+    const glassesWidth = baseWidth * frameScale * userScale;
+    const glassesHeight = glassesWidth / aspectRatio;
+    
+    const verticalAdjust = (state.selectedGlasses.verticalAdjust || 0.25) * eyeDistance;
+    const userVerticalOffset = state.verticalOffset * eyeDistance;
+    const userHorizontalOffset = state.horizontalOffset * eyeDistance;
+    
+    const finalX = centerX + userHorizontalOffset;
+    const finalY = centerY + verticalAdjust + userVerticalOffset;
+    
+    ctx.save();
+    ctx.translate(finalX, finalY);
+    
+    if (state.currentFilter && state.currentFilter !== 'none') {
+        ctx.filter = state.currentFilter;
+    }
+    
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    ctx.drawImage(
+        glassesImg,
+        -glassesWidth / 2,
+        -glassesHeight / 2,
+        glassesWidth,
+        glassesHeight
+    );
+    
+    ctx.restore();
+}
+
+function drawCenteredGlasses(ctx) {
+    const glassesImg = imageCache.get(state.selectedGlasses.id);
+    if (!glassesImg || !glassesImg.complete) return;
+    
+    const scale = 0.3 * state.glassesScale;
+    const x = canvasElement.width / 2;
+    const y = canvasElement.height / 2;
+    
+    ctx.save();
+    ctx.translate(x, y);
+    
+    if (state.currentFilter && state.currentFilter !== 'none') {
+        ctx.filter = state.currentFilter;
+    }
+    
+    ctx.drawImage(
+        glassesImg,
+        -glassesImg.width * scale,
+        -glassesImg.height * scale,
+        glassesImg.width * scale,
+        glassesImg.height * scale
+    );
+    
+    ctx.restore();
+}
+
+function drawBasicVideo() {
+    function drawLoop() {
+        function drawLoop() {
+            if (!state.isCameraActive || state.isStaticMode) return;
+        
+        if (state.isPortraitLocked) {
+            requestAnimationFrame(drawLoop);
+            return;
+        }
+
+        const ctx = canvasElement.getContext('2d');
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+        
+        drawCenteredGlasses(ctx);
+        
+        requestAnimationFrame(drawLoop);
+    }
+    drawLoop();
+}
+
+function activateStaticMode() {
+    state.isStaticMode = true;
+    state.isCameraActive = false;
+    state.faceDetectionActive = false;
+    
+    if (videoElement.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+    }
+    
+    staticContainer.style.display = 'flex';
+    videoElement.style.display = 'none';
+    canvasElement.style.display = 'none';
+    loadingOverlay.style.display = 'none';
+    permissionOverlay.style.display = 'none';
+    
+    cameraStatus.textContent = 'Static';
+    toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Static';
+    
+    const cachedImg = imageCache.get(state.selectedGlasses.id);
+    staticGlasses.src = cachedImg ? cachedImg.src : `assets/glasses/${state.selectedGlasses.image}`;
+    
+    staticGlasses.style.position = 'absolute';
+    staticGlasses.style.width = `${200 * state.glassesScale}px`;
+    staticGlasses.style.left = `${state.glassesX}%`;
+    staticGlasses.style.top = `${state.glassesY}%`;
+    staticGlasses.style.transform = 'translate(-50%, -50%)';
+    staticGlasses.style.cursor = 'grab';
+    
+    makeDraggable(staticGlasses);
+}
+
+function makeDraggable(element) {
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    element.addEventListener('mousedown', startDrag);
+    element.addEventListener('touchstart', startDragTouch);
+
+    function startDrag(e) {
+        isDragging = true;
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
+        element.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDrag);
+        e.preventDefault();
+    }
+
+    function startDragTouch(e) {
+        isDragging = true;
+        const touch = e.touches[0];
+        const rect = element.getBoundingClientRect();
+        const offsetX = touch.clientX - rect.left;
+        const offsetY = touch.clientY - rect.top;
+        document.addEventListener('touchmove', dragTouch);
+        document.addEventListener('touchend', stopDrag);
+        e.preventDefault();
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+
+        const container = staticContainer.getBoundingClientRect();
+        const x = e.clientX - container.left - offsetX;
+        const y = e.clientY - container.top - offsetY;
+        
+        const percentX = (x / container.width) * 100;
+        const percentY = (y / container.height) * 100;
+
+        state.glassesX = Math.max(10, Math.min(percentX, 90));
+        state.glassesY = Math.max(10, Math.min(percentY, 90));
+
+        element.style.left = `${state.glassesX}%`;
+        element.style.top = `${state.glassesY}%`;
+        element.style.transform = 'translate(-50%, -50%)';
+
+    function dragTouch(e) {
+        if (!isDragging) return;
+
+        const touch = e.touches[0];
+        const container = staticContainer.getBoundingClientRect();
+        const x = touch.clientX - container.offsetX;
+        const y = touch.clientY - container.top - offsetY;
+
+        const percentX = (x / container.width) * 100;
+        const percentY = (y / container.height) * 100;
+
+        state.glassesX = Math.max(10, Math.min(percentX, 90));
+        state.glassesY = Math.max(10, Math.min(percentY, 90));
+
+        element.style.left = `${state.glassesX}%`;
+        element.style.top = `${state.glassesY}%`;
+        element.style.top = `${state.glassesY}%`;
+        element.style.transform = 'translate(-50%, -50%)';
+    }
+
+    function stopDrag() {
+        isDragging = false;
+        element.style.cursor = 'grab';
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('touchmove', dragTouch);
+        document.removeEventListener('touchend', stopDrag');
+    }
+
+function toggleCamera() {
+    if (state.isCameraActive) {
+        state.faceDetectionActive = false;
+        const stream = videoElement.srcObject;
+        if (stream) stream.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+        
+        state.isCameraActive = false;
+        cameraStatus.textContent = 'Off';
+        toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Off';
+
+        const ctx = canvasElement.getContext('2d');
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        
+        showPermissionOverlay();
+    } else {
+        startCamera();
+    }
+}
+
+function showPermissionOverlay() {
+    loadingOverlay.classList.add('display: none');
+    permissionOverlay.style.display = 'flex';
+}
+
+// ===== CAPTURE FUNCTION =====
+function capturePhoto(action = 'open') {
+    try {
+        let dataUrl;
+
+        if (state.isCameraActive && !state.isStaticMode) {
+            dataUrl = captureFromCanvas();
+        } else if (state.isStaticMode) {
+            dataUrl = captureFromStatic();
+        } else {
+            throw new Error('No active view to capture');
+        }
+        
+        if (!dataUrl) throw new Error('Failed to generate image');
+        
+        state.lastCapturedImage = dataUrl;
+        
+        switch(action) {
+            case 'open':
+                openResultPage(dataUrl);
+                showNotification('Capture successful!', 'success');
+                break;
+            case 'download':
+                downloadImage(dataUrl);
+                break;
+            case 'share':
+                shareImage(dataUrl);
+                break;
+            case 'download':
+                downloadImage(dataUrl);
+                break;
+        }
+        
+    } catch (error) {
+        console.error('Capture error:', error);
+        showNotification(`Capture failed: ${error.message}`, 'error');
+    }
+}
+
+function captureFromCanvas() {
+    try {
+        return canvasElement.toDataURL('image/png', 1.0);
+    } catch (e) {
+        console.warn('Tainted Canvas detected. Saving user photo only.');
+        return captureVideoOnly();
+    }
+}
+
+function captureVideoOnly() {
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas = tempCanvas.getContext('2d');
+
+    tempCanvas.width = canvasElement.width;
+    tempCanvas.height = canvasElement.height;
+
+    ctx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
+    
+    if (state.currentFilter && state.currentFilter !== 'none') {
+        ctx.filter = state.currentFilter;
+    }
+
+    ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+    
+    ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+    
+    return tempCanvas.toDataURL('image/png', 1.0);
+}
+
+function captureFromStatic() {
+    try {
+        const tempCanvas = document.createElement('canvas');
+        const ctx = tempCanvas = tempCanvas.getContext('2d');
+        
+        tempCanvas.width = 800;
+        tempCanvas.height = 600;
+        
+        if (state.currentFilter && state.currentFilter !== 'none') {
+            ctx.filter = state.currentFilter;
+        }
+        
+        const bg = document.getElementById('staticModel');
+        const bg = document.getElementById('staticModel');
+        if (bg && bg.complete) {
+            const scale = Math.min(tempCanvas.width / bg.naturalWidth, tempCanvas.height / bg.naturalHeight) * 0.85;
+            const width = bg.naturalWidth * scale;
+            const height = bg.naturalHeight * scale;
+            ctx.drawImage(bg, (tempCanvas.width - width) / 2, (tempCanvas.height - height) / 2, width, height);
+            ctx.drawImage(bg, (tempCanvas.width - width) / 2, (tempCanvas.height / 2, width, height);
+            
+            ctx.filter = 'none';
+        }
+        
+        //  ctx.filter = 'none';
+        
+        const glassesImg = imageCache.get(state.selectedGlasses.id);
+        if (glassesImg && glassesImg.complete) {
+            const container = staticContainer;
+            const rect = staticGlasses.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const containerRect = containerRect.getBoundingClientRect();
+            
+            const x = (rect.left - containerRect.left - containerRect.left) * (tempCanvas.width / container.offsetWidth);
+            const y = (rect.top - containerRect.top - containerRect.top - containerRect.height) * (tempCanvas.height / container.offsetHeight);
+            const width = rect.width * (tempCanvas.width / container.offsetWidth);
+            const height = rect.height * (tempCanvas.height / container.offsetHeight);
+            
+            const x = (rect.left - containerRect.left - containerRect.left);
+            const y = (rect.top - containerRect.top - containerRect.top - containerRect.height) * (tempCanvas.height / container.offsetHeight);
+            const width = rect.width * (tempCanvas.width / container.offsetWidth);
+            const height = rect.height * (tempCanvas.height / container.offsetHeight);
+            
+            const x = (rect.left - containerRect.left - containerRect.left - offsetX;
+            const y = (rect.top - containerRect.top - offsetY;
+            
+            const percentX = (x / container.width) * 100;
+            const percentY = (y / container.height) * 100;
+            
+            const width = rect.width * (tempCanvas.width / container.offsetWidth);
+            const height = rect.height * (tempCanvas.width / container.offsetHeight);
+            
+            ctx.drawImage(glassesImg, x, y, width, height);
+
+            ctx.filter = 'none';
+            ctx.filter = 'none';
+        
+        ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
+        ctx.font = 'bold 24px Arial';
+        ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+        
+        return tempCanvas.toDataURL('image/png', 1.0);
+        
+    } catch (error) {
+        console.error('Static capture error:', error);
+        return createFallbackCapture();
+    }
+}
+
+function createFallbackCapture() {
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    tempCanvas.width = 800;
+    tempCanvas.height = 600;
+    
+    ctx.fillStyle = '#f0f8ff';
+    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    
+    const glassesImg = imageCache.get(state.selectedGlasses.id);
+    if (glassesImg && glassesImg.complete) {
+        const scale = 0.5;
+        ctx.drawImage(glassesImg, tempCanvas.width/2 - (glassesImg.width*scale)/2, tempCanvas.height/2, glassesImg.width*scale, glassesImg.height*scale);
+    }
+    
+    ctx.fillStyle = '#1a2980';
+    ctx.font = 'bold 24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(state.selectedGlasses.name, tempCanvas.width / 2, tempCanvas.height / 2, glassesImg.width*scale, glassesImg.height * scale, glassesImg.width * scale, glassesImg.height * scale);
+    
+    return tempCanvas.toDataURL('image/png', 1.0);
+}
+
+function downloadImage(dataUrl) {
+    try {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-', '').substring(0, 19);
+        const filename = `opticore-tryon-${timestamp}.png`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        
+        setTimeout(() => {
+            document.body.removeChild(link);
+        }, 100);
+        
+        showNotification('Download started!', 'success');
+        
+    } catch (error) {
+        console.error('Download error:', error);
+        showNotification('Download failed.', 'error');
+    }
+}
+
+async function shareImage(dataUrl) {
+    try {
+        const message = `Check out my virtual try-on with ${state.selectedGlasses.name} from Opticore ViPro!`;
+        
+        if (navigator.share) {
+            try {
+                const response = await fetch(dataUrl);
+                const blob = await response.blob();
+                const file = new File([blob], 'opticore-tryon.png', { type: 'image/png' });
+                
+                await navigator.share({
+                    title: 'My Opticore ViPro Virtual Try-On',
+                    text: message,
+                    files: [file]
+                });
+                showNotification('Shared successfully!', 'success');
+                return;
+            } catch (shareError) {
+                if (shareError.name !== 'AbortError') console.log('Web Share failed:', shareError);
+            }
+        }
+        
+        showShareOptions(dataUrl, message);
+        
+    } catch (error) {
+        console.error('Share error:', error);
+        showNotification('Share failed. Try downloading instead.', 'error');
+    }
 }
 
 function openResultPage(dataUrl) {
@@ -1048,143 +1679,705 @@ function openResultPage(dataUrl) {
         <html>
         <head>
             <title>Your Try-On</title>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0/css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-                .result-container { background: white; border-radius: 24px; padding: 3rem; max-width: 900px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
-                h1 { color: #1a2980; margin-bottom: 1rem; font-size: 2.5rem; }
-                img { max-width: 100%; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-                .btn-primary { background: linear-gradient(135deg, #1a2980, #2980b9); color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                * { margin: 0; padding: 0; }
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+                body { font-family: 'Segoe UI', sans-serif; background: #f8fafc;
+                min-height: 100vh;
+                color: #2c3e50;
             </style>
-        </head>
-        <body>
-            <div class="result-container">
-                <h1>Result</h1>
-                <img src="${dataUrl}">
-                <button class="btn-primary" onclick="window.close()">Close</button>
-            </div>
-        </body>
-        </html>
-    `);
-    win.document.close();
-}
+            </head>
+            <title>Result</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                * { margin: 0; padding: 0; border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8fafc; min-height: 100vh;
+                color: #2c3e50;
+            </style>
+            <style>
+                @media { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+                * { font-size: 1.8rem; font-weight: 300; color: #1a2980; }
+            </style>
+            </head>
+                <title>Your Try-On</title>
+            </head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <style>
+                * { font-size: 2rem; font-weight: 300; color: #2c3e50; }
+            </style>
+            <style>
+                @media print {
+                    @page-break { size: 8.5in; }
+                    body { margin: 2rem; padding: 2rem; }
+                    background: white;
+                        font-size: 1rem;
+                    color: #2c3e50;
+                        max-width: 800px;
+                        padding: 2rem;
+                    }
+                }
+            </style>
+            </head>
+            <title>Your Try-On</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            </head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            
+            <!-- Favicon Configuration -->
+            <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
+            <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+            <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+            <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+            <link rel="manifest" href="icons/site.webmanifest">
+            <meta name="theme-color" content="#0a192f">
+            
+            <title>Opticore ViPro | Professional Virtual Eyewear Analysis</title>
+            
+            <!-- Meta Description with MortApps Studios Branding -->
+            <meta name="description" content="Opticore ViPro: Professional-grade virtual eyewear analysis powered by MortApps Studios AI. Optimized for Desktop and Tablet devices.");
+            
+            <!-- Keywords for MortApps Studios SEO -->
+            <meta name="keywords" content="Opticore ViPro, MortApps Studios, Virtual Eyewear Try-On, AI Face Recognition, Optical Technology, Eyewear Analysis, Virtual Try-On, Face API, Web Development Kenya, AI Development Nairobi, Optical Software">
+            
+            <!-- Open Graph / Social Media Meta Tags -->
+            <meta property="og:title" content="Opticore ViPro">
+            <meta property="og:description" content="Opticore ViPro: Professional-grade virtual eyewear analysis system powered by MortApps Studios AI. Optimized for Desktop and Tablet devices.");
+            <meta property="og:image" content="icons/android-chrome-512x512.png">
+            <meta property="og:image:width" content="512">
+            <meta property="og:image:height" content="512">
+            <meta property="og:url" content="https://your-github-username.github.io/opticore-vipro">
+            <meta property="og:site_name" content="Opticore ViPro">
+            <meta property="og:type" content="website">
+            <meta property="og:url" content="https://your-github-username.github.io/opticore-vipro">
+            <meta property="og:locale" content="en_US">
+            
+            <meta property="og:title" content="Opticore ViPro">
+            <meta property("og:title", "Opticore ViPro");
+            <meta property("og:description", "Opticore ViPro: Professional-grade virtual eyewear analysis system powered by MortApps Studios AI. Optimized for Desktop and Tablet devices.");
+            
+        <meta name="og:description" content="Opticore ViPro: Professional-grade virtual eyewear analysis system developed by MortApps Studios AI. Optimized for Desktop and Tablet devices.");
+        
+        // ...rest of your meta tags...
 
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="notification-close">&times;</button>
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
+// ===== NAVIGATION FUNCTIONS =====
+function setupNavigation() {
+    framesLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        const framesSection = document.getElementById('framesSection');
+        if (framesSection) {
+            framesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            updateActiveNavLink('frames');
+        });
     
-    notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
+    howItWorksLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPopup(howItWorksPopup);
+        updateActiveNavLink('howItWorks');
+    });
+
+    privacyLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPopup(privacyPopup);
+        updateActiveNavLink('privacy');
+    });
+
+    contactLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPopup(contactPopup);
+    });
+
+contactLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPopup(contactPopup);
+    });
+
+// ===== NAVIGATION FUNCTIONS =====
+
+function updateActiveNavLink(activeLink) {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
     });
     
+    switch(activeLink) {
+        case 'frames':
+            framesLink.classList.add('active');
+            break;
+        case 'howItWorks':
+            howItWorksLink.classList.add('active');
+            break;
+        case 'privacy':
+            privacyLink.classList.add('active');
+            break;
+    }
+}
+
+// ===== INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🔬 Opticore ViPro - Enterprise Edition");
+    
+    enableCodeProtection();
+    setupPopupCloseButtons();
+    setupNavigation();
+    
+    // Wait for Loading Screen
     setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
+        document.getElementById('loadingScreen').style.display = 'none';
+        initApplication();
+    }, 4200);
+});
+
+// ===== INIT APPLICATION =====
+function initApplication() {
+    renderGlassesGrid();
+    setupEventListeners();
+    showPermissionOverlay();
+    loadFaceModels();
+    shareBtn.disabled = false;
+
+    // SmartMode Button Logic
+    if (mobileSmartModeBtn) mobileSmartModeBtn.classList.remove('active');
 }
 
-// Add Notification Styles dynamically if missing
-if(!document.getElementById('notif-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notif-styles';
-    style.textContent = `
-        .notification { position: fixed; top: 20px; right: 20px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 10000; display: flex; align-items: center; gap: 15px; border-left: 5px solid #3498db; transform: translateX(120%); transition: transform 0.3s; }
-        .notification.show { transform: translateX(0); }
-        .notification-success { border-left-color: #27ae60; background: linear-gradient(to right, #f0f9ff, white); }
-        .notification-warning { border-left-color: #f39c12; background: linear-gradient(to right, #fef9e7, white); }
-        .notification-content { display: flex; align-items: center; gap: 10px; }
-        .notification-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #95a5a6; }
-    `;
-    document.head.appendChild(style);
+    // Ensure grid is rendered
+    if (!document.getElementById('glassesGrid').innerHTML === '') {
+        renderGlassesGrid();
+    }
+
+    console.log("✅ System Ready");
 }
 
-function sendToWhatsAppDirect() {
-    const message = `*OPTICORE VIPRO*\n\nFrame: ${state.selectedGlasses.name}\nScale: ${state.glassesScale}x`;
-    const url = `https://wa.me/254113400063?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+// ===== FACE MODEL LOADING =====
+async function loadFaceModels() {
+    loadingText.textContent = 'Loading visual intelligence...';
+    loadingOverlay.style.display = 'flex';
+
+    try {
+        const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+        
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+
+        state.modelsLoaded = true;
+        loadingText.textContent = 'Ready';
+        
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Model loading error:', error);
+        loadingText.textContent = 'Basic mode activated';
+        state.modelsLoaded = false;
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+        }, 2000);
+    }
 }
 
-function applyCanvasFilter(filter) {
-    state.currentFilter = filter;
-    canvasElement.style.filter = filter;
-    staticContainer.style.filter = filter;
+// ===== RENDER GLASSES GRID =====
+function renderGlassesGrid() {
+    glassesGrid.innerHTML = '';
+    
+    glassesCatalog.forEach(glasses => {
+        const card = document.createElement('div');
+        card.className = 'glasses-card';
+        card.dataset.id = glasses.id;
+        
+        let badgeHTML = '';
+        if (glasses.badge) {
+            badgeHTML = `<div class="card-badge">${glasses.badge}</div>`;
+        }
+        
+        card.innerHTML = `
+            <img src="assets/glasses/${glasses.image}" alt="${glasses.name}">
+            <h4>${glasses.name}</h4>
+            <p>${glasses.price}</p>
+            ${badgeHTML}
+        `;
+        
+        card.addEventListener('click', () => selectGlasses(glasses));
+        glassesGrid.appendChild(card);
+        
+        preloadImage(`assets/glasses/${glasses.image}`, glasses.id);
+    });
+    
+    selectGlasses(glassesCatalog[0]);
 }
 
+// ===== PRELOAD IMAGE =====
+function preloadImage(src, id) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+        imageCache.set(id, img);
+    };
+    img.onerror = function() {
+        console.error(`❌ Failed: ${src}`);
+    };
+    img.src = src;
+}
+
+// ===== SELECT GLASSES =====
+function selectGlasses(glasses) {
+    state.selectedGlasses = glasses;
+    state.glassesScale = 1.0;
+    state.verticalOffset = 0;
+    state.horizontalOffset = 0;
+
+    const cachedImg = imageCache.get(glasses.id);
+    if (cachedImg) {
+        selectedFrameImg.src = cachedImg.src;
+    } else {
+        selectedFrameImg.src = `assets/glasses/${state.selectedGlasses.image}`;
+    }
+
+    selectedFrameName.textContent = glasses.name;
+    selectedFramePrice.textContent = glasses.price;
+    
+    if (state.isStaticMode) {
+        if (cachedImg) {
+            staticGlasses.src = cachedImg.src;
+        } else {
+            staticGlasses.src = `assets/glasses/${state.selectedGlasses.image}`;
+        }
+    
+    // Desktop & Tablet Logic: If user rotates phone to landscape, clear static mode, show permission, lock.
+    if (!state.isPortraitLocked) {
+        if (window.innerWidth < 992) {
+            state.isPortraitLocked = false; // Unlock the logic
+        }
+
+    if (window.innerHeight > window.innerWidth) {
+            state.isPortraitLocked = false;
+        orientationLock.style.display = 'none';
+    }
+
+    // If mobile phone keeps logic: Stop the loop if locked.
+    if (state.isPortraitLocked) {
+        // Stop the loop to save battery.
+    if (!state.isPortraitLocked) {
+        requestAnimationFrame(detectFaces);
+    }
+}
+
+// ===== ADJUSTMENT CONTROLS =====
 function handleAdjustment(action) {
     switch(action) {
         case 'size-up':
-            state.glassesScale = Math.min(2.0, state.glassesScale + 0. Replaced Code Protection: Source Code Access Restricted', 'warning');
-    case 'size-down':
-            state.glassesScale = Replaced Code Protection: Source Code Access Restricted', 'warning');
-            case 'position-up':
-            state.verticalOffset = Math.max(-0.3, state.verticalOffset - 0.03);
-            if (state.isStaticMode) { state.glassesY = Math.max(10, state.glassesY - 2); staticGlasses.style.top = `${state.glassesY}%`; }
+            state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
+            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
             break;
-        case 'position-down':
-            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
-            if (state.isStaticMode) { state.glassesY = Math.min(90, state.glassesY + 2); staticGlasses.style.top = `${state.glassesY}%`; }
+        case 'size-down':
+            state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
+            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
+            break;
+        case 'position-up':
+            state.verticalOffset = Math.max(-0.3, state.verticalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesY = Math.max(10, state.glassesY - 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.verticalOffset = Math.min(-0.3, state.verticalOffset + 0.03);
+                state.glassesY = Math.min(90, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            }
             break;
         case 'position-left':
             state.horizontalOffset = Math.max(-0.3, state.horizontalOffset - 0.03);
-            if (state.isStaticMode) { state.glassesX = Math.max(10, state.glassesX - 2); staticGlasses.style.left = `${state.glassesX}%`; }
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesX - 2);
+                staticGlasses.style.left = `${state.glassesX}%`;
+            } else {
+                state.glassesX = Math.min(10, state.glassesX + 2);
+                staticGlasses.style.left = `${state.glassesX}%`;
+                if (state.glassesX !== 0) {
+                    state.glassesX = Math.max(10, state.glassesX - 2);
+                staticGlasses.style.left = `${state.glassesX}%`;
+                } else {
+                    state.glassesX = Math.min(10, state.glassesX + 2);
+                staticGlasses.style.left = `${state.glassesX}%`;
+            }
+            break;
+        case 'position-right':
+            state.horizontalOffset = Math.min(-0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+                state.glassesX = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-down':
+            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
+            if (state.isStaticMode) {
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.min(10, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.glassesY = Math.min(90, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            }
+            break;
+        case 'position-left':
+            state.horizontalOffset = Math.max(-0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                staticGlasses.style.left = `${state.glassesX}%`;
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+                staticGlasses.style.left = `${state.glassesX}%`;
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(-0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-down':
+            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
+            if (state.isStaticMode) {
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                staticGlasses.style.top = `${state.glassesY}%`;
+            } else {
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-left':
+            state.horizontalOffset = Math.max(-0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+                state.glassesX = Math.max(10, state.glassesX + 2);
+            }
+            else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-down':
+            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
+            if (state.isStaticMode) {
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesY = Math.max(10, state.glassesY + 2);
+            }
             break;
         case 'position-right':
             state.horizontalOffset = Math.min(0.3, state.horizontalOffset + 0.03);
-            if (state state.glassesX = Math.min(90, state.glassesX + 2); staticGlasses.style.left = `${state.glassesX}%`; }
-            break;
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX + 2);
+                state.glassesY = Math.max(10, state.glassesX + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesX = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX = Math.max(10, state.glassesY + 2);
+            }
+            else {
+                state.glassesX = Math.max(10, state.glassesX = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesX = Math.max(10, state.glassesY + 2);
+            }
+    case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03);
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.horizontalOffset - 0.03;
+            if (state.isStaticMode) {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.horizontalOffset = Math.min(0.3, state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2;
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            }
+        case 'position-right':
+            state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+        } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY + 2);
+            } else {
+                state.glassesX = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math(10, state.glassesY = Math(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math(10, state.glassesY = Math(10, state.glassesY = Math(10, state.glassesY = Math(10, state.glassesY = Math.max(10, state.glassesY = Math.5, state.glassesY = Math.0, state.glassesY = Math.0.5);
     }
 }
 
-function filterGlasses(category) {
-    const cards = document.querySelectorAll('.glasses-card');
-    cards.forEach(card => {
-        const id = parseInt(card.dataset.id);
-        const glasses = glassesCatalog.find(g => g.id === id);
-        if (category === 'all collections' || category === 'all') card.style.display = 'block';
-        else if (category === 'professional') card.style.display = glasses.category.includes('professional') ? 'block' : 'none';
-        else if (category === 'contemporary') card.style.display = glasses.category.includes('contemporary') ? 'block' : 'none';
-        else if (category === 'classic design') card.style.display = glasses.category.includes('classic') ? 'block' : 'none';
-        else card.style.display = 'block';
-    });
+/* ===== DRAWING GLASSES ===== */
+function drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale) {
+    const glassesImg = imageCache.get(state.selectedGlasses.id);
+    if (!glassesImg || !glassesImg.complete) return;
+    
+    const aspectRatio = glassesImg.width / glassesImg.height;
+    const glassesWidth = baseWidth = frameScale * userScale;
+    const glassesHeight = glassesWidth / aspectRatio;
+    
+    const verticalAdjust = (state.selectedGlasses.verticalAdjust || 0.25) * eyeDistance;
+    const userVerticalOffset = state.verticalOffset * eyeDistance;
+    const userVerticalOffset = state.glassesScale * eyeDistance;
+    
+    const finalX = centerX + userHorizontalOffset;
+    const centerY = (leftEyeCenter.x + rightEyeCenter.x) / 2;
+    
+    const finalX = centerX + userHorizontalOffset;
+    const centerY = (leftEyeCenter.x + rightEyeCenter.x) / 2;
+    const finalY = centerY + leftEyeCenter.y) / 2;
+    
+    const finalX = centerX + userHorizontalOffset;
+    const finalY = centerY + verticalAdjust + userVerticalOffset;
+    
+    const finalX = centerX + userHorizontalOffset;
+    const finalY = centerY + verticalAdjust + userVerticalOffset;
+    
+    ctx.save();
+    ctx.translate(finalX, finalY);
+    
+    if (state.currentFilter && state.currentFilter && state.currentFilter !== 'none') {
+        ctx.filter = state.currentFilter;
+    }
+    
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingEnabled = 'high';
+    ctx.imageSmoothingQuality = 'high';
+    
+    ctx.drawImage(
+        glassesImg,
+        -glassesWidth / 2,
+        -glassesHeight / 2,
+        glassesWidth,
+        glassesWidth,
+        glassesHeight
+    );
+    
+    ctx.restore();
 }
 
-function resetApp() {
-    if (confirm("Reset?")) {
-        if (state.isCameraActive) {
-            state.faceDetectionActive = false;
-            if (videoElement.srcObject) videoElement.srcObject.getTracks().forEach(track => track.stop());
+function drawCenteredGlasses(ctx) {
+    const glassesImg = imageCache.get(state.selectedGlasses.id);
+    if (!glassesImg || !glassesImg.complete) return;
+    
+    const scale = 0.3 * state.glassesScale;
+    const x = canvasElement.width / 2;
+    const y = canvasElement.height / 2;
+    
+    ctx.save();
+    ctx.translate(x, y);
+    
+    if (state.currentFilter && state.currentFilter && state.currentFilter !== 'none') {
+        ctx.filter = state.currentFilter;
+    }
+    
+    ctx.drawImage(
+        glassesImg,
+        -glassesImg.width * scale,
+        -glassesImg.height / 2,
+        glassesImg.width * scale,
+        glassesImg.width * scale,
+        glassesImg.height * scale
+    );
+    
+    ctx.restore();
+}
+
+function drawBasicVideo() {
+    function drawLoop() {
+        function drawLoop() {
+            if (!state.isCameraActive || state.isStaticMode) return;
+            
+            const ctx = canvasElement.getContext('2d');
+            ctx.clearRect(0, 0, canvasElement.width, canvasElement.width, canvasElement.height);
+            ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            
+            drawCenteredGlasses(ctx);
+            
+            requestAnimationFrame(drawLoop);
         }
-        
-        Object.assign(state, {
-            isCameraActive: false, selectedGlasses: glassesCatalog[0], isStaticMode: false, faceDetectionActive: false,
-            currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
-            glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
-            lastCapturedImage: null, lastDetection: null
-        });
-        
-        videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
-        canvasElement.style.filter = 'none'; staticContainer.style.filter = 'none';
-        staticGlasses.style.left = '50%'; staticGlasses.style.top = '40%'; staticGlasses.style.transform = 'translate(-50%, -50%)'; staticGlasses.style.width = '200px';
-        
-        document.querySelectorAll('.light-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
-        document.querySelectorAll('.filter-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
-        
-        showPermissionOverlay();
-        selectGlasses(glassesCatalog[0]);
-        filterGlasses('all');
-        showNotification('Reset successfully', 'success');
-    }
+    drawLoop();
+    drawLoop();
 }
 
-console.log("✅ Opticore ViPro - Desktop/Tablet Enterprise Edition Loaded");
+function activateStaticMode() {
+    state.isStaticMode = true;
+    state.isCameraActive = false;
+    state.faceDetectionActive = false;
+    
+    if (videoElement.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+    }
+    
+    staticContainer.style.display = 'flex';
+    videoElement.style.display = 'none';
+    canvasElement.style.display = 'none';
+    canvasElement.style.display = 'none';
+    canvasElement.style.display = 'none';
+    loadingOverlay.classList.add('display: none');
+    permissionOverlay.classList.add('display: none');
+    
+    cameraStatus.textContent = 'Static';
+    toggleCameraBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera: Static';
+    
+    const cachedImg = imageCache.get(state.selectedGlasses.id);
+    if (cachedImg) {
+        staticGlasses.src = cachedImg.src = cachedImg ? cachedImg.src : `assets/glasses/${state.selectedGlasses.image}`;
+    } else {
+        staticGlasses.src = `assets/glasses/${state.selectedGlasses.image}`;
+    }
+    
+    staticGlasses.style.position = 'absolute';
+    staticGlasses.style.width = `${200 * state.glassesScale}px`;
+    staticGlasses.style.left = `${state.glassesY}%`;
+    staticGlasses.style.top = `${state.glassesY}%`;
+    staticGlasses.style.left = `${state.glassesY}%`;
+    staticGlasses.style.top = `${state.glassesY}%`;
+    staticGlasses.style.transform = 'translate(-50%, -50%)';
+    
+    staticGlasses.style.cursor = 'grab';
+    
+    makeDraggable(staticGlasses);
+}
+
+function makeDraggable(element) {
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    element.addEventListener('mousedown', startDrag);
+    element.addEventListener('touchstart touchstart
