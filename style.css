@@ -105,7 +105,7 @@ body {
     }
 
     /* 2. AGGRESSIVE CSS KILL SWITCH */
-    /* Hide all direct children of body EXCEPT the restriction overlay */
+    /* Hide all direct children of body EXCEPT restriction overlay */
     body > *:not(#mobileRestrictionOverlay) {
         display: none !important;
         visibility: hidden !important;
