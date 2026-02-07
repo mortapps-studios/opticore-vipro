@@ -681,8 +681,8 @@ function drawRealisticGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWi
     const targetY = centerY + verticalAdjust + userVerticalOffset;
     
     // === SMOOTHING ALGORITHM (LERP) ===
-    // This creates "Premium/Stable" feel by preventing jitter
-    const smoothingFactor = 0.15; // 0.1 = very smooth/laggy, 0.5 = fast/jittery. 0.15 is "Snapchat" sweet spot.
+    // INCREASED FACTOR: 0.45 (Faster, snappy tracking, reduced lag)
+    const smoothingFactor = 0.45; 
     
     if (!state.render.initialized) {
         // Initialize instantly on first frame to avoid jumping from 0,0
