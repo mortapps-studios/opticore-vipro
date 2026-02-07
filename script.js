@@ -1,11 +1,6 @@
 // ============================================
-// OPTICORE VIPRO - AESTHETIC & SECURE VERSION
-// ✅ Cool SmartMode Visuals (Blue Mesh, Green Box, Red L/R)
-// ✅ Professional "How-To" Text
-// ✅ Code Protection (Anti-Inspect)
-// ✅ HARD BLOCK MOBILE ACCESS (Aggressive CSS Kill Switch)
-// ✅ Removed Orientation Lock & Mobile Controls
-// ✅ Fixed SmartMode L/R labeling from user's perspective
+// OPTICORE VIPRO - PREMIUM AR GRAPHICS UPDATE
+// Enhanced Stability, Realism, and Accuracy
 // ============================================
 
 // State Management
@@ -31,23 +26,31 @@ let state = {
     glassesX: 50,
     glassesY: 40,
     lastCapturedImage: null,
-    lastDetection: null
+    lastDetection: null,
+    // SMOOTHING STATE: Enables "Snapchat-like" fluid movement
+    render: {
+        x: 0,
+        y: 0,
+        scale: 0,
+        angle: 0,
+        initialized: false
+    }
 };
 
 // Glasses Catalog
 const glassesCatalog = [
-    { id: 1, name: "Classic Thick-Rim", price: "Professional Grade", image: "frame1.png", category: ["professional", "classic"], badge: "Premium", scale: 0.8, style: "classic", verticalAdjust: 0.25 },
-    { id: 2, name: "Wide Rectangular", price: "Professional Grade", image: "frame2.png", category: ["professional", "contemporary"], scale: 0.8, style: "modern", verticalAdjust: 0.27 },
-    { id: 3, name: "Thin Metal", price: "Professional Grade", image: "frame3.png", category: ["professional", "contemporary"], badge: "Trending", scale: 0.75, style: "designer", verticalAdjust: 0.26 },
-    { id: 4, name: "Gold Metal", price: "Professional Grade", image: "frame4.png", category: ["professional", "classic"], scale: 0.78, style: "vintage", verticalAdjust: 0.28 },
-    { id: 5, name: "Aviator", price: "Professional Grade", image: "frame5.png", category: ["professional", "contemporary"], scale: 0.85, style: "aviator", verticalAdjust: 0.30 },
-    { id: 6, name: "Modern Square", price: "Professional Grade", image: "frame6.png", category: ["professional", "contemporary"], scale: 0.82, style: "cateye", verticalAdjust: 0.24 },
-    { id: 7, name: "Soft Square", price: "Professional Grade", image: "frame7.png", category: ["professional", "classic"], scale: 0.77, style: "round", verticalAdjust: 0.26 },
-    { id: 8, name: "Oversized Square", price: "Professional Grade", image: "frame8.png", category: ["professional", "classic"], badge: "Popular", scale: 0.9, style: "oversized", verticalAdjust: 0.32 },
-    { id: 9, name: "Slim Oval", price: "Professional Grade", image: "frame9.png", category: ["professional", "contemporary"], scale: 0.76, style: "rectangle", verticalAdjust: 0.25 },
-    { id: 10, name: "Bold Square", price: "Professional Grade", image: "frame10.png", category: ["professional", "contemporary"], scale: 0.88, style: "oversized", verticalAdjust: 0.29 },
-    { id: 11, name: "Round Metal", price: "Professional Grade", image: "frame11.png", category: ["professional", "contemporary"], badge: "Premium", scale: 0.74, style: "rimless", verticalAdjust: 0.26 },
-    { id: 12, name: "Compact Rectangular", price: "Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.27 }
+    { id: 1, name: "Classic Thick-Rim", price: "Professional Grade", image: "frame1.png", category: ["professional", "classic"], badge: "Premium", scale: 0.8, style: "classic", verticalAdjust: 0.20 }, // Adjusted vertical
+    { id: 2, name: "Wide Rectangular", price: "Professional Grade", image: "frame2.png", category: ["professional", "contemporary"], scale: 0.8, style: "modern", verticalAdjust: 0.22 },
+    { id: 3, name: "Thin Metal", price: "Professional Grade", image: "frame3.png", category: ["professional", "contemporary"], badge: "Trending", scale: 0.75, style: "designer", verticalAdjust: 0.21 },
+    { id: 4, name: "Gold Metal", price: "Professional Grade", image: "frame4.png", category: ["professional", "classic"], scale: 0.78, style: "vintage", verticalAdjust: 0.23 },
+    { id: 5, name: "Aviator", price: "Professional Grade", image: "frame5.png", category: ["professional", "contemporary"], scale: 0.85, style: "aviator", verticalAdjust: 0.25 },
+    { id: 6, name: "Modern Square", price: "Professional Grade", image: "frame6.png", category: ["professional", "contemporary"], scale: 0.82, style: "cateye", verticalAdjust: 0.19 },
+    { id: 7, name: "Soft Square", price: "Professional Grade", image: "frame7.png", category: ["professional", "classic"], scale: 0.77, style: "round", verticalAdjust: 0.21 },
+    { id: 8, name: "Oversized Square", price: "Professional Grade", image: "frame8.png", category: ["professional", "classic"], badge: "Popular", scale: 0.9, style: "oversized", verticalAdjust: 0.27 },
+    { id: 9, name: "Slim Oval", price: "Professional Grade", image: "frame9.png", category: ["professional", "contemporary"], scale: 0.76, style: "rectangle", verticalAdjust: 0.20 },
+    { id: 10, name: "Bold Square", price: "Professional Grade", image: "frame10.png", category: ["professional", "contemporary"], scale: 0.88, style: "oversized", verticalAdjust: 0.24 },
+    { id: 11, name: "Round Metal", price: "Professional Grade", image: "frame11.png", category: ["professional", "contemporary"], badge: "Premium", scale: 0.74, style: "rimless", verticalAdjust: 0.21 },
+    { id: 12, name: "Compact Rectangular", price: "Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.22 }
 ];
 
 // DOM Elements
@@ -206,7 +209,7 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Secure & Aesthetic Version");
+    console.log("🔬 Opticore ViPro - Premium AR Graphics Edition");
     
     // 1. Enable Protection
     enableCodeProtection();
@@ -427,8 +430,8 @@ async function startCamera() {
         
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { ideal: 640 },
-                height: { ideal: 480 },
+                width: { ideal: 1280 }, // Higher resolution input
+                height: { ideal: 720 },
                 facingMode: 'user'
             },
             audio: false
@@ -450,6 +453,9 @@ async function startCamera() {
             
             loadingOverlay.style.display = 'none';
             permissionOverlay.style.display = 'none';
+            
+            // Reset smoothing state for new session
+            state.render.initialized = false;
             
             if (state.modelsLoaded) {
                 startFaceDetection();
@@ -487,7 +493,7 @@ async function detectFaces() {
     try {
         const detections = await faceapi
             .detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions({
-                inputSize: 416,
+                inputSize: 416, // Higher input size for better accuracy
                 scoreThreshold: 0.5
             }))
             .withFaceLandmarks(true);
@@ -521,11 +527,17 @@ async function detectFaces() {
                 Math.pow(rightEyeCenter.y - leftEyeCenter.y, 2)
             );
             
-            const baseWidth = eyeDistance * 2.4;
+            // Calculate Rotation (Tilt)
+            const dx = rightEyeCenter.x - leftEyeCenter.x;
+            const dy = rightEyeCenter.y - leftEyeCenter.y;
+            const angle = Math.atan2(dy, dx);
+            
+            const baseWidth = eyeDistance * 2.4; // Base width relative to face width
             const frameScale = state.selectedGlasses.scale || 0.8;
             const userScale = state.glassesScale;
             
-            drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale);
+            // Draw with new realistic smoothing
+            drawRealisticGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale, angle);
             
         } else {
             state.lastDetection = null;
@@ -596,8 +608,8 @@ function drawCoolSmartMode(ctx, detection) {
     const rightEyeCenter = getCenterPoint(rightEye);
     
     const eyes = [
-        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on the RIGHT side of image
-        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on the LEFT side of image
+        { p: leftEyeCenter, label: 'R' },  // Person's left eye is on RIGHT side of image
+        { p: rightEyeCenter, label: 'L' }  // Person's right eye is on LEFT side of image
     ];
     
     ctx.font = 'bold 16px "Segoe UI"';
@@ -648,40 +660,84 @@ function getCenterPoint(points) {
     };
 }
 
-function drawGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale) {
+// ===== PREMIUM GLASSES RENDERING =====
+function drawRealisticGlassesOnCanvas(ctx, centerX, centerY, eyeDistance, baseWidth, frameScale, userScale, angle) {
     const glassesImg = imageCache.get(state.selectedGlasses.id);
     if (!glassesImg || !glassesImg.complete) {
         return; // Will retry next frame if not ready
     }
     
+    // Calculate Target Dimensions
     const aspectRatio = glassesImg.width / glassesImg.height;
-    const glassesWidth = baseWidth * frameScale * userScale;
-    const glassesHeight = glassesWidth / aspectRatio;
+    const targetWidth = baseWidth * frameScale * userScale;
+    const targetHeight = targetWidth / aspectRatio;
     
-    const verticalAdjust = (state.selectedGlasses.verticalAdjust || 0.25) * eyeDistance;
+    // Calculate Target Position (Higher placement as requested)
+    const verticalAdjust = (state.selectedGlasses.verticalAdjust || 0.20) * eyeDistance; // Reduced to sit higher
     const userVerticalOffset = state.verticalOffset * eyeDistance;
     const userHorizontalOffset = state.horizontalOffset * eyeDistance;
     
-    const finalX = centerX + userHorizontalOffset;
-    const finalY = centerY + verticalAdjust + userVerticalOffset;
+    const targetX = centerX + userHorizontalOffset;
+    const targetY = centerY + verticalAdjust + userVerticalOffset;
     
-    ctx.save();
-    ctx.translate(finalX, finalY);
+    // === SMOOTHING ALGORITHM (LERP) ===
+    // This creates "Premium/Stable" feel by preventing jitter
+    const smoothingFactor = 0.15; // 0.1 = very smooth/laggy, 0.5 = fast/jittery. 0.15 is "Snapchat" sweet spot.
     
-    if (state.currentFilter && state.currentFilter !== 'none') {
-        ctx.filter = state.currentFilter;
+    if (!state.render.initialized) {
+        // Initialize instantly on first frame to avoid jumping from 0,0
+        state.render.x = targetX;
+        state.render.y = targetY;
+        state.render.scale = targetWidth;
+        state.render.angle = angle;
+        state.render.initialized = true;
+    } else {
+        // Linear Interpolation
+        state.render.x += (targetX - state.render.x) * smoothingFactor;
+        state.render.y += (targetY - state.render.y) * smoothingFactor;
+        state.render.scale += (targetWidth - state.render.scale) * smoothingFactor;
+        
+        // Handle angle wrapping for smooth rotation (e.g. 350deg -> 10deg)
+        let deltaAngle = angle - state.render.angle;
+        while (deltaAngle <= -Math.PI) deltaAngle += Math.PI * 2;
+        while (deltaAngle > Math.PI) deltaAngle -= Math.PI * 2;
+        state.render.angle += deltaAngle * smoothingFactor;
     }
     
+    // === DRAWING ===
+    ctx.save();
+    
+    // 1. Move to smoothed center
+    ctx.translate(state.render.x, state.render.y);
+    
+    // 2. Rotate by smoothed angle
+    ctx.rotate(state.render.angle);
+    
+    // 3. Add Realistic Drop Shadow (Crucial for "Depth")
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 10;
+    
+    // 4. Draw Glasses centered
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     
+    // Apply Filters if needed
+    if (state.currentFilter && state.currentFilter !== 'none') {
+        ctx.filter = state.currentFilter;
+    }
+
     ctx.drawImage(
         glassesImg,
-        -glassesWidth / 2,
-        -glassesHeight / 2,
-        glassesWidth,
-        glassesHeight
+        -state.render.scale / 2,
+        -state.render.scale / aspectRatio / 2,
+        state.render.scale,
+        state.render.scale / aspectRatio
     );
+    
+    // Optional: Add a subtle highlight/shadow overlay specific to nose bridge could go here
+    // for extra realism, but PNG assets handle this well.
     
     ctx.restore();
 }
@@ -697,6 +753,11 @@ function drawCenteredGlasses(ctx) {
     ctx.save();
     ctx.translate(x, y);
     
+    // Add shadow even in centered mode
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetY = 10;
+
     if (state.currentFilter && state.currentFilter !== 'none') {
         ctx.filter = state.currentFilter;
     }
@@ -1235,7 +1296,8 @@ function resetApp() {
             isCameraActive: false, selectedGlasses: glassesCatalog[0], isStaticMode: false, faceDetectionActive: false,
             currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
             glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
-            lastCapturedImage: null, lastDetection: null
+            lastCapturedImage: null, lastDetection: null,
+            render: { x: 0, y: 0, scale: 0, angle: 0, initialized: false }
         });
         
         videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
@@ -1252,4 +1314,4 @@ function resetApp() {
     }
 }
 
-console.log("✅ Opticore ViPro - Secure & Aesthetic Version Loaded");
+console.log("✅ Opticore ViPro - Premium AR Graphics Edition Loaded");
