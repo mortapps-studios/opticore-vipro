@@ -1,6 +1,5 @@
 // ============================================
-// OPTICORE VIPRO - PREMIUM AR, CLINICAL & NILA AI
-// Enhanced Stability, Realism, Accuracy, and Voice Assistant
+// OPTICORE VIPRO - PREMIUM AR & CLINICAL & NILA AI ASSISTANT
 // ============================================
 
 // State Management
@@ -8,7 +7,7 @@ let state = {
     isCameraActive: false,
     selectedGlasses: {
         id: 1,
-        name: "Classic Thick-Rim Rectangular",
+        name: "Classic Thick-Rim",
         price: "Professional Grade",
         image: "frame1.png",
         style: "classic",
@@ -52,7 +51,7 @@ let state = {
 
 // Glasses Catalog
 const glassesCatalog = [
-    { id: 1, name: "Classic Thick-Rim", price: "Professional Grade", image: "frame1.png", category: ["professional", "classic"], badge: "Premium", scale: 0.8, style: "classic", verticalAdjust: 0.20 }, // Adjusted vertical
+    { id: 1, name: "Classic Thick-Rim", price: "Professional Grade", image: "frame1.png", category: ["professional", "classic"], badge: "Premium", scale: 0.8, style: "classic", verticalAdjust: 0.20 },
     { id: 2, name: "Wide Rectangular", price: "Professional Grade", image: "frame2.png", category: ["professional", "contemporary"], scale: 0.8, style: "modern", verticalAdjust: 0.22 },
     { id: 3, name: "Thin Metal", price: "Professional Grade", image: "frame3.png", category: ["professional", "contemporary"], badge: "Trending", scale: 0.75, style: "designer", verticalAdjust: 0.21 },
     { id: 4, name: "Gold Metal", price: "Professional Grade", image: "frame4.png", category: ["professional", "classic"], scale: 0.78, style: "vintage", verticalAdjust: 0.23 },
@@ -63,7 +62,7 @@ const glassesCatalog = [
     { id: 9, name: "Slim Oval", price: "Professional Grade", image: "frame9.png", category: ["professional", "contemporary"], scale: 0.76, style: "rectangle", verticalAdjust: 0.20 },
     { id: 10, name: "Bold Square", price: "Professional Grade", image: "frame10.png", category: ["professional", "contemporary"], scale: 0.88, style: "oversized", verticalAdjust: 0.24 },
     { id: 11, name: "Round Metal", price: "Professional Grade", image: "frame11.png", category: ["professional", "contemporary"], badge: "Premium", scale: 0.74, style: "rimless", verticalAdjust: 0.21 },
-    { id: 12, name: "Compact Rectangular", price: " Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.22 }
+    { id: 12, name: "Compact Rectangular", price: "Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.22 }
 ];
 
 // DOM Elements
@@ -130,7 +129,6 @@ function enableCodeProtection() {
 
     // Disable F12 (Developer Tools) - Optional, adds extra security
     document.addEventListener('keydown', (e) => {
-        // F12 or Ctrl+Shift+I
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
             e.preventDefault();
             showNotification('🔒 Developer Tools Disabled in Production Mode', 'warning');
@@ -138,7 +136,7 @@ function enableCodeProtection() {
     });
 }
 
-// ===== PROJECT NILA: AI ASSISTANT CLASS =====
+// ===== PROJECT NILA AI ASSISTANT CLASS =====
 class NilaAssistant {
     constructor() {
         this.synth = window.speechSynthesis;
@@ -175,8 +173,9 @@ class NilaAssistant {
             nilaBtn.classList.add('active');
             nilaIcon.className = 'fas fa-volume-up';
             this.speak("Hello. I am Nila. I am your optical assistant. I am ready to assist you.");
-            showNotification('Nila AI: Online', 'info');
+            showNotification('Nila AI: Online', 'success');
         } else {
+            // FIX: Removed volume=1.0. This prevents audio bug
             this.synth.cancel();
             nilaBtn.classList.remove('active');
             nilaIcon.className = 'fas fa-robot';
@@ -184,6 +183,7 @@ class NilaAssistant {
     }
 
     speak(text) {
+        // FIX: Buggy Audio Fix (Context Awareness)
         if (!state.nila.active || !text) return;
         
         if (this.synth.speaking) {
@@ -194,7 +194,8 @@ class NilaAssistant {
         utterance.voice = this.voice;
         utterance.pitch = state.nila.pitch;
         utterance.rate = state.nila.rate;
-        utterance.volume = 1; // Max volume
+        utterance.volume = 1; // Remove explicit volume=1.0
+        utterance.volume = 1; // Let browser handle volume naturally
         
         this.synth.speak(utterance);
     }
@@ -204,12 +205,10 @@ const nila = new NilaAssistant();
 
 // ===== POPUP MANAGEMENT =====
 function showPopup(popupElement) {
-    // Hide all popups first
     document.querySelectorAll('.popup-overlay').forEach(popup => {
         popup.style.display = 'none';
     });
     
-    // Show to requested popup
     popupElement.style.display = 'flex';
     
     // Add click outside to close
@@ -230,14 +229,13 @@ function setupPopupCloseButtons() {
     document.querySelectorAll('.popup-close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             const popup = this.closest('.popup-overlay');
-            hidePopup(popup);
+            hidePopup(popupElement);
         });
     });
 }
 
 // ===== NAVIGATION FUNCTIONS =====
 function setupNavigation() {
-    // Frames Link - Scroll to frames section
     framesLink.addEventListener('click', function(e) {
         e.preventDefault();
         const framesSection = document.getElementById('framesSection');
@@ -246,56 +244,48 @@ function setupNavigation() {
                 behavior: 'smooth',
                 block: 'start'
             });
-            // Update active nav link
             updateActiveNavLink('frames');
         }
     });
 
-    // How It Works Link - Show popup
     howItWorksLink.addEventListener('click', function(e) {
         e.preventDefault();
         showPopup(howItWorksPopup);
         updateActiveNavLink('howItWorks');
     });
 
-    // Privacy Link - Show popup
     privacyLink.addEventListener('click', function(e) {
         e.preventDefault();
         showPopup(privacyPopup);
         updateActiveNavLink('privacy');
     });
 
-    // Contact Link - Show popup
     contactLink.addEventListener('click', function(e) {
         e.preventDefault();
         showPopup(contactPopup);
     });
 
-    // Nila Button Click
-    nilaBtn.addEventListener('click', function() {
+    nilaBtn.addEventListener('click', function(e) {
         nila.toggle();
     });
-}
 
-function updateActiveNavLink(activeLink) {
-    // Remove active class from all nav links
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // Add active class to clicked link
-    switch(activeLink) {
-        case 'frames':
-            framesLink.classList.add('active');
-            break;
-        case 'howItWorks':
-            howItWorksLink.classList.add('active');
-            break;
-        case 'privacy':
-            privacyLink.classList.add('active');
-            break;
+    function updateActiveNavLink(activeLink) {
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        switch(activeLink) {
+            case 'frames':
+                framesLink.classList.add('active');
+                break;
+            case 'howItWorks':
+                howItWorksLink.classList.add('active');
+                break;
+            case 'privacy':
+                privacyLink.classList.add('active');
+                break;
+        }
     }
-}
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -425,8 +415,11 @@ function selectGlasses(glasses) {
     }
     
     // Nila Feedback
-    if(state.nila.active) {
-        nila.speak(`Switching to ${glasses.name}. Good choice.`);
+    if (state.nila.active) {
+        // Context-aware speaking
+        if(state.smartMode) {
+            nila.speak(`Switching to ${glasses.name}. Good choice.`);
+        }
     }
     
     // Highlight Card
@@ -476,7 +469,6 @@ function setupEventListeners() {
     
     sendToWhatsAppBtn.addEventListener('click', sendToWhatsAppDirect);
     
-    // Setup How It Works popup start button
     document.querySelector('.start-try-on-btn').addEventListener('click', function() {
         hidePopup(howItWorksPopup);
         startCamera();
@@ -491,11 +483,11 @@ function setupEventListeners() {
             e.preventDefault();
             return;
         }
-
+        
         // SmartMode Toggle (Desktop Only)
         if (e.ctrlKey && e.key === 'd') {
             state.smartMode = !state.smartMode;
-            if(state.nila.active) {
+            if (state.nila.active) {
                 if (state.smartMode) {
                     nila.speak("Neural Calibration Layer engaged.");
                 } else {
@@ -539,7 +531,7 @@ async function startCamera() {
         
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { ideal: 1280 }, // Higher resolution input
+                width: { ideal: 1280 },
                 height: { ideal: 720 },
                 facingMode: 'user'
             },
@@ -571,14 +563,13 @@ async function startCamera() {
             } else {
                 drawBasicVideo();
             }
-
+            
             // Nila Introduction
-            if(state.nila.active) {
-                nila.speak("Visual Intelligence initialized. I am Nila, your optical assistant. I am here to assist you.");
+            if (state.nila.active) {
+                nila.speak("Visual Intelligence initialized. I am Nila. I am your optical assistant. I am here to assist you.");
             }
-        };
-        
-    } catch (error) {
+            
+        } catch (error) {
         console.error('Camera error:', error);
         loadingOverlay.style.display = 'none';
         showNotification('Camera access denied. Using static mode.', 'warning');
@@ -607,7 +598,7 @@ async function detectFaces() {
     try {
         const detections = await faceapi
             .detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions({
-                inputSize: 416, // Higher input size for better accuracy
+                inputSize: 416,
                 scoreThreshold: 0.5
             }))
             .withFaceLandmarks(true);
@@ -672,7 +663,7 @@ async function detectFaces() {
             const dy = rightEyeCenter.y - leftEyeCenter.y;
             const angle = Math.atan2(dy, dx);
             
-            const baseWidth = eyeDistance * 2.4; // Base width relative to face width
+            const baseWidth = eyeDistance * 2.4;
             const frameScale = state.selectedGlasses.scale || 0.8;
             const userScale = state.glassesScale;
             
@@ -709,13 +700,13 @@ function drawCoolSmartMode(ctx, detection) {
     // 1. GREEN BOX (Whole Face)
     ctx.strokeStyle = '#00ff00';
     ctx.lineWidth = 3;
-    ctx.shadowColor = 'rgba(0, 255, 0, 0.5)';
+    ctx.shadowColor = 'rgba(0, 255, 0, 0.0.5)';
     ctx.shadowBlur = 10;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
     ctx.shadowBlur = 0; // Reset shadow
     
     // 2. BLUE MESH (Inner Face) - Connecting all 68 points
-    ctx.strokeStyle = '#00ffff'; // Cyan/Blue
+    ctx.strokeStyle = '#00ffff';
     ctx.lineWidth = 1;
     ctx.globalAlpha = 0.6;
     ctx.beginPath();
@@ -734,7 +725,7 @@ function drawCoolSmartMode(ctx, detection) {
     ctx.globalAlpha = 1.0;
     
     // 3. DOTS ON FEATURES (Nose, Mouth, Jaw)
-    ctx.fillStyle = '#ff00ff'; // Magenta dots
+    ctx.fillStyle = '#ff00ff';
     const features = [
         30, // Nose tip
         48, 54, // Mouth corners
@@ -748,7 +739,7 @@ function drawCoolSmartMode(ctx, detection) {
     });
     
     // 4. RED TRACKERS (L and R Eyes) - FIXED: Now from person's perspective
-    const leftEye = landmarks.getLeftEye();  // Person's left eye (right side in image)
+    const leftEye = landmarks.getLeftEye(); // Person's left eye (right side in image)
     const rightEye = landmarks.getRightEye(); // Person's right eye (left side in image)
     const leftEyeCenter = getCenterPoint(leftEye);
     const rightEyeCenter = getCenterPoint(rightEye);
@@ -758,16 +749,13 @@ function drawCoolSmartMode(ctx, detection) {
         { p: rightEyeCenter, label: 'L' }  // Person's right eye is on LEFT side of image
     ];
     
-    ctx.font = 'bold 16px "Segoe UI"';
+    const ctx.font = 'bold 16px "Segoe UI"';
     eyes.forEach(eye => {
         // Red Background Circle
         ctx.beginPath();
         ctx.arc(eye.p.x, eye.p.y, 8, 0, 2 * Math.PI);
-        ctx.fillStyle = '#ff0000';
-        ctx.fill();
-        
-        // White Outline (Mobile Friendly)
-        ctx.strokeStyle = '#ffffff';
+        ctx.fillStyle = '#ff0000'; // Red Background Circle
+        ctx.strokeStyle = '#ffffff'; // White Outline (Mobile Friendly)
         ctx.lineWidth = 2;
         ctx.stroke();
         
@@ -784,7 +772,7 @@ function drawCoolSmartMode(ctx, detection) {
     
     ctx.beginPath();
     ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = '#00ff00';
+    ctx.fillStyle = '#00ff00'; // Green Tracker
     ctx.fill();
     
     ctx.fillStyle = '#ffffff';
@@ -907,7 +895,7 @@ function drawCenteredGlasses(ctx) {
     if (state.currentFilter && state.currentFilter !== 'none') {
         ctx.filter = state.currentFilter;
     }
-    
+
     ctx.drawImage(
         glassesImg,
         -glassesImg.width * scale / 2,
@@ -945,7 +933,7 @@ function activateStaticMode() {
     }
     
     staticContainer.style.display = 'flex';
-    videoElement style.display = 'none';
+    videoElement.style.display = 'none';
     canvasElement.style.display = 'none';
     permissionOverlay.style.display = 'none';
     loadingOverlay.style.display = 'none';
@@ -982,7 +970,7 @@ function makeDraggable(element) {
         document.addEventListener('mouseup', stopDrag);
         e.preventDefault();
     }
-    
+
     function startDragTouch(e) {
         isDragging = true;
         const touch = e.touches[0];
@@ -993,7 +981,7 @@ function makeDraggable(element) {
         document.addEventListener('touchend', stopDrag);
         e.preventDefault();
     }
-    
+
     function drag(e) {
         if (!isDragging) return;
         const container = staticContainer.getBoundingClientRect();
@@ -1010,7 +998,7 @@ function makeDraggable(element) {
         element.style.top = `${state.glassesY}%`;
         element.style.transform = 'translate(-50%, -50%)';
     }
-    
+
     function dragTouch(e) {
         if (!isDragging) return;
         const touch = e.touches[0];
@@ -1019,16 +1007,17 @@ function makeDraggable(element) {
         const y = touch.clientY - container.top - offsetY;
         
         const percentX = (x / container.width) * 100;
-        const const percentY = (y / container.height) * 100;
+        const percentY = (y / container.height) * 100;
         
         state.glassesX = Math.max(10, Math.min(percentX, 90));
         state.glassesY = Math.max(10, Math.min(percentY, 90));
         
         element.style.left = `${state.glassesX}%`;
         element.style.top = `${state.glassesY}%`;
+        element.style.top = `${state.glassesY}%`;
         element.style.transform = 'translate(-50%, -50%)';
     }
-    
+
     function stopDrag() {
         isDragging = false;
         element.style.cursor = 'grab';
@@ -1125,7 +1114,7 @@ function captureVideoOnly() {
     ctx.font = 'bold 24px Arial';
     ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
     
-    return tempCanvas.toDataURL('image/png', 1.0);
+    return tempCanvas.toDataURL('image/png',1.0);
 }
 
 function captureFromStatic() {
@@ -1168,6 +1157,10 @@ function captureFromStatic() {
         ctx.font = 'bold 20px Arial';
         ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
         
+        ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+        
         return tempCanvas.toDataURL('image/png', 1.0);
         
     } catch (error) {
@@ -1198,8 +1191,13 @@ function createFallbackCapture() {
     
     ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
     ctx.font = 'bold 20px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText('Opticore ViPro', 25, tempCanvas.height - 25);
+    ctx.textAlign = 'center';
+    ctx.fillText('Opticore ViPro', tempCanvas.width / 2, 100);
+    
+    ctx.fillStyle = 'rgba(26, 41, 128, 0.9)';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Opticore ViPro', tempCanvas.width / 2, 100);
     
     return tempCanvas.toDataURL('image/png', 1.0);
 }
@@ -1261,228 +1259,132 @@ async function shareImage(dataUrl) {
 function showShareOptions(dataUrl, message) {
     const encodedMessage = encodeURIComponent(message);
     const shareHTML = `
-        <div class="popup-overlay" id="sharePopup" style="display: flex;">
+        <div class="popup-overlay" id="sharePopup" style="display: none;">
             <div class="popup-content">
                 <div class="popup-header">
                     <h3><i class="fas fa-share-alt"></i> Share Your Try-On</h3>
                     <button class="popup-close" onclick="document.getElementById('sharePopup').remove()">×</button>
                 </div>
                 <div class="popup-body">
-                    <p style="margin-bottom:1.5rem; color: #5a6c7d;">Choose how to share:</p>
+                    <p style="margin-bottom: 1.5rem; color: #5a6c7d;">Choose how to share:</p>
                     <div class="contact-options">
                         <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
                             <i class="fab fa-whatsapp"></i>
                             <div>
                                 <strong>WhatsApp</strong>
-                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Share via WhatsApp</p>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">
+                                Share via WhatsApp
+                                </p>
                             </div>
                         </a>
                         <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" class="contact-option-btn" style="border-color: #3b5998;">
                             <i class="fab fa-facebook" style="color: #3b5998; font-size: 1.5rem;"></i>
                             <div>
                                 <strong>Facebook</strong>
-                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Share on Facebook</p>
-                            </div>
-                        </a>
-                        <button onclick="navigator.clipboard.writeText('${dataUrl}').then(() => alert('Image data copied!')).catch(() => alert('Download first'));" class="contact-option-btn" style="border-color: #e74c3c;">
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">
+                                Share on Facebook
+                                </div>
+                            </a>
+                            <button onclick="navigator.clipboard.writeText('${dataUrl}').then(() => alert('Image data copied!')).catch(() => alert('Download first'));" class="contact-option-btn" style="border-color: #e74c3c;">
+                        <i class="fas fa-download" style="color: #e74c3c; font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>Download First</strong>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">
+                                Download image to share
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="contact-options">
+                        <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+                                <strong>WhatsApp</strong>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">
+                                Share via WhatsApp
+                                </div>
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" class="contact-option-btn" style="border-color: #3b5998;">
+                            <i class="fab fa-facebook" style="color: #3b5998; font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>Facebook</strong>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">
+                                Share on Facebook
+                                </div>
+                            </a>
+                            <button onclick="navigator.clipboard.writeText('${dataUrl}').then(() => alert('Image data copied!')).catch(() => alert('Download first'));" class="contact-option-btn" style="border-color: #e74c3c;">
                             <i class="fas fa-download" style="color: #e74c3c; font-size: 1.5rem;"></i>
                             <div>
                                 <strong>Download First</strong>
-                                <p style="font style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Download image to share</p>
-                            </div>
-                        </button>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">
+                                Download image to share
+                                </div>
+                            </button>
+                        </div>
                     </div>
-                    <button onclick="document.getElementById('sharePopup').remove()" class="btn-secondary" style="width: 100%; margin-top: 1rem;">Cancel</button>
+                <button onclick="document.getElementById('sharePopup').remove()" class="btn-secondary" style="width: 100%; margin-top: 1rem;">Cancel</button>
                 </div>
             </div>
         </div>
     `;
-    
+
     const div = document.createElement('div');
     div.innerHTML = shareHTML;
     document.body.appendChild(div);
 }
 
 function openResultPage(dataUrl) {
-    const win = window.open('', '_blank', 'width=1000,height=750,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes');
-    if (!win) {
-        showNotification('Please allow popups.', 'warning');
-        downloadImage(dataUrl);
-        return;
-    }
+        const win = window.open('', '_blank', 'width=1000,height=750,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes');
+        if (!win) {
+            alert('Please allow popups.');
+            showNotification('Please allow popups.', 'warning');
+            downloadImage(dataUrl);
+            return;
+        }
     
     win.document.write(`
         <!DOCTYPE html>
+        <!DOCTYPE html>
         <html>
         <head>
-            <title>Your Try-On</title>
+            <title>Result</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
             <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-                .result-container { background: white; border-radius: 24px; padding: 3rem; max-width: 900px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
-                h1 { color: #1a2980; margin-bottom: 1rem; font-size: 2.5rem; }
-                img { max-width: 100%; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-                .btn-primary { background: linear-gradient(135deg, #1a2980, #2980b9); color: white; border: none; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif, sans-serif; }
+                body { font-family: 'Segoe UI', sans-serif; system-ui, sans-serif; }
+                html, body { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif', system-ui, sans-serif; }
+
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif', system-ui, sans-serif; }
+                body { background: linear-gradient(135deg, #f8fafc, #e8f0f8); }
+                body { font-family: 'Segoe UI', sans-serif, system-ui, sans-serif; }
+            </style>
+        </head>
+        <title>Result</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; system-ui, sans-serif; }
+
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif, system-ui, sans-serif; }
+            </style>
+        </head>
+
+        <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif, system-ui, sans-serif; }
+
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif, system-ui, sans-serif; }
+
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif, system-ui, sans-serif; }
             </style>
         </head>
         <body>
             <div class="result-container">
-                <h1>Result</h1>
+                <h1>Result</h1>Result</h1>
                 <img src="${dataUrl}">
                 <button class="btn-primary" onclick="window.close()">Close</button>
             </div>
         </body>
         </html>
+        `);
     `);
     win.document.close();
-}
-
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="notification-close">×</button>
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
-    
-    notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    });
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
-}
-
-// Add Notification Styles dynamically if missing
-if(!document.getElementById('notif-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notif-styles';
-    style.textContent = `
-        .notification { position: fixed; top: 20px; right: 20px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 10000; display: flex; align-items: center; gap: 15px; border-left: 5px solid #3498db; transform: translateX(120%); transition: transform 0.3s; }
-        .notification.show { transform: translateX(0); }
-        .notification-success { border-left-color: #27ae60; background: linear-gradient(to right, #f0f9ff, white); }
-        .notification-warning { border-left-color: #f39c12; background: linear-gradient(to right, #fef9e7, white); }
-        .notification-content { display: flex; align-items: center; gap: 10px; }
-        .notification-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #95a5a6; }
-    `;
-    document.head.appendChild(style);
-}
-
-function sendToWhatsAppDirect() {
-    // Construct Clinical Report
-    const hasBiometrics = state.clinical.calculated;
-    const pdText = hasBiometrics ? `PD: ${state.clinical.pd_mm}mm` : 'PD: N/A';
-    const fwText = hasBiometrics ? `Face Width: ${state.clinical.faceWidth_mm}mm` : 'Face Width: N/A';
-    const frameName = state.selectedGlasses.name;
-    const framePrice = state.selectedGlasses.price;
-    const scaleText = `Scale: ${(state.glassesScale * 100).toFixed(0)}%`;
-    
-    // Create structured message
-    const message = `*OPTICORE VIPRO - CLINICAL REPORT*
--------------------------------------
-🧿 *Biometric Analysis*
- ${pdText}
- ${fwText}
-
-👓 *Selected Frame*
-Name: ${frameName}
-Grade: ${framePrice}
-Fit: ${scaleText}
-
--------------------------------------
-*Requesting Prescription & Consultation*
-Please review my biometric data above for lens selection.`;
-
-    const url = `https://wa.me/254113400063?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-}
-
-function applyCanvasFilter(filter) {
-    state.currentFilter = filter;
-    canvasElement.style.filter = filter;
-    staticContainer.style.filter = filter;
-}
-
-function handleAdjustment(action) {
-    switch(action) {
-        case 'size-up':
-            state.glassesScale = Math.min(2.0, state.glassesScale + 0.1);
-            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-            break;
-        case 'size-down':
-            state.glassesScale = Math.max(0.5, state.glassesScale - 0.1);
-            if (state.isStaticMode) staticGlasses.style.width = `${200 * state.glassesScale}px`;
-            break;
-        case 'position-up':
-            state.verticalOffset = Math.max(-0.3, state.verticalOffset - 0.03);
-            if (state.isStaticMode) { state.glassesY = Math.max(10, state.glassesY - 2); staticGlasses.style.top = `${state.glassesY}%`; }
-            break;
-        case 'position-down':
-            state.verticalOffset = Math.min(0.3, state.verticalOffset + 0.03);
-            if (state.isStaticMode) { state.glassesY = Math.min(90, state.glassesY + 2); staticGlasses.style.top = `${state.glassesY}%`; }
-            break;
-        case 'position-left':
-            state.horizontalOffset = Math.max(-0.3, state.horizontalOffset - 0.03);
-            if (state.isStaticMode) { state.glassesX = Math.max(10, state.glassesX - 2); staticGlasses.style.left = `${state.glassesX}%`; }
-            break;
-        case 'position-right':
-            state.horizontalOffset = Math.min(0.3, state.horizontalOffset + 0.03);
-            if (state.isStaticMode) { state.glassesX = Math.min(90, state.glassesX + 2); staticGlasses.style.left = `${state.glassesX}%`; }
-            break;
-    }
-}
-
-function filterGlasses(category) {
-    const cards = document.querySelectorAll('.glasses-card');
-    cards.forEach(card => {
-        const id = parseInt(card.dataset.id);
-        const glasses = glassesCatalog.find(g => g.id === id);
-        if (category === 'all collections' || category === 'all') card.style.display = 'block';
-        else if (category === 'professional') card.style.display = glasses.category.includes('professional') ? 'block' : 'none';
-        else if (category === 'contemporary') card.style.display = glasses.category.includes('contemporary') ? 'block' : 'none';
-        else if (category === 'classic design') card.style.display = glasses.category.includes('classic') ? 'block' : 'none';
-        else card.style.display = 'block';
-    });
-}
-
-function resetApp() {
-    if (confirm("Reset?")) {
-        if (state.isCameraActive) {
-            state.faceDetectionActive = false;
-            if (videoElement.srcObject) videoElement.srcObject.getTracks().forEach(track => track.stop());
-        }
-        
-        Object.assign(state, {
-            isCameraActive: false, selectedGlasses: glassesCatalog[0], isStaticMode: false, faceDetectionActive: false,
-            currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
-            glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
-            lastCapturedImage: null, lastDetection: null,
-            render: { x: 0, y: 0, scale: 0, angle: 0, initialized: false },
-            clinical: { pd_mm: 0, faceWidth_mm: 0, calculated: false },
-            nila: { active: false }
-        });
-        
-        videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
-        canvasElement.style.filter = 'none'; staticContainer.style.filter = 'none';
-        staticGlasses.style.left = '50%'; staticGlasses.style.top = '40%'; staticGlasses.style.transform = 'translate(-50%, -50%)'; staticGlasses.style.width = '200px';
-        
-        document.querySelectorAll('.light-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
-        document.querySelectorAll('.filter-btn').forEach((btn, i) => { btn.classList.remove('active'); if(i===0) btn.classList.add('active'); });
-        
-        showPermissionOverlay();
-        selectGlasses(glassesCatalog[0]);
-        filterGlasses('all');
-        showNotification('Reset successfully', 'success');
-    }
-}
-
-console.log("✅ Opticore ViPro - Premium AR, Clinical & Nila AI Edition Loaded");
+    </script>
