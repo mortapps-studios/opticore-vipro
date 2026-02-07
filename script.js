@@ -1,6 +1,6 @@
 // ============================================
-// OPTICORE VIPRO - PREMIUM AR & CLINICAL ANALYSIS
-// Enhanced Stability, Realism, and Accuracy
+// OPTICORE VIPRO - PREMIUM AR, CLINICAL & NILA AI
+// Enhanced Stability, Realism, Accuracy, and Voice Assistant
 // ============================================
 
 // State Management
@@ -40,6 +40,13 @@ let state = {
         pd_mm: 0,
         faceWidth_mm: 0,
         calculated: false
+    },
+    // NILA AI STATE
+    nila: {
+        active: false,
+        voice: null,
+        pitch: 1.1, // Slightly higher for female tone
+        rate: 1.0
     }
 };
 
@@ -56,7 +63,7 @@ const glassesCatalog = [
     { id: 9, name: "Slim Oval", price: "Professional Grade", image: "frame9.png", category: ["professional", "contemporary"], scale: 0.76, style: "rectangle", verticalAdjust: 0.20 },
     { id: 10, name: "Bold Square", price: "Professional Grade", image: "frame10.png", category: ["professional", "contemporary"], scale: 0.88, style: "oversized", verticalAdjust: 0.24 },
     { id: 11, name: "Round Metal", price: "Professional Grade", image: "frame11.png", category: ["professional", "contemporary"], badge: "Premium", scale: 0.74, style: "rimless", verticalAdjust: 0.21 },
-    { id: 12, name: "Compact Rectangular", price: "Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.22 }
+    { id: 12, name: "Compact Rectangular", price: " Professional Grade", image: "frame12.png", category: ["professional", "contemporary"], scale: 0.8, style: "geometric", verticalAdjust: 0.22 }
 ];
 
 // DOM Elements
@@ -96,6 +103,10 @@ const howItWorksPopup = document.getElementById('howItWorksPopup');
 const privacyPopup = document.getElementById('privacyPopup');
 const contactPopup = document.getElementById('contactPopup');
 
+// Nila Elements
+const nilaBtn = document.getElementById('nilaBtn');
+const nilaIcon = document.getElementById('nilaIcon');
+
 // Image Cache
 const imageCache = new Map();
 
@@ -126,6 +137,70 @@ function enableCodeProtection() {
         }
     });
 }
+
+// ===== PROJECT NILA: AI ASSISTANT CLASS =====
+class NilaAssistant {
+    constructor() {
+        this.synth = window.speechSynthesis;
+        this.voices = [];
+        this.isSpeaking = false;
+        this.init();
+    }
+
+    init() {
+        // Load voices when available
+        if (this.synth.onvoiceschanged !== undefined) {
+            this.synth.onvoiceschanged = () => this.loadVoices();
+        } else {
+            this.loadVoices();
+        }
+    }
+
+    loadVoices() {
+        this.voices = this.synth.getVoices();
+        // Try to find a female English voice
+        this.voice = this.voices.find(v => 
+            v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Google US English') || v.name.includes('Microsoft Zira'))
+        );
+        
+        // Fallback to default if no female voice found
+        if (!this.voice) {
+            this.voice = this.voices[0];
+        }
+    }
+
+    toggle() {
+        state.nila.active = !state.nila.active;
+        if (state.nila.active) {
+            nilaBtn.classList.add('active');
+            nilaIcon.className = 'fas fa-volume-up';
+            this.speak("Hello. I am Nila. I am your optical assistant. I am ready to assist you.");
+            showNotification('Nila AI: Online', 'info');
+        } else {
+            this.synth.cancel();
+            nilaBtn.classList.remove('active');
+            nilaIcon.className = 'fas fa-robot';
+        }
+    }
+
+    speak(text) {
+        if (!state.nila.active || !text) return;
+        
+        if (this.synth.speaking) {
+            this.synth.cancel();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = this.voice;
+        utterance.pitch = state.nila.pitch;
+        utterance.rate = state.nila.rate;
+        utterance.volume = 1; // Max volume
+        
+        this.synth.speak(utterance);
+    }
+}
+
+const nila = new NilaAssistant();
 
 // ===== POPUP MANAGEMENT =====
 function showPopup(popupElement) {
@@ -195,6 +270,11 @@ function setupNavigation() {
         e.preventDefault();
         showPopup(contactPopup);
     });
+
+    // Nila Button Click
+    nilaBtn.addEventListener('click', function() {
+        nila.toggle();
+    });
 }
 
 function updateActiveNavLink(activeLink) {
@@ -219,7 +299,7 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Premium AR & Clinical Edition");
+    console.log("🔬 Opticore ViPro - Premium AR, Clinical & Nila AI Edition");
     
     // 1. Enable Protection
     enableCodeProtection();
@@ -344,6 +424,11 @@ function selectGlasses(glasses) {
         staticGlasses.style.width = `${200 * state.glassesScale}px`;
     }
     
+    // Nila Feedback
+    if(state.nila.active) {
+        nila.speak(`Switching to ${glasses.name}. Good choice.`);
+    }
+    
     // Highlight Card
     document.querySelectorAll('.glasses-card').forEach(card => {
         if (card.dataset.id == glasses.id) {
@@ -400,9 +485,23 @@ function setupEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         
+        // Nila Toggle Shortcut
+        if (e.ctrlKey && e.key === 'm') {
+            nila.toggle();
+            e.preventDefault();
+            return;
+        }
+
         // SmartMode Toggle (Desktop Only)
         if (e.ctrlKey && e.key === 'd') {
             state.smartMode = !state.smartMode;
+            if(state.nila.active) {
+                if (state.smartMode) {
+                    nila.speak("Neural Calibration Layer engaged.");
+                } else {
+                    nila.speak("Neural Calibration Layer disabled.");
+                }
+            }
             showNotification(
                 `Neural Calibration Layer ${state.smartMode ? 'ENABLED' : 'DISABLED'}`, 
                 state.smartMode ? 'success' : 'info'
@@ -471,6 +570,11 @@ async function startCamera() {
                 startFaceDetection();
             } else {
                 drawBasicVideo();
+            }
+
+            // Nila Introduction
+            if(state.nila.active) {
+                nila.speak("Visual Intelligence initialized. I am Nila, your optical assistant. I am here to assist you.");
             }
         };
         
@@ -841,7 +945,7 @@ function activateStaticMode() {
     }
     
     staticContainer.style.display = 'flex';
-    videoElement.style.display = 'none';
+    videoElement style.display = 'none';
     canvasElement.style.display = 'none';
     permissionOverlay.style.display = 'none';
     loadingOverlay.style.display = 'none';
@@ -915,7 +1019,7 @@ function makeDraggable(element) {
         const y = touch.clientY - container.top - offsetY;
         
         const percentX = (x / container.width) * 100;
-        const percentY = (y / container.height) * 100;
+        const const percentY = (y / container.height) * 100;
         
         state.glassesX = Math.max(10, Math.min(percentX, 90));
         state.glassesY = Math.max(10, Math.min(percentY, 90));
@@ -1164,7 +1268,7 @@ function showShareOptions(dataUrl, message) {
                     <button class="popup-close" onclick="document.getElementById('sharePopup').remove()">×</button>
                 </div>
                 <div class="popup-body">
-                    <p style="margin-bottom: 1.5rem; color: #5a6c7d;">Choose how to share:</p>
+                    <p style="margin-bottom:1.5rem; color: #5a6c7d;">Choose how to share:</p>
                     <div class="contact-options">
                         <a href="https://wa.me/?text=${encodedMessage}" target="_blank" class="contact-option-btn whatsapp-option">
                             <i class="fab fa-whatsapp"></i>
@@ -1184,7 +1288,7 @@ function showShareOptions(dataUrl, message) {
                             <i class="fas fa-download" style="color: #e74c3c; font-size: 1.5rem;"></i>
                             <div>
                                 <strong>Download First</strong>
-                                <p style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Download image to share</p>
+                                <p style="font style="font-size: 0.9rem; color: #7f8c8d; margin: 0;">Download image to share</p>
                             </div>
                         </button>
                     </div>
@@ -1274,7 +1378,7 @@ if(!document.getElementById('notif-styles')) {
 }
 
 function sendToWhatsAppDirect() {
-    // Construct the Clinical Report
+    // Construct Clinical Report
     const hasBiometrics = state.clinical.calculated;
     const pdText = hasBiometrics ? `PD: ${state.clinical.pd_mm}mm` : 'PD: N/A';
     const fwText = hasBiometrics ? `Face Width: ${state.clinical.faceWidth_mm}mm` : 'Face Width: N/A';
@@ -1282,7 +1386,7 @@ function sendToWhatsAppDirect() {
     const framePrice = state.selectedGlasses.price;
     const scaleText = `Scale: ${(state.glassesScale * 100).toFixed(0)}%`;
     
-    // Create the structured message
+    // Create structured message
     const message = `*OPTICORE VIPRO - CLINICAL REPORT*
 -------------------------------------
 🧿 *Biometric Analysis*
@@ -1363,7 +1467,8 @@ function resetApp() {
             glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
             lastCapturedImage: null, lastDetection: null,
             render: { x: 0, y: 0, scale: 0, angle: 0, initialized: false },
-            clinical: { pd_mm: 0, faceWidth_mm: 0, calculated: false }
+            clinical: { pd_mm: 0, faceWidth_mm: 0, calculated: false },
+            nila: { active: false }
         });
         
         videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
@@ -1380,4 +1485,4 @@ function resetApp() {
     }
 }
 
-console.log("✅ Opticore ViPro - Premium AR & Clinical Analysis Edition Loaded");
+console.log("✅ Opticore ViPro - Premium AR, Clinical & Nila AI Edition Loaded");
