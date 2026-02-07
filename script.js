@@ -1,5 +1,5 @@
 // ============================================
-// OPTICORE VIPRO - PREMIUM AR GRAPHICS UPDATE
+// OPTICORE VIPRO - PREMIUM AR & CLINICAL ANALYSIS
 // Enhanced Stability, Realism, and Accuracy
 // ============================================
 
@@ -34,6 +34,12 @@ let state = {
         scale: 0,
         angle: 0,
         initialized: false
+    },
+    // CLINICAL STATE
+    clinical: {
+        pd_mm: 0,
+        faceWidth_mm: 0,
+        calculated: false
     }
 };
 
@@ -74,6 +80,10 @@ const selectedFrameName = document.getElementById('selectedFrameName');
 const selectedFramePrice = document.getElementById('selectedFramePrice');
 const loadingText = document.getElementById('loadingText');
 const sendToWhatsAppBtn = document.getElementById('sendToWhatsAppBtn');
+
+// Biometrics Elements
+const pdDisplay = document.getElementById('pdDisplay');
+const fwDisplay = document.getElementById('fwDisplay');
 
 // Navigation Elements
 const framesLink = document.getElementById('framesLink');
@@ -209,7 +219,7 @@ function updateActiveNavLink(activeLink) {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔬 Opticore ViPro - Premium AR Graphics Edition");
+    console.log("🔬 Opticore ViPro - Premium AR & Clinical Edition");
     
     // 1. Enable Protection
     enableCodeProtection();
@@ -527,6 +537,32 @@ async function detectFaces() {
                 Math.pow(rightEyeCenter.y - leftEyeCenter.y, 2)
             );
             
+            // CLINICAL ANALYSIS: Calculate PD & Face Width
+            // Reference: Average human face width (Zygion to Zygion) is approx 140mm.
+            // We calculate Jaw Width (Point 0 to 16) in pixels.
+            const jawLeft = landmarks.positions[0];
+            const jawRight = landmarks.positions[16];
+            const jawWidthPixels = Math.sqrt(
+                Math.pow(jawRight.x - jawLeft.x, 2) + 
+                Math.pow(jawRight.y - jawLeft.y, 2)
+            );
+            
+            // Calculate Scale Factor (Pixels per mm)
+            // 140mm is a robust average reference for face width
+            const scaleFactor = 140 / jawWidthPixels;
+            
+            // Calculate PD in mm
+            const pd_mm = (eyeDistance * scaleFactor).toFixed(1);
+            const fw_mm = (jawWidthPixels * scaleFactor).toFixed(1);
+            
+            state.clinical.pd_mm = pd_mm;
+            state.clinical.faceWidth_mm = fw_mm;
+            state.clinical.calculated = true;
+            
+            // Update UI
+            pdDisplay.innerText = `${pd_mm} mm`;
+            fwDisplay.innerText = `${fw_mm} mm`;
+            
             // Calculate Rotation (Tilt)
             const dx = rightEyeCenter.x - leftEyeCenter.x;
             const dy = rightEyeCenter.y - leftEyeCenter.y;
@@ -541,6 +577,12 @@ async function detectFaces() {
             
         } else {
             state.lastDetection = null;
+            // Reset Biometrics if face lost
+            if (state.clinical.calculated) {
+                pdDisplay.innerText = "-- mm";
+                fwDisplay.innerText = "-- mm";
+                state.clinical.calculated = false;
+            }
             drawCenteredGlasses(ctx);
         }
         
@@ -1232,7 +1274,30 @@ if(!document.getElementById('notif-styles')) {
 }
 
 function sendToWhatsAppDirect() {
-    const message = `*OPTICORE VIPRO*\n\nFrame: ${state.selectedGlasses.name}\nScale: ${state.glassesScale}x`;
+    // Construct the Clinical Report
+    const hasBiometrics = state.clinical.calculated;
+    const pdText = hasBiometrics ? `PD: ${state.clinical.pd_mm}mm` : 'PD: N/A';
+    const fwText = hasBiometrics ? `Face Width: ${state.clinical.faceWidth_mm}mm` : 'Face Width: N/A';
+    const frameName = state.selectedGlasses.name;
+    const framePrice = state.selectedGlasses.price;
+    const scaleText = `Scale: ${(state.glassesScale * 100).toFixed(0)}%`;
+    
+    // Create the structured message
+    const message = `*OPTICORE VIPRO - CLINICAL REPORT*
+-------------------------------------
+🧿 *Biometric Analysis*
+ ${pdText}
+ ${fwText}
+
+👓 *Selected Frame*
+Name: ${frameName}
+Grade: ${framePrice}
+Fit: ${scaleText}
+
+-------------------------------------
+*Requesting Prescription & Consultation*
+Please review my biometric data above for lens selection.`;
+
     const url = `https://wa.me/254113400063?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
 }
@@ -1297,7 +1362,8 @@ function resetApp() {
             currentFilter: "none", modelsLoaded: state.modelsLoaded, smartMode: false,
             glassesScale: 1.0, verticalOffset: 0.0, horizontalOffset: 0.0, glassesX: 50, glassesY: 40,
             lastCapturedImage: null, lastDetection: null,
-            render: { x: 0, y: 0, scale: 0, angle: 0, initialized: false }
+            render: { x: 0, y: 0, scale: 0, angle: 0, initialized: false },
+            clinical: { pd_mm: 0, faceWidth_mm: 0, calculated: false }
         });
         
         videoElement.style.display = 'none'; canvasElement.style.display = 'none'; staticContainer.style.display = 'none';
@@ -1314,4 +1380,4 @@ function resetApp() {
     }
 }
 
-console.log("✅ Opticore ViPro - Premium AR Graphics Edition Loaded");
+console.log("✅ Opticore ViPro - Premium AR & Clinical Analysis Edition Loaded");
